@@ -1,10 +1,13 @@
-package org.housered.simul.render;
+package org.housered.simul.view.swing;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 
 import javax.swing.JPanel;
 
+import org.housered.simul.view.GraphicsAdapter;
+import org.housered.simul.view.Renderable;
+import org.housered.simul.view.RenderableProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +31,7 @@ public class SwingPanel extends JPanel
         Graphics2D g2 = (Graphics2D) g;
 
         renderables.beginRender();
-        RenderStrategy strategy = new SwingRenderStrategy(g2, 0, 0, 1);
+        GraphicsAdapter strategy = new SwingGraphicsAdapter(g2, 0, 0, 1);
         
         for (Renderable r : renderables.getRenderables())
         {

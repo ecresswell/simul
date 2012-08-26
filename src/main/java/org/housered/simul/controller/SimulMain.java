@@ -2,12 +2,12 @@ package org.housered.simul.controller;
 
 import java.util.concurrent.TimeUnit;
 
-import org.housered.simul.render.SwingFrame;
-import org.housered.simul.world.World;
+import org.housered.simul.model.world.World;
+import org.housered.simul.view.swing.SwingFrame;
 
 public class SimulMain
 {
-    private static final long DELAY = 5;
+    private static final long DELAY = 20;
 
     private World world;
     private SwingFrame swingFrame;
@@ -17,7 +17,7 @@ public class SimulMain
     {
         world = new World();
         world.loadLevel();
-        
+
         swingFrame = new SwingFrame(world);
 
         running = true;
@@ -26,16 +26,16 @@ public class SimulMain
 
     private void run()
     {
-        long beforeTime, sleep;
-        long timeDiff = 0;
+        long beforeTime, sleep, timeDiff, currentTime;
+        long dt = 0;
 
         beforeTime = System.currentTimeMillis();
 
         while (running)
         {
             swingFrame.repaint();
-            world.tick(TimeUnit.MILLISECONDS.toSeconds(timeDiff));
-
+            world.tick((float)dt / 1000);
+            
             timeDiff = System.currentTimeMillis() - beforeTime;
             sleep = DELAY - timeDiff;
 
@@ -49,7 +49,9 @@ public class SimulMain
             {
                 System.out.println("interrupted");
             }
-            beforeTime = System.currentTimeMillis();
+            currentTime = System.currentTimeMillis();
+            dt = currentTime - beforeTime;
+            beforeTime = currentTime;
         }
     }
 

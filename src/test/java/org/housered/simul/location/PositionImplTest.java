@@ -2,6 +2,8 @@ package org.housered.simul.location;
 
 import static org.junit.Assert.assertEquals;
 
+import org.housered.simul.model.location.Position;
+import org.housered.simul.model.location.PositionImpl;
 import org.junit.Test;
 
 public class PositionImplTest

@@ -1,17 +1,17 @@
-package org.housered.simul.render;
+package org.housered.simul.view;
 
 import java.awt.Color;
 
-import org.housered.simul.location.Dimension;
-import org.housered.simul.location.Position;
+import org.housered.simul.model.location.Dimension;
+import org.housered.simul.model.location.Position;
 
-public interface RenderStrategy
+public interface GraphicsAdapter
 {
     void setColour(Color colour);
 
     /**
      * Render a filled rectangle at the given world position, with the passed dimensions. The
-     * position is the centre of the object.
+     * position is the top left.
      */
     void fillRect(Position position, Dimension dimension);
 }

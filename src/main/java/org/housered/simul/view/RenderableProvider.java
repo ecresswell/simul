@@ -1,4 +1,4 @@
-package org.housered.simul.render;
+package org.housered.simul.view;
 
 public interface RenderableProvider
 {

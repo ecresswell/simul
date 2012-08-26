@@ -1,4 +1,4 @@
-package org.housered.simul.location;
+package org.housered.simul.model.location;
 
 
 public interface Locatable

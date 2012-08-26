@@ -1,6 +1,8 @@
-package org.housered.simul.render;
+package org.housered.simul.view.swing;
 
 import javax.swing.JFrame;
+
+import org.housered.simul.view.RenderableProvider;
 
 public class SwingFrame extends JFrame
 {

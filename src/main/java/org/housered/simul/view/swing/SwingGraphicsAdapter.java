@@ -1,19 +1,20 @@
-package org.housered.simul.render;
+package org.housered.simul.view.swing;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-import org.housered.simul.location.Dimension;
-import org.housered.simul.location.Position;
+import org.housered.simul.model.location.Dimension;
+import org.housered.simul.model.location.Position;
+import org.housered.simul.view.GraphicsAdapter;
 
-public class SwingRenderStrategy implements RenderStrategy
+public class SwingGraphicsAdapter implements GraphicsAdapter
 {
     private final Graphics2D g;
     private final int offsetX;
     private final int offsetY;
     private final float unitsPerWorldUnit;
 
-    public SwingRenderStrategy(Graphics2D g, int offsetX, int offsetY, float unitsPerWorldUnit)
+    public SwingGraphicsAdapter(Graphics2D g, int offsetX, int offsetY, float unitsPerWorldUnit)
     {
         this.g = g;
         this.offsetX = offsetX;

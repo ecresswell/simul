@@ -1,4 +1,4 @@
-package org.housered.simul.actor;
+package org.housered.simul.model.actor;
 
 public class Mood
 {

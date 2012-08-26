@@ -2,6 +2,8 @@ package org.housered.simul.location;
 
 import static org.junit.Assert.assertEquals;
 
+import org.housered.simul.model.location.Dimension;
+import org.housered.simul.model.location.DimensionImpl;
 import org.junit.Test;
 
 public class DimensionImplTest
