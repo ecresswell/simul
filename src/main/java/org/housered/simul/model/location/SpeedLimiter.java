@@ -20,6 +20,7 @@ public class SpeedLimiter
     public Vector incrementPosition(Vector delta)
     {
         float wantedMag = Math.min(maxDistancePerSecond * dt - distanceMovedThisTick, delta.magnitude());
+        wantedMag = Math.max(wantedMag, 0);
         distanceMovedThisTick += wantedMag;
         return delta.scaleToMagnitudeCopy(wantedMag);
     }

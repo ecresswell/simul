@@ -22,6 +22,9 @@ public class SimpleNavigationBrainImpl implements NavigationBrain
     @Override
     public boolean hasTarget()
     {
+        if (currentPosition.equals(target))
+            target = null;
+        
         return target != null;
     }
 

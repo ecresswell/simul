@@ -25,6 +25,9 @@ public class VectorImpl implements Vector
     @Override
     public Vector scaleToMagnitudeCopy(float wantedMagnitude)
     {
+        if (magnitude() == 0)
+            return new VectorImpl();
+        
         float scale = wantedMagnitude / magnitude();
         return new VectorImpl(x * scale, y * scale);
     }
