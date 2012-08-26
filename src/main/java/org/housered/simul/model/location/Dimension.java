@@ -1,6 +1,6 @@
 package org.housered.simul.model.location;
 
-public interface Dimension
+public interface Dimension extends Vector
 {
     float getWidth();
 

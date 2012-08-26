@@ -1,42 +1,39 @@
 package org.housered.simul.model.location;
 
-public class DimensionImpl implements Dimension
+public class DimensionImpl extends VectorImpl implements Dimension
 {
-    private float width;
-    private float height;
-
     public DimensionImpl(float width, float height)
     {
-        setWidth(width);
-        setHeight(height);
+        super(width, height);
     }
 
     public DimensionImpl()
     {
+        super();
     }
 
     @Override
     public float getWidth()
     {
-        return width;
+        return getX();
     }
 
     @Override
     public float getHeight()
     {
-        return height;
+        return getY();
     }
 
     @Override
     public float getConvertedWidthAsFloat(float unitsPerWorldUnit)
     {
-        return width * unitsPerWorldUnit;
+        return getWidth() * unitsPerWorldUnit;
     }
 
     @Override
     public float getConvertedHeightAsFloat(float unitsPerWorldUnit)
     {
-        return height * unitsPerWorldUnit;
+        return getHeight() * unitsPerWorldUnit;
     }
 
     @Override
@@ -54,13 +51,12 @@ public class DimensionImpl implements Dimension
     @Override
     public void setWidth(float width)
     {
-        this.width = width;
+        setX(width);
     }
 
     @Override
     public void setHeight(float height)
     {
-        this.height = height;
+        setY(height);
     }
-
 }

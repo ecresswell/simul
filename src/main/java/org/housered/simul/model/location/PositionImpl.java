@@ -1,54 +1,27 @@
 package org.housered.simul.model.location;
 
-public class PositionImpl implements Position
+public class PositionImpl extends VectorImpl implements Position
 {
-    private float x;
-    private float y;
-    
     public PositionImpl(float x, float y)
     {
-        setX(x);
-        setY(y);
+        super(x, y);
     }
-    
+
     public PositionImpl()
     {
-    }
-
-    @Override
-    public void setX(float x)
-    {
-        this.x = x;
-    }
-
-    @Override
-    public void setY(float y)
-    {
-        this.y = y;
-    }
-
-    @Override
-    public float getX()
-    {
-        return x;
-    }
-
-    @Override
-    public float getY()
-    {
-        return y;
+        super();
     }
 
     @Override
     public float getConvertedXAsFloat(float offset, float unitsPerWorldUnit)
     {
-        return this.x * unitsPerWorldUnit - offset;
+        return getX() * unitsPerWorldUnit - offset;
     }
 
     @Override
     public float getConvertedYAsFloat(float offset, float unitsPerWorldUnit)
     {
-        return this.y * unitsPerWorldUnit - offset;
+        return getY() * unitsPerWorldUnit - offset;
     }
 
     @Override
@@ -62,6 +35,4 @@ public class PositionImpl implements Position
     {
         return Math.round(getConvertedYAsFloat(offset, unitsPerWorldUnit));
     }
-
-
 }
