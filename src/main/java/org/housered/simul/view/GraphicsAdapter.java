@@ -14,4 +14,6 @@ public interface GraphicsAdapter
      * position is the top left.
      */
     void fillRect(Position position, Dimension dimension);
+    
+    void drawRect(Position position, Dimension dimension);
 }

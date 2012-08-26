@@ -27,14 +27,29 @@ public class SwingGraphicsAdapter implements GraphicsAdapter
     {
         g.setColor(colour);
     }
-    
+
     @Override
     public void fillRect(Position position, Dimension dimension)
     {
+        drawRect(position, dimension, true);
+    }
+
+    @Override
+    public void drawRect(Position position, Dimension dimension)
+    {
+        drawRect(position, dimension, false);
+    }
+
+    private void drawRect(Position position, Dimension size, boolean filled)
+    {
         int x = position.getConvertedX(offsetX, unitsPerWorldUnit);
         int y = position.getConvertedY(offsetY, unitsPerWorldUnit);
-        int width = dimension.getConvertedWidth(unitsPerWorldUnit);
-        int height = dimension.getConvertedHeight(unitsPerWorldUnit);
-        g.fillRect(x, y, width, height);
+        int width = size.getConvertedWidth(unitsPerWorldUnit);
+        int height = size.getConvertedHeight(unitsPerWorldUnit);
+
+        if (filled)
+            g.fillRect(x, y, width, height);
+        else
+            g.drawRect(x, y, width, height);
     }
 }

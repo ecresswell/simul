@@ -16,8 +16,13 @@ import org.slf4j.LoggerFactory;
 public class Person implements Locatable, Identifiable, Renderable, Tickable
 {
     private static Logger LOGGER = LoggerFactory.getLogger(Person.class);
+    private final long id;
     private Mood mood = new Mood();
-    private int direction = 1;
+
+    public Person(long id)
+    {
+        this.id = id;
+    }
 
     @Override
     public Position getCurrentPosition()
@@ -28,26 +33,18 @@ public class Person implements Locatable, Identifiable, Renderable, Tickable
     @Override
     public long getId()
     {
-        return 0;
+        return id;
     }
 
     @Override
     public void render(GraphicsAdapter r)
     {
-        int happyColour = Math.round(mood.getHappiness() * 255);
-        LOGGER.debug("{},{},{}", new Object[] {happyColour, 255 - happyColour, 122});
-        r.setColour(new Color(happyColour, 255 - happyColour, 122));
+        r.setColour(Color.GREEN);
         r.fillRect(new PositionImpl(0, 0), new DimensionImpl(10, 10));
     }
 
     @Override
     public void tick(float dt)
     {
-        if (mood.getHappiness() >= 1)
-            direction = -1;
-        else if (mood.getHappiness() <= 0)
-            direction = 1;
-
-        mood.setHappiness(mood.getHappiness() + 0.2f * dt * direction);
     }
 }

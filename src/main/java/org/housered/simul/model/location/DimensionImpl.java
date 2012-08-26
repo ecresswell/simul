@@ -11,6 +11,10 @@ public class DimensionImpl implements Dimension
         setHeight(height);
     }
 
+    public DimensionImpl()
+    {
+    }
+
     @Override
     public float getWidth()
     {

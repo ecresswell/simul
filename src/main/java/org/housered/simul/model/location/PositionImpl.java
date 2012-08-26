@@ -11,6 +11,10 @@ public class PositionImpl implements Position
         setY(y);
     }
     
+    public PositionImpl()
+    {
+    }
+
     @Override
     public void setX(float x)
     {
