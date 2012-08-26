@@ -9,11 +9,12 @@ public class GameClockImpl implements GameClock, Tickable
 {
     private static Logger LOGGER = LoggerFactory.getLogger(GameClockImpl.class);
     private int inGameSecondsPerSecond;
-    private float secondsSinceMidnight;
+    private int secondsSinceMidnight;
+    private int milliseconds;
 
     public GameClockImpl(long secondsSinceMidnight, int inGameSecondsPerSecond)
     {
-        this.secondsSinceMidnight = secondsSinceMidnight;
+        this.secondsSinceMidnight = (int) secondsSinceMidnight;
         this.inGameSecondsPerSecond = inGameSecondsPerSecond;
     }
 
@@ -23,7 +24,7 @@ public class GameClockImpl implements GameClock, Tickable
     }
 
     @Override
-    public int getTime()
+    public int getSecondsSinceMidnight()
     {
         return Math.round(secondsSinceMidnight);
     }
@@ -31,15 +32,38 @@ public class GameClockImpl implements GameClock, Tickable
     @Override
     public void tick(float dt)
     {
-        secondsSinceMidnight += inGameSecondsPerSecond * dt;
+        milliseconds += inGameSecondsPerSecond * dt * 1000;
+        long seconds = TimeUnit.MILLISECONDS.toSeconds(milliseconds);
 
-        if (secondsSinceMidnight > TimeUnit.DAYS.toSeconds(1))
+        if (seconds > 0)
         {
-            secondsSinceMidnight = 0;
+            secondsSinceMidnight += seconds;
+            milliseconds -= seconds * 1000;
         }
 
-        long hours = TimeUnit.SECONDS.toHours(Math.round(secondsSinceMidnight));
-        long minutes = TimeUnit.SECONDS.toMinutes(Math.round(secondsSinceMidnight)) - TimeUnit.HOURS.toMinutes(hours);
-        LOGGER.debug("The time is: {}:{}", hours, minutes);
+        if (secondsSinceMidnight >= TimeUnit.DAYS.toSeconds(1))
+        {
+            secondsSinceMidnight -= TimeUnit.DAYS.toSeconds(1);
+        }
+    }
+
+    @Override
+    public int getHour()
+    {
+        return (int) TimeUnit.SECONDS.toHours(Math.round(secondsSinceMidnight));
+    }
+
+    @Override
+    public int getMinutes()
+    {
+        return (int) (TimeUnit.SECONDS.toMinutes(Math.round(secondsSinceMidnight)) - TimeUnit.HOURS
+                .toMinutes(getHour()));
+    }
+
+    @Override
+    public int getSeconds()
+    {
+        return (int) (secondsSinceMidnight - TimeUnit.MINUTES.toSeconds(getMinutes()) - TimeUnit.HOURS
+                .toSeconds(getHour()));
     }
 }
