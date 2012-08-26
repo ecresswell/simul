@@ -32,7 +32,7 @@ public class World implements RenderableProvider, Tickable
         gameClock = new GameClockImpl(TimeUnit.HOURS.toSeconds(7), 30);
         tickables.add(gameClock);
 
-        addEntity(new Person(getNextId()));
+        addEntity(new Person(getNextId(), assetManager));
         addEntity(new House(getNextId()));
     }
 

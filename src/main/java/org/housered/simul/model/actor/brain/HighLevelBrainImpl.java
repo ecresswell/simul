@@ -13,7 +13,13 @@ public class HighLevelBrainImpl implements HighLevelBrain
     private AssetManager assetManager;
 
     private Occupiable currentTarget;
-
+    
+    public HighLevelBrainImpl(Actor actor, AssetManager assetManager)
+    {
+        this.actor = actor;
+        this.assetManager = assetManager;
+    }
+    
     @Override
     public Occupiable decideWhereToGo()
     {

@@ -1,5 +1,6 @@
 package org.housered.simul.model.assets;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,6 +11,8 @@ import org.housered.simul.model.world.Identifiable;
  */
 public class AssetManagerImpl implements AssetManager
 {
+    private Occupiable occupiable;
+    
     @Override
     public void addIdentifiable(Identifiable entity)
     {
@@ -19,12 +22,12 @@ public class AssetManagerImpl implements AssetManager
     @Override
     public void addOccupiable(Occupiable asset)
     {
-
+        occupiable = asset;
     }
 
     @Override
     public List<Occupiable> getAssets(Identifiable entity)
     {
-        return Collections.emptyList();
+        return Arrays.asList(occupiable);
     }
 }

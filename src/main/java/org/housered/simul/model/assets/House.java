@@ -11,11 +11,11 @@ import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
 
-public class House implements Identifiable, Renderable, Tickable
+public class House implements Identifiable, Renderable, Tickable, Occupiable
 {
     private final long id;
-    private Position position = new PositionImpl();
-    private Dimension size = new DimensionImpl();
+    private Position position = new PositionImpl(50, 50);
+    private Dimension size = new DimensionImpl(20, 20);
     
     public House(long id)
     {
@@ -39,6 +39,18 @@ public class House implements Identifiable, Renderable, Tickable
     public long getId()
     {
         return id;
+    }
+
+    @Override
+    public long getOwner()
+    {
+        return 0;
+    }
+
+    @Override
+    public Position getPosition()
+    {
+        return position;
     }
 
 }
