@@ -1,4 +1,4 @@
-package org.housered.simul.interfaces;
+package org.housered.simul.world;
 
 public interface Tickable
 {

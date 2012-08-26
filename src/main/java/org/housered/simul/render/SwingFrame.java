@@ -6,9 +6,9 @@ public class SwingFrame extends JFrame
 {
     private static final long serialVersionUID = 2000214150960328157L;
 
-    public SwingFrame()
+    public SwingFrame(RenderableProvider renderables)
     {
-        add(new SwingPanel());
+        add(new SwingPanel(renderables));
 
         setTitle("Simul");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
