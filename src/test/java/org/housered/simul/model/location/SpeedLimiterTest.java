@@ -13,7 +13,7 @@ public class SpeedLimiterTest
         limiter.setSpeedLimit(10);
         limiter.startNewTick(1);
 
-        Vector actual = limiter.incrementPosition(new VectorImpl(13, 13));
+        Vector actual = limiter.incrementPosition(new Vector(13, 13));
 
         assertEquals(7.071, actual.getX(), 0.0001);
         assertEquals(7.071, actual.getY(), 0.0001);
@@ -26,8 +26,8 @@ public class SpeedLimiterTest
         limiter.setSpeedLimit(10);
         limiter.startNewTick(1);
 
-        assertEquals(new VectorImpl(5, 5), limiter.incrementPosition(new VectorImpl(5, 5)));
-        Vector actual =  limiter.incrementPosition(new VectorImpl(5, 5));
+        assertEquals(new Vector(5, 5), limiter.incrementPosition(new Vector(5, 5)));
+        Vector actual =  limiter.incrementPosition(new Vector(5, 5));
         
         assertEquals(2.071, actual.getX(), 0.0001);
         assertEquals(2.071, actual.getY(), 0.0001);
@@ -40,7 +40,7 @@ public class SpeedLimiterTest
         limiter.setSpeedLimit(10);
         limiter.startNewTick(0.1f);
 
-        Vector actual = limiter.incrementPosition(new VectorImpl(13, 13));
+        Vector actual = limiter.incrementPosition(new Vector(13, 13));
 
         assertEquals(0.7071, actual.getX(), 0.0001);
         assertEquals(0.7071, actual.getY(), 0.0001);

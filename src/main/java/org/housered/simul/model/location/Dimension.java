@@ -1,16 +1,44 @@
 package org.housered.simul.model.location;
 
-public interface Dimension extends Vector
+public class Dimension extends Vector
 {
-    float getWidth();
+    public Dimension(float width, float height)
+    {
+        super(width, height);
+    }
 
-    float getHeight();
+    public Dimension()
+    {
+        super();
+    }
 
-    void setWidth(float width);
+    public float getWidth()
+    {
+        return getX();
+    }
 
-    void setHeight(float height);
+    public float getHeight()
+    {
+        return getY();
+    }
 
-    int getConvertedWidth(double unitsPerWorldUnit);
+    public int getConvertedWidth(double unitsPerWorldUnit)
+    {
+        return (int) Math.round(getWidth() * unitsPerWorldUnit);
+    }
 
-    int getConvertedHeight(double unitsPerWorldUnit);
+    public int getConvertedHeight(double unitsPerWorldUnit)
+    {
+        return (int) Math.round(getHeight() * unitsPerWorldUnit);
+    }
+
+    public void setWidth(float width)
+    {
+        setX(width);
+    }
+
+    public void setHeight(float height)
+    {
+        setY(height);
+    }
 }

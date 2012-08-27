@@ -1,12 +1,24 @@
 package org.housered.simul.model.location;
 
-public interface Position extends Vector
+public class Position extends Vector
 {
-    void setX(float x);
+    public Position(float x, float y)
+    {
+        super(x, y);
+    }
 
-    void setY(float y);
+    public Position()
+    {
+        super();
+    }
 
-    int getConvertedX(double offset, double unitsPerWorldUnit);
+    public int getConvertedX(double offset, double unitsPerWorldUnit)
+    {
+        return (int) Math.round((getX() - offset) * unitsPerWorldUnit);
+    }
 
-    int getConvertedY(double offset, double unitsPerWorldUnit);
+    public int getConvertedY(double offset, double unitsPerWorldUnit)
+    {
+        return (int) Math.round((getY() - offset) * unitsPerWorldUnit);
+    }
 }

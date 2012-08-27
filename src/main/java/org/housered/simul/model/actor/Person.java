@@ -8,7 +8,6 @@ import org.housered.simul.model.actor.brain.NavigationBrain;
 import org.housered.simul.model.actor.brain.SimpleNavigationBrainImpl;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.Occupiable;
-import org.housered.simul.model.location.DimensionImpl;
 import org.housered.simul.model.location.Position;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;

@@ -1,7 +1,7 @@
 package org.housered.simul.model.actor.brain;
 
 import org.housered.simul.model.location.Position;
-import org.housered.simul.model.location.PositionImpl;
+import org.housered.simul.model.location.Position;
 
 public class SimpleNavigationBrainImpl implements NavigationBrain
 {
@@ -10,7 +10,7 @@ public class SimpleNavigationBrainImpl implements NavigationBrain
     
     public SimpleNavigationBrainImpl()
     {
-        currentPosition = new PositionImpl();
+        currentPosition = new Position();
     }
     
     @Override
