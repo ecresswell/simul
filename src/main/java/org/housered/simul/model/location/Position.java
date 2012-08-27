@@ -6,7 +6,7 @@ public interface Position extends Vector
 
     void setY(float y);
 
-    int getConvertedX(float offset, float unitsPerWorldUnit);
+    int getConvertedX(double offset, double unitsPerWorldUnit);
 
-    int getConvertedY(float offset, float unitsPerWorldUnit);
+    int getConvertedY(double offset, double unitsPerWorldUnit);
 }

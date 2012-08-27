@@ -1,7 +1,6 @@
 package org.housered.simul.model.world;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -28,7 +27,12 @@ public class World implements RenderableProvider, Tickable
     private GameClockImpl gameClock;
 
     private InputManager inputManager = new InputManager();
-    private Camera camera = new Camera();
+    private final Camera camera;
+    
+    public World(Camera camera)
+    {
+        this.camera = camera;
+    }
 
     public void loadLevel()
     {
@@ -42,8 +46,8 @@ public class World implements RenderableProvider, Tickable
 
         House h1 = new House(getNextId());
         House h2 = new House(getNextId());
-        h2.getPosition().setX(100);
-        h2.getPosition().setY(100);
+        h2.getPosition().setX(390);
+        h2.getPosition().setY(290);
 
         assetManager.createDeed(p1, h1);
         assetManager.createDeed(p2, h2);
@@ -111,11 +115,11 @@ public class World implements RenderableProvider, Tickable
         }
         if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
         {
-            camera.zoomIn(-Camera.DEFAULT_CAMERA_ZOOM);
+            camera.zoom(Camera.DEFAULT_CAMERA_ZOOM_OUT);
         }
         if (inputManager.isKeyDown(KeyEvent.VK_C))
         {
-            camera.zoomIn(Camera.DEFAULT_CAMERA_ZOOM);
+            camera.zoom(Camera.DEFAULT_CAMERA_ZOOM_IN);
         }
     }
 

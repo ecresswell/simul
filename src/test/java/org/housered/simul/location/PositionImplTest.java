@@ -13,8 +13,8 @@ public class PositionImplTest
     {
         Position p = new PositionImpl(10, 20);
 
-        //but camera is has 10 pixels per game unit, and is looking at (-50, -50) pixels
-        assertEquals(150, p.getConvertedX(-50, 10));
-        assertEquals(250, p.getConvertedY(-50, 10));
+        //but camera has 10 pixels per game unit, and is looking at (-50, -50) (game unit)
+        assertEquals(600, p.getConvertedX(-50, 10));
+        assertEquals(700, p.getConvertedY(-50, 10));
     }
 }

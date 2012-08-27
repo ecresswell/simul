@@ -13,14 +13,14 @@ public class PositionImpl extends VectorImpl implements Position
     }
 
     @Override
-    public int getConvertedX(float offset, float unitsPerWorldUnit)
+    public int getConvertedX(double offset, double unitsPerWorldUnit)
     {
-        return Math.round(getX() * unitsPerWorldUnit - offset);
+        return (int) Math.round((getX() - offset) * unitsPerWorldUnit);
     }
 
     @Override
-    public int getConvertedY(float offset, float unitsPerWorldUnit)
+    public int getConvertedY(double offset, double unitsPerWorldUnit)
     {
-        return Math.round(getY() * unitsPerWorldUnit - offset);
+        return (int) Math.round((getY() - offset) * unitsPerWorldUnit);
     }
 }

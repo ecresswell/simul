@@ -13,13 +13,13 @@ public class SwingGraphicsAdapter implements GraphicsAdapter
     private final Graphics2D g;
     private final int offsetX;
     private final int offsetY;
-    private final float unitsPerWorldUnit;
+    private final double unitsPerWorldUnit;
 
     public SwingGraphicsAdapter(Graphics2D g, Camera camera)
     {
         this.g = g;
-        offsetX = Math.round(camera.getXOffset());
-        offsetY = Math.round(camera.getYOffset());
+        offsetX = (int) Math.round(camera.getXOffset());
+        offsetY = (int) Math.round(camera.getYOffset());
         unitsPerWorldUnit = camera.getUnitsPerWorldUnit();
     }
 
@@ -46,7 +46,7 @@ public class SwingGraphicsAdapter implements GraphicsAdapter
     {
         int x = position.getConvertedX(offsetX, unitsPerWorldUnit);
         int y = position.getConvertedY(offsetY, unitsPerWorldUnit);
-        int convertedRadius = Math.round(radius * unitsPerWorldUnit);
+        int convertedRadius = (int) Math.round(radius * unitsPerWorldUnit);
         g.fillOval(x, y, convertedRadius, convertedRadius);
     }
 

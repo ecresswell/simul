@@ -1,5 +1,6 @@
 package org.housered.simul.controller;
 
+import org.housered.simul.model.world.Camera;
 import org.housered.simul.model.world.World;
 import org.housered.simul.view.swing.SwingFrame;
 
@@ -13,10 +14,14 @@ public class SimulMain
 
     public SimulMain()
     {
-        world = new World();
+        int width = 800;
+        int height = 600;
+        Camera camera = new Camera(width, height);
+
+        world = new World(camera);
         world.loadLevel();
 
-        swingFrame = new SwingFrame(world);
+        swingFrame = new SwingFrame(width, height, world);
         swingFrame.addKeyListener(world.getInputManager());
 
         running = true;
@@ -33,8 +38,8 @@ public class SimulMain
         while (running)
         {
             swingFrame.repaint();
-            world.tick((float)dt / 1000);
-            
+            world.tick((float) dt / 1000);
+
             timeDiff = System.currentTimeMillis() - beforeTime;
             sleep = DELAY - timeDiff;
 

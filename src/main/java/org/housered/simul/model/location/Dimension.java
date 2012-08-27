@@ -10,7 +10,7 @@ public interface Dimension extends Vector
 
     void setHeight(float height);
 
-    int getConvertedWidth(float unitsPerWorldUnit);
+    int getConvertedWidth(double unitsPerWorldUnit);
 
-    int getConvertedHeight(float unitsPerWorldUnit);
+    int getConvertedHeight(double unitsPerWorldUnit);
 }

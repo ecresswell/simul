@@ -8,13 +8,13 @@ public class SwingFrame extends JFrame
 {
     private static final long serialVersionUID = 2000214150960328157L;
 
-    public SwingFrame(RenderableProvider renderables)
+    public SwingFrame(int width, int height, RenderableProvider renderables)
     {
         add(new SwingPanel(renderables));
 
         setTitle("Simul");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(800, 600);
+        setSize(width, height);
         setLocationRelativeTo(null);
         setVisible(true);
         setResizable(false);

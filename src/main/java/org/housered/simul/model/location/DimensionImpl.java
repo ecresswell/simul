@@ -25,15 +25,15 @@ public class DimensionImpl extends VectorImpl implements Dimension
     }
 
     @Override
-    public int getConvertedWidth(float unitsPerWorldUnit)
+    public int getConvertedWidth(double unitsPerWorldUnit)
     {
-        return Math.round(getWidth() * unitsPerWorldUnit);
+        return (int) Math.round(getWidth() * unitsPerWorldUnit);
     }
 
     @Override
-    public int getConvertedHeight(float unitsPerWorldUnit)
+    public int getConvertedHeight(double unitsPerWorldUnit)
     {
-        return Math.round(getHeight() * unitsPerWorldUnit);
+        return (int) Math.round(getHeight() * unitsPerWorldUnit);
     }
 
     @Override
