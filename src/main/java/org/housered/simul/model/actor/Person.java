@@ -51,7 +51,7 @@ public class Person implements Renderable, Tickable, Actor
     public void render(GraphicsAdapter r)
     {
         r.setColour(Color.GREEN);
-        r.fillRect(navigation.getPosition(), new DimensionImpl(10, 10));
+        r.fillCircle(getPosition(), 3);
     }
 
     @Override

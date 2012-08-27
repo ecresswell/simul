@@ -16,4 +16,6 @@ public interface GraphicsAdapter
     void fillRect(Position position, Dimension dimension);
     
     void drawRect(Position position, Dimension dimension);
+    
+    void fillCircle(Position position, float radius);
 }

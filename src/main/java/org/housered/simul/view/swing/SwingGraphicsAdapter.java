@@ -39,6 +39,15 @@ public class SwingGraphicsAdapter implements GraphicsAdapter
     {
         drawRect(position, dimension, false);
     }
+    
+    @Override
+    public void fillCircle(Position position, float radius)
+    {
+        int x = position.getConvertedX(offsetX, unitsPerWorldUnit);
+        int y = position.getConvertedY(offsetY, unitsPerWorldUnit);
+        int convertedRadius = Math.round(radius * unitsPerWorldUnit);
+        g.fillOval(x, y, convertedRadius, convertedRadius);
+    }
 
     private void drawRect(Position position, Dimension size, boolean filled)
     {
