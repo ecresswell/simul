@@ -48,10 +48,10 @@ public class World implements RenderableProvider, Tickable
         gameClock = new GameClockImpl(TimeUnit.HOURS.toSeconds(7), 30);
         tickables.add(gameClock);
 
-        Person p1 = new Person(getNextId(), assetManager);
-        Person p2 = new Person(getNextId(), assetManager);
-        p1.getPosition().setX(50);
-        p1.getPosition().setY(50);
+        Person p1 = new Person(getNextId(), assetManager, navigationManager);
+        Person p2 = new Person(getNextId(), assetManager, navigationManager);
+        p1.getPosition().setX(400);
+        p1.getPosition().setY(400);
 
         House h1 = new House(getNextId());
         House h2 = new House(getNextId());

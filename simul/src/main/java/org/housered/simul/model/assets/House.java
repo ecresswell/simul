@@ -4,12 +4,13 @@ import java.awt.Color;
 
 import org.housered.simul.model.location.Dimension;
 import org.housered.simul.model.location.Position;
+import org.housered.simul.model.navigation.Collidable;
 import org.housered.simul.model.world.Identifiable;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
 
-public class House implements Identifiable, Renderable, Tickable, Occupiable
+public class House implements Identifiable, Renderable, Tickable, Occupiable, Collidable
 {
     private final long id;
     private Position position = new Position(50, 50);
@@ -43,6 +44,18 @@ public class House implements Identifiable, Renderable, Tickable, Occupiable
     public Position getPosition()
     {
         return position;
+    }
+
+    @Override
+    public Dimension getBounds()
+    {
+        return size;
+    }
+
+    @Override
+    public boolean isColliding()
+    {
+        return true;
     }
 
 }

@@ -31,7 +31,6 @@ public class HighLevelBrainImpl implements HighLevelBrain
                 return null;
 
             //choose a random thing we occupy
-            
             currentTarget = ourBelongings.iterator().next();
             return currentTarget;
         }

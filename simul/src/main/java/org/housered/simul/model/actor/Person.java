@@ -5,12 +5,13 @@ import java.awt.Color;
 import org.housered.simul.model.actor.brain.HighLevelBrain;
 import org.housered.simul.model.actor.brain.HighLevelBrainImpl;
 import org.housered.simul.model.actor.brain.NavigationBrain;
-import org.housered.simul.model.actor.brain.SimpleNavigationBrainImpl;
+import org.housered.simul.model.actor.brain.NavigationMeshBrain;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Position;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
+import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
@@ -26,12 +27,12 @@ public class Person implements Renderable, Tickable, Actor
     private NavigationBrain navigation;
     private SpeedLimiter speedLimiter = new SpeedLimiter();
 
-    public Person(long id, AssetManager assetManager)
+    public Person(long id, AssetManager assetManager, NavigationManager navigationManager)
     {
         this.id = id;
-        speedLimiter.setSpeedLimit(10);
+        speedLimiter.setSpeedLimit(75);
         highLevel = new HighLevelBrainImpl(this, assetManager);
-        navigation = new SimpleNavigationBrainImpl();
+        navigation = new NavigationMeshBrain(navigationManager);
     }
 
     @Override
@@ -62,7 +63,9 @@ public class Person implements Renderable, Tickable, Actor
 
         if (target != null)
         {
-            navigation.setTarget(target.getPosition());
+            Position justOutside = new Position(target.getPosition().getX(), target.getPosition().getY());
+            justOutside.increment(new Vector(-1, -1));
+            navigation.setTarget(justOutside);
             LOGGER.debug("Moving towards target - {}", target);
         }
 
