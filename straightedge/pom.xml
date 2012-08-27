@@ -1,0 +1,25 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>woodward.keith</groupId>
+	<artifactId>straightedge</artifactId>
+	<version>0.3</version>
+
+	<parent>
+		<groupId>org.housered</groupId>
+		<artifactId>simul-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../simul-parent</relativePath>
+	</parent>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.vividsolutions</groupId>
+			<artifactId>jts</artifactId>
+			<version>1.12</version>
+		</dependency>
+	</dependencies>
+
+
+</project>

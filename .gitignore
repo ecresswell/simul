@@ -1,5 +1,12 @@
 
-/target
-/.settings
-/.project
-/.classpath
+/simul/target
+/simul/.settings
+/simul/.project
+/simul/.classpath
+/simul-parent/.classpath
+/simul-parent/.project
+/simul-parent/.settings
+/straightedge/.settings
+/straightedge/target
+/straightedge/.classpath
+/straightedge/.project
