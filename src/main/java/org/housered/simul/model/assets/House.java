@@ -3,8 +3,6 @@ package org.housered.simul.model.assets;
 import java.awt.Color;
 
 import org.housered.simul.model.location.Dimension;
-import org.housered.simul.model.location.Dimension;
-import org.housered.simul.model.location.Position;
 import org.housered.simul.model.location.Position;
 import org.housered.simul.model.world.Identifiable;
 import org.housered.simul.model.world.Tickable;
