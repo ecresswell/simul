@@ -42,12 +42,6 @@ public class House implements Identifiable, Renderable, Tickable, Occupiable
     }
 
     @Override
-    public long getOwner()
-    {
-        return 0;
-    }
-
-    @Override
     public Position getPosition()
     {
         return position;

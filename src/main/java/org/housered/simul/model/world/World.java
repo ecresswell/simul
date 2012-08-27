@@ -9,8 +9,6 @@ import org.housered.simul.model.actor.Person;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.AssetManagerImpl;
 import org.housered.simul.model.assets.House;
-import org.housered.simul.model.assets.Occupiable;
-import org.housered.simul.model.assets.Ownable;
 import org.housered.simul.view.Renderable;
 import org.housered.simul.view.RenderableProvider;
 import org.slf4j.Logger;
@@ -32,8 +30,23 @@ public class World implements RenderableProvider, Tickable
         gameClock = new GameClockImpl(TimeUnit.HOURS.toSeconds(7), 30);
         tickables.add(gameClock);
 
-        addEntity(new Person(getNextId(), assetManager));
-        addEntity(new House(getNextId()));
+        Person p1 = new Person(getNextId(), assetManager);
+        Person p2 = new Person(getNextId(), assetManager);
+        p1.getPosition().setX(50);
+        p1.getPosition().setY(50);
+
+        House h1 = new House(getNextId());
+        House h2 = new House(getNextId());
+        h2.getPosition().setX(100);
+        h2.getPosition().setY(100);
+
+        assetManager.createDeed(p1, h1);
+        assetManager.createDeed(p2, h2);
+
+        addEntity(p1);
+        addEntity(p2);
+        addEntity(h1);
+        addEntity(h2);
     }
 
     private void addEntity(Identifiable entity)
@@ -44,10 +57,6 @@ public class World implements RenderableProvider, Tickable
             renderables.add((Renderable) entity);
         if (entity instanceof Tickable)
             tickables.add((Tickable) entity);
-        if (entity instanceof Occupiable)
-            assetManager.addOccupiable((Occupiable) entity);
-
-        assetManager.addIdentifiable(entity);
     }
 
     @Override

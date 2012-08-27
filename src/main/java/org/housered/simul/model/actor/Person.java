@@ -9,12 +9,9 @@ import org.housered.simul.model.actor.brain.SimpleNavigationBrainImpl;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.DimensionImpl;
-import org.housered.simul.model.location.Locatable;
 import org.housered.simul.model.location.Position;
-import org.housered.simul.model.location.PositionImpl;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
-import org.housered.simul.model.world.Identifiable;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
@@ -33,7 +30,7 @@ public class Person implements Renderable, Tickable, Actor
     public Person(long id, AssetManager assetManager)
     {
         this.id = id;
-        speedLimiter.setSpeedLimit(4);
+        speedLimiter.setSpeedLimit(10);
         highLevel = new HighLevelBrainImpl(this, assetManager);
         navigation = new SimpleNavigationBrainImpl();
     }

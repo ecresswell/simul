@@ -1,14 +1,12 @@
 package org.housered.simul.model.assets;
 
-import java.util.List;
+import java.util.Set;
 
 import org.housered.simul.model.world.Identifiable;
 
 public interface AssetManager
 {
-    void addIdentifiable(Identifiable entity);
+    void createDeed(Identifiable owner, Occupiable asset);
 
-    void addOccupiable(Occupiable asset);
-
-    List<Occupiable> getAssets(Identifiable entity);
+    Set<Occupiable> getAssets(Identifiable entity);
 }
