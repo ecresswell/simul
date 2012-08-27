@@ -1,5 +1,7 @@
 package org.housered.simul.model.world;
 
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +26,9 @@ public class World implements RenderableProvider, Tickable
 
     private AssetManager assetManager = new AssetManagerImpl();
     private GameClockImpl gameClock;
+
+    private InputManager inputManager = new InputManager();
+    private Camera camera = new Camera();
 
     public void loadLevel()
     {
@@ -78,14 +83,55 @@ public class World implements RenderableProvider, Tickable
     @Override
     public void tick(float dt)
     {
+        processInput();
+
         for (Tickable tickable : tickables)
         {
             tickable.tick(dt);
         }
     }
 
+    private void processInput()
+    {
+        if (inputManager.isKeyDown(KeyEvent.VK_LEFT))
+        {
+            camera.incrementXOffset(-Camera.DEFAULT_CAMERA_MOVE);
+        }
+        if (inputManager.isKeyDown(KeyEvent.VK_RIGHT))
+        {
+            camera.incrementXOffset(Camera.DEFAULT_CAMERA_MOVE);
+        }
+        if (inputManager.isKeyDown(KeyEvent.VK_UP))
+        {
+            camera.incrementYOffset(-Camera.DEFAULT_CAMERA_MOVE);
+        }
+        if (inputManager.isKeyDown(KeyEvent.VK_DOWN))
+        {
+            camera.incrementYOffset(Camera.DEFAULT_CAMERA_MOVE);
+        }
+        if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+        {
+            camera.zoomIn(-Camera.DEFAULT_CAMERA_ZOOM);
+        }
+        if (inputManager.isKeyDown(KeyEvent.VK_C))
+        {
+            camera.zoomIn(Camera.DEFAULT_CAMERA_ZOOM);
+        }
+    }
+
     private long getNextId()
     {
         return nextId.getAndIncrement();
+    }
+
+    public InputManager getInputManager()
+    {
+        return inputManager;
+    }
+
+    @Override
+    public Camera getCamera()
+    {
+        return camera;
     }
 }

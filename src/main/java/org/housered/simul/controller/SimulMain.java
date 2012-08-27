@@ -1,7 +1,5 @@
 package org.housered.simul.controller;
 
-import java.util.concurrent.TimeUnit;
-
 import org.housered.simul.model.world.World;
 import org.housered.simul.view.swing.SwingFrame;
 
@@ -19,6 +17,7 @@ public class SimulMain
         world.loadLevel();
 
         swingFrame = new SwingFrame(world);
+        swingFrame.addKeyListener(world.getInputManager());
 
         running = true;
         run();

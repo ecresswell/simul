@@ -5,6 +5,7 @@ import java.awt.Graphics2D;
 
 import org.housered.simul.model.location.Dimension;
 import org.housered.simul.model.location.Position;
+import org.housered.simul.model.world.Camera;
 import org.housered.simul.view.GraphicsAdapter;
 
 public class SwingGraphicsAdapter implements GraphicsAdapter
@@ -14,12 +15,12 @@ public class SwingGraphicsAdapter implements GraphicsAdapter
     private final int offsetY;
     private final float unitsPerWorldUnit;
 
-    public SwingGraphicsAdapter(Graphics2D g, int offsetX, int offsetY, float unitsPerWorldUnit)
+    public SwingGraphicsAdapter(Graphics2D g, Camera camera)
     {
         this.g = g;
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
-        this.unitsPerWorldUnit = unitsPerWorldUnit;
+        offsetX = Math.round(camera.getXOffset());
+        offsetY = Math.round(camera.getYOffset());
+        unitsPerWorldUnit = camera.getUnitsPerWorldUnit();
     }
 
     @Override

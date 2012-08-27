@@ -31,11 +31,11 @@ public class SwingPanel extends JPanel
         Graphics2D g2 = (Graphics2D) g;
 
         renderables.beginRender();
-        GraphicsAdapter strategy = new SwingGraphicsAdapter(g2, 0, 0, 1);
+        GraphicsAdapter adapter = new SwingGraphicsAdapter(g2, renderables.getCamera());
         
         for (Renderable r : renderables.getRenderables())
         {
-            r.render(strategy);
+            r.render(adapter);
         }
 
         renderables.endRender();
