@@ -1,26 +1,28 @@
 package org.housered.simul.model.actor.brain;
 
-import org.housered.simul.model.location.Position;
 import org.housered.simul.model.navigation.NavigationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import straightedge.geom.KPoint;
 import straightedge.geom.path.PathData;
 
 public class NavigationMeshBrain implements NavigationBrain
 {
+    private static Logger LOGGER = LoggerFactory.getLogger(NavigationMeshBrain.class);
     private final NavigationManager navigationManager;
-    private Position currentPosition;
-    private Position target;
+    private KPoint currentPosition;
+    private KPoint target;
     private PathData path;
 
     public NavigationMeshBrain(NavigationManager navigationManager)
     {
         this.navigationManager = navigationManager;
-        currentPosition = new Position();
+        currentPosition = new KPoint();
     }
 
     @Override
-    public void setTarget(Position target)
+    public void setTarget(KPoint target)
     {
         this.target = target;
         path = navigationManager.findPath(getPosition(), target);
@@ -36,11 +38,17 @@ public class NavigationMeshBrain implements NavigationBrain
     }
 
     @Override
-    public Position getNextPoint()
+    public KPoint getNextPoint()
     {
-        KPoint kNextPoint = path.getPoints().get(0);
-        Position nextPoint = new Position((float) kNextPoint.x, (float) kNextPoint.y);
-        
+        if (path.isError())
+        {
+            LOGGER.warn("Path is in error for {}: {}", this, path.getResult());
+            target = null;
+            return currentPosition;
+        }
+
+        KPoint nextPoint = path.getPoints().get(0);
+
         if (getPosition().equals(nextPoint))
         {
             if (path.getPoints().size() == 1)
@@ -57,7 +65,7 @@ public class NavigationMeshBrain implements NavigationBrain
     }
 
     @Override
-    public Position getPosition()
+    public KPoint getPosition()
     {
         return currentPosition;
     }

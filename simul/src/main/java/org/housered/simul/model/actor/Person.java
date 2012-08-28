@@ -8,15 +8,15 @@ import org.housered.simul.model.actor.brain.NavigationBrain;
 import org.housered.simul.model.actor.brain.NavigationMeshBrain;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.Occupiable;
-import org.housered.simul.model.location.Position;
 import org.housered.simul.model.location.SpeedLimiter;
-import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import straightedge.geom.KPoint;
 
 public class Person implements Renderable, Tickable, Actor
 {
@@ -36,7 +36,7 @@ public class Person implements Renderable, Tickable, Actor
     }
 
     @Override
-    public Position getPosition()
+    public KPoint getPosition()
     {
         return navigation.getPosition();
     }
@@ -63,22 +63,25 @@ public class Person implements Renderable, Tickable, Actor
 
         if (target != null)
         {
-            Position justOutside = new Position(target.getPosition().getX(), target.getPosition().getY());
-            justOutside.increment(new Vector(-1, -1));
+            KPoint justOutside = new KPoint(target.getPosition().getX(), target.getPosition().getY());
+            justOutside.translate(-1, -1);
             navigation.setTarget(justOutside);
-            LOGGER.debug("Moving towards target - {}", target);
+            LOGGER.debug("[{}]Moving towards target - {}@{}", new Object[] {this, target, target.getPosition()});
         }
 
         if (navigation.hasTarget())
         {
-            Position targetPoint = navigation.getNextPoint();
-            incrementPosition(targetPoint.subtractCopy(getPosition()));
+            LOGGER.debug("I'm at {}", getPosition());
+            KPoint targetPoint = navigation.getNextPoint();
+            LOGGER.debug("targetPoint = {}", targetPoint);
+            KPoint negativeGetPosition = new KPoint(-getPosition().x, -getPosition().y);
+            incrementPosition(targetPoint.translateCopy(negativeGetPosition));
         }
     }
 
-    private void incrementPosition(Vector delta)
+    private void incrementPosition(KPoint delta)
     {
-        Vector move = speedLimiter.incrementPosition(delta);
-        getPosition().increment(move);
+        KPoint move = speedLimiter.incrementPosition(delta);
+        getPosition().translate(move);
     }
 }

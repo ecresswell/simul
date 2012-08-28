@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import straightedge.geom.KPoint;
+
 public class CameraTest
 {
     @Test
@@ -25,8 +27,8 @@ public class CameraTest
 
         c.zoom(0.5f);
 
-        assertEquals(200, c.getXOffset(), 0.001d);
-        assertEquals(150, c.getYOffset(), 0.001d);
+        assertEquals(-200, c.getXOffset(), 0.001d);
+        assertEquals(-150, c.getYOffset(), 0.001d);
     }
 
     @Test
@@ -37,8 +39,8 @@ public class CameraTest
         c.incrementXOffset(100);
         c.zoom(0.5f);
 
-        assertEquals(300, c.getXOffset(), 0.001d);
-        assertEquals(150, c.getYOffset(), 0.001d);
+        assertEquals(-100, c.getXOffset(), 0.001d);
+        assertEquals(-150, c.getYOffset(), 0.001d);
     }
 
     @Test
@@ -51,11 +53,46 @@ public class CameraTest
 
         c.zoom(0.5f);
         assertEquals(4, c.getUnitsPerWorldUnit(), 0.001d);
-        
+
         c.zoom(4f);
         assertEquals(1, c.getUnitsPerWorldUnit(), 0.001d);
-        
+
         c.zoom(0.454f);
         assertEquals(2.2026, c.getUnitsPerWorldUnit(), 0.001d);
+    }
+
+    @Test
+    public void shouldTranslatePositionsWithRespectToZoomAndOffset()
+    {
+        Camera c = new Camera(800, 600);
+
+        assertEquals(new KPoint(5, 5), c.translateIntoScreenSpace(new KPoint(5, 5)));
+
+        c.incrementXOffset(100);
+        assertEquals(new KPoint(105, 5), c.translateIntoScreenSpace(new KPoint(5, 5)));
+
+        c.incrementYOffset(-10);
+        assertEquals(new KPoint(105, -5), c.translateIntoScreenSpace(new KPoint(5, 5)));
+
+        c.zoom(0.5);
+        assertEquals(new KPoint(-190, -310), c.translateIntoScreenSpace(new KPoint(5, 5)));
+    }
+
+    @Test
+    public void shouldScaleDimensionWithRespectToZoom()
+    {
+        Camera c = new Camera(800, 600);
+
+        assertEquals(new KPoint(10, 10), c.scaleIntoScreenSpace(new KPoint(10, 10)));
+
+        c.incrementXOffset(13);
+        c.incrementYOffset(-23);
+        assertEquals(new KPoint(10, 10), c.scaleIntoScreenSpace(new KPoint(10, 10)));
+
+        c.zoom(2);
+        assertEquals(new KPoint(5, 5), c.scaleIntoScreenSpace(new KPoint(10, 10)));
+
+        c.zoom(0.5);
+        assertEquals(new KPoint(10, 10), c.scaleIntoScreenSpace(new KPoint(10, 10)));
     }
 }

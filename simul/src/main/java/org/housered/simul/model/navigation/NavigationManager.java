@@ -2,12 +2,8 @@ package org.housered.simul.model.navigation;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Set;
 
-import org.housered.simul.model.location.Dimension;
-import org.housered.simul.model.location.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,14 +23,14 @@ public class NavigationManager
     private static final float MAX_CONNECTION_DISTANCE = 1000f;
     private static Logger LOGGER = LoggerFactory.getLogger(NavigationManager.class);
 
-    private final Dimension worldBounds;
+    private final KPoint worldBounds;
     private Set<Collidable> collidables = new HashSet<Collidable>();
 
     private PathFinder pathfinder = new PathFinder();
     private ArrayList<PathBlockingObstacle> obstacles = new ArrayList<PathBlockingObstacle>();
     private NodeConnector<PathBlockingObstacle> nodeConnector = new NodeConnector<PathBlockingObstacle>();
 
-    public NavigationManager(Dimension worldBounds)
+    public NavigationManager(KPoint worldBounds)
     {
         this.worldBounds = worldBounds;
     }
@@ -50,7 +46,7 @@ public class NavigationManager
         refreshNavigationMesh();
     }
 
-    public PathData findPath(Position start, Position end)
+    public PathData findPath(KPoint start, KPoint end)
     {
         long startTime = System.currentTimeMillis();
         KPoint kStart = new KPoint(start.getX(), start.getY());
@@ -70,11 +66,11 @@ public class NavigationManager
         nodeConnector = new NodeConnector<PathBlockingObstacle>();
         for (Collidable c : collidables)
         {
-            KPoint topLeft = new KPoint(c.getPosition().getX(), c.getPosition().getY());
-            KPoint topRight = new KPoint(c.getPosition().getX() + c.getBounds().getWidth(), c.getPosition().getY());
-            KPoint bottomRight = new KPoint(c.getPosition().getX() + c.getBounds().getWidth(), c.getPosition().getY()
-                    + c.getBounds().getHeight());
-            KPoint bottomLeft = new KPoint(c.getPosition().getX(), c.getPosition().getY() + c.getBounds().getHeight());
+            KPoint b = c.getBounds();
+            KPoint topLeft = c.getPosition().copy();
+            KPoint topRight = topLeft.translateCopy(b.x, 0);
+            KPoint bottomRight = topLeft.translateCopy(b.x, b.y);
+            KPoint bottomLeft = topLeft.translateCopy(0, b.y);
 
             KPolygon poly = new KPolygon(topLeft, topRight, bottomRight, bottomLeft);
             obstacles.add(PathBlockingObstacleImpl.createObstacleFromInnerPolygon(poly));
@@ -92,8 +88,8 @@ public class NavigationManager
     {
         if (c.getPosition().getX() < 0 || c.getPosition().getY() < 0)
             return false;
-        if (c.getPosition().getX() + c.getBounds().getWidth() > worldBounds.getWidth()
-                || c.getPosition().getY() + c.getBounds().getHeight() > worldBounds.getHeight())
+        if (c.getPosition().getX() + c.getBounds().getX() > worldBounds.getX()
+                || c.getPosition().getY() + c.getBounds().getY() > worldBounds.getY())
             return false;
         return true;
     }

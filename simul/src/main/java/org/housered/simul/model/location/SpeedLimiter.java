@@ -1,9 +1,11 @@
 package org.housered.simul.model.location;
 
+import straightedge.geom.KPoint;
+
 public class SpeedLimiter
 {
-    private float maxDistancePerSecond;
-    private float distanceMovedThisTick;
+    private double maxDistancePerSecond;
+    private double distanceMovedThisTick;
     private float dt;
 
     public void setSpeedLimit(float maxDistancePerSecond)
@@ -17,11 +19,20 @@ public class SpeedLimiter
         this.dt = dt;
     }
 
-    public Vector incrementPosition(Vector delta)
+    public KPoint incrementPosition(KPoint delta)
     {
-        float wantedMag = Math.min(maxDistancePerSecond * dt - distanceMovedThisTick, delta.magnitude());
+        double wantedMag = Math.min(maxDistancePerSecond * dt - distanceMovedThisTick, delta.magnitude());
         wantedMag = Math.max(wantedMag, 0);
         distanceMovedThisTick += wantedMag;
-        return delta.scaleToMagnitudeCopy(wantedMag);
+        return scaleToMagnitudeCopy(delta, wantedMag);
+    }
+
+    private KPoint scaleToMagnitudeCopy(KPoint direction, double wantedMagnitude)
+    {
+        if (direction.magnitude() == 0)
+            return new KPoint();
+
+        double scale = wantedMagnitude / direction.magnitude();
+        return new KPoint(direction.x * scale, direction.y * scale);
     }
 }

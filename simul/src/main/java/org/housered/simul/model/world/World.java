@@ -10,8 +10,6 @@ import org.housered.simul.model.actor.Person;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.AssetManagerImpl;
 import org.housered.simul.model.assets.House;
-import org.housered.simul.model.location.Dimension;
-import org.housered.simul.model.location.Position;
 import org.housered.simul.model.navigation.BoundingBox;
 import org.housered.simul.model.navigation.Collidable;
 import org.housered.simul.model.navigation.NavigationManager;
@@ -19,6 +17,8 @@ import org.housered.simul.view.Renderable;
 import org.housered.simul.view.RenderableProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import straightedge.geom.KPoint;
 
 public class World implements RenderableProvider, Tickable
 {
@@ -30,7 +30,7 @@ public class World implements RenderableProvider, Tickable
     private List<Renderable> renderables = new LinkedList<Renderable>();
     private List<Tickable> tickables = new LinkedList<Tickable>();
 
-    private NavigationManager navigationManager = new NavigationManager(new Dimension(WORLD_WIDTH, WORLD_HEIGHT));
+    private NavigationManager navigationManager = new NavigationManager(new KPoint(WORLD_WIDTH, WORLD_HEIGHT));
     private AssetManager assetManager = new AssetManagerImpl();
     private GameClockImpl gameClock;
 
@@ -40,7 +40,7 @@ public class World implements RenderableProvider, Tickable
     public World(Camera camera)
     {
         this.camera = camera;
-        addEntity(new BoundingBox(new Position(), new Dimension(WORLD_WIDTH, WORLD_HEIGHT)));
+        addEntity(new BoundingBox(new KPoint(), new KPoint(WORLD_WIDTH, WORLD_HEIGHT)));
     }
 
     public void loadLevel()
@@ -50,13 +50,13 @@ public class World implements RenderableProvider, Tickable
 
         Person p1 = new Person(getNextId(), assetManager, navigationManager);
         Person p2 = new Person(getNextId(), assetManager, navigationManager);
-        p1.getPosition().setX(400);
-        p1.getPosition().setY(400);
+        p1.getPosition().setX(395);
+        p1.getPosition().setY(295);
 
         House h1 = new House(getNextId());
         House h2 = new House(getNextId());
-        h2.getPosition().setX(390);
-        h2.getPosition().setY(290);
+        h2.getPosition().setX(450);
+        h2.getPosition().setY(500);
 
         assetManager.createDeed(p1, h1);
         assetManager.createDeed(p2, h2);
@@ -113,19 +113,19 @@ public class World implements RenderableProvider, Tickable
     {
         if (inputManager.isKeyDown(KeyEvent.VK_LEFT))
         {
-            camera.incrementXOffset(-Camera.DEFAULT_CAMERA_MOVE);
+            camera.incrementXOffset(Camera.DEFAULT_CAMERA_MOVE);
         }
         if (inputManager.isKeyDown(KeyEvent.VK_RIGHT))
         {
-            camera.incrementXOffset(Camera.DEFAULT_CAMERA_MOVE);
+            camera.incrementXOffset(-Camera.DEFAULT_CAMERA_MOVE);
         }
         if (inputManager.isKeyDown(KeyEvent.VK_UP))
         {
-            camera.incrementYOffset(-Camera.DEFAULT_CAMERA_MOVE);
+            camera.incrementYOffset(Camera.DEFAULT_CAMERA_MOVE);
         }
         if (inputManager.isKeyDown(KeyEvent.VK_DOWN))
         {
-            camera.incrementYOffset(Camera.DEFAULT_CAMERA_MOVE);
+            camera.incrementYOffset(-Camera.DEFAULT_CAMERA_MOVE);
         }
         if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
         {

@@ -3,6 +3,8 @@ package org.housered.simul.model.world;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import straightedge.geom.KPoint;
+
 public class Camera
 {
     private static Logger LOGGER = LoggerFactory.getLogger(Camera.class);
@@ -33,19 +35,8 @@ public class Camera
         this.yOffset += delta;
     }
 
-    void zoom(float delta)
+    void zoom(double delta)
     {
-        //want to change the x and y offsets by half the amount we just lost
-        //        float changeInZoom = unitsPerWorldUnit - (unitsPerWorldUnit + unitsPerWorldUnit * delta);
-        //        float gameUnitWidthLoss = screenWidth * (1 /changeInZoom);
-        //        float gameUnitHeightLoss = screenHeight * (1 /changeInZoom);
-
-        //        float gameWidthLost = screenWidth / unitsPerWorldUnit - screenWidth / (unitsPerWorldUnit + unitsPerWorldUnit * delta);
-        //        float gameHeightLost = screenHeight / unitsPerWorldUnit - screenHeight / (unitsPerWorldUnit + unitsPerWorldUnit * delta);
-
-        //incrementXOffset(gameWidthLost / 2);
-        //incrementYOffset(gameHeightLost / 2);
-
         double gameWidthLost = (double) screenWidth * (zoom - zoom * delta);
         double gameHeightLost = (double) screenHeight * (zoom - zoom * delta);
 
@@ -57,8 +48,8 @@ public class Camera
             return;
         }
 
-        incrementXOffset(gameWidthLost / 2);
-        incrementYOffset(gameHeightLost / 2);
+        incrementXOffset(-gameWidthLost / 2);
+        incrementYOffset(-gameHeightLost / 2);
     }
 
     /**
@@ -76,7 +67,31 @@ public class Camera
 
     public double getUnitsPerWorldUnit()
     {
-        //LOGGER.debug("'{}'", 1 / zoom);
         return (double) 1 / zoom;
+    }
+
+    //    public int getConvertedX(double offset, double unitsPerWorldUnit)
+    //    {
+    //        return (int) Math.round((getX() - offset) * unitsPerWorldUnit);
+    //    }
+    //
+    //    public int getConvertedY(double offset, double unitsPerWorldUnit)
+    //    {
+    //        return (int) Math.round((getY() - offset) * unitsPerWorldUnit);
+    //    }
+
+    public KPoint translateIntoScreenSpace(KPoint gameUnitPosition)
+    {
+        return gameUnitPosition.translateCopy(xOffset, yOffset).scaleCopy(getUnitsPerWorldUnit());
+    }
+
+    public KPoint scaleIntoScreenSpace(KPoint gameUnitDimension)
+    {
+        return gameUnitDimension.scaleCopy(getUnitsPerWorldUnit());
+    }
+
+    public double scaleIntoScreenSpace(double length)
+    {
+        return length * getUnitsPerWorldUnit();
     }
 }

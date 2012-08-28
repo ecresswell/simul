@@ -1,7 +1,9 @@
 package org.housered.simul.model.location;
 
+import straightedge.geom.KPoint;
+
 
 public interface Locatable
 {
-    Position getPosition();
+    KPoint getPosition();
 }

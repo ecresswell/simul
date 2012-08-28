@@ -2,8 +2,7 @@ package org.housered.simul.view;
 
 import java.awt.Color;
 
-import org.housered.simul.model.location.Dimension;
-import org.housered.simul.model.location.Position;
+import straightedge.geom.KPoint;
 
 public interface GraphicsAdapter
 {
@@ -13,9 +12,9 @@ public interface GraphicsAdapter
      * Render a filled rectangle at the given world position, with the passed dimensions. The
      * position is the top left.
      */
-    void fillRect(Position position, Dimension dimension);
+    void fillRect(KPoint position, KPoint dimension);
     
-    void drawRect(Position position, Dimension dimension);
+    void drawRect(KPoint position, KPoint dimension);
     
-    void fillCircle(Position position, float radius);
+    void fillCircle(KPoint position, float radius);
 }
