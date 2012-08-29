@@ -2,19 +2,18 @@ package org.housered.simul.model.assets;
 
 import java.awt.Color;
 
+import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.Collidable;
 import org.housered.simul.model.world.Identifiable;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
 
-import straightedge.geom.KPoint;
-
 public class House implements Identifiable, Renderable, Tickable, Occupiable, Collidable
 {
     private final long id;
-    private KPoint position = new KPoint(50, 50);
-    private KPoint size = new KPoint(20, 20);
+    private Vector position = new Vector(50, 50);
+    private Vector size = new Vector(20, 20);
     
     public House(long id)
     {
@@ -41,13 +40,13 @@ public class House implements Identifiable, Renderable, Tickable, Occupiable, Co
     }
 
     @Override
-    public KPoint getPosition()
+    public Vector getPosition()
     {
         return position;
     }
 
     @Override
-    public KPoint getBounds()
+    public Vector getBounds()
     {
         return size;
     }
@@ -56,6 +55,12 @@ public class House implements Identifiable, Renderable, Tickable, Occupiable, Co
     public boolean isColliding()
     {
         return true;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "House [id=" + id + ", position=" + position + ", size=" + size + "]";
     }
 
 }

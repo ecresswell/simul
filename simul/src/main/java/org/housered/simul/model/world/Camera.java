@@ -1,9 +1,8 @@
 package org.housered.simul.model.world;
 
+import org.housered.simul.model.location.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import straightedge.geom.KPoint;
 
 public class Camera
 {
@@ -70,22 +69,12 @@ public class Camera
         return (double) 1 / zoom;
     }
 
-    //    public int getConvertedX(double offset, double unitsPerWorldUnit)
-    //    {
-    //        return (int) Math.round((getX() - offset) * unitsPerWorldUnit);
-    //    }
-    //
-    //    public int getConvertedY(double offset, double unitsPerWorldUnit)
-    //    {
-    //        return (int) Math.round((getY() - offset) * unitsPerWorldUnit);
-    //    }
-
-    public KPoint translateIntoScreenSpace(KPoint gameUnitPosition)
+    public Vector translateIntoScreenSpace(Vector gameUnitPosition)
     {
         return gameUnitPosition.translateCopy(xOffset, yOffset).scaleCopy(getUnitsPerWorldUnit());
     }
 
-    public KPoint scaleIntoScreenSpace(KPoint gameUnitDimension)
+    public Vector scaleIntoScreenSpace(Vector gameUnitDimension)
     {
         return gameUnitDimension.scaleCopy(getUnitsPerWorldUnit());
     }

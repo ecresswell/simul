@@ -2,9 +2,8 @@ package org.housered.simul.model.world;
 
 import static org.junit.Assert.assertEquals;
 
+import org.housered.simul.model.location.Vector;
 import org.junit.Test;
-
-import straightedge.geom.KPoint;
 
 public class CameraTest
 {
@@ -66,16 +65,16 @@ public class CameraTest
     {
         Camera c = new Camera(800, 600);
 
-        assertEquals(new KPoint(5, 5), c.translateIntoScreenSpace(new KPoint(5, 5)));
+        assertEquals(new Vector(5, 5), c.translateIntoScreenSpace(new Vector(5, 5)));
 
         c.incrementXOffset(100);
-        assertEquals(new KPoint(105, 5), c.translateIntoScreenSpace(new KPoint(5, 5)));
+        assertEquals(new Vector(105, 5), c.translateIntoScreenSpace(new Vector(5, 5)));
 
         c.incrementYOffset(-10);
-        assertEquals(new KPoint(105, -5), c.translateIntoScreenSpace(new KPoint(5, 5)));
+        assertEquals(new Vector(105, -5), c.translateIntoScreenSpace(new Vector(5, 5)));
 
         c.zoom(0.5);
-        assertEquals(new KPoint(-190, -310), c.translateIntoScreenSpace(new KPoint(5, 5)));
+        assertEquals(new Vector(-190, -310), c.translateIntoScreenSpace(new Vector(5, 5)));
     }
 
     @Test
@@ -83,16 +82,16 @@ public class CameraTest
     {
         Camera c = new Camera(800, 600);
 
-        assertEquals(new KPoint(10, 10), c.scaleIntoScreenSpace(new KPoint(10, 10)));
+        assertEquals(new Vector(10, 10), c.scaleIntoScreenSpace(new Vector(10, 10)));
 
         c.incrementXOffset(13);
         c.incrementYOffset(-23);
-        assertEquals(new KPoint(10, 10), c.scaleIntoScreenSpace(new KPoint(10, 10)));
+        assertEquals(new Vector(10, 10), c.scaleIntoScreenSpace(new Vector(10, 10)));
 
         c.zoom(2);
-        assertEquals(new KPoint(5, 5), c.scaleIntoScreenSpace(new KPoint(10, 10)));
+        assertEquals(new Vector(5, 5), c.scaleIntoScreenSpace(new Vector(10, 10)));
 
         c.zoom(0.5);
-        assertEquals(new KPoint(10, 10), c.scaleIntoScreenSpace(new KPoint(10, 10)));
+        assertEquals(new Vector(10, 10), c.scaleIntoScreenSpace(new Vector(10, 10)));
     }
 }

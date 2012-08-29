@@ -1,6 +1,5 @@
 package org.housered.simul.model.location;
 
-import straightedge.geom.KPoint;
 
 public class SpeedLimiter
 {
@@ -19,7 +18,7 @@ public class SpeedLimiter
         this.dt = dt;
     }
 
-    public KPoint incrementPosition(KPoint delta)
+    public Vector incrementPosition(Vector delta)
     {
         double wantedMag = Math.min(maxDistancePerSecond * dt - distanceMovedThisTick, delta.magnitude());
         wantedMag = Math.max(wantedMag, 0);
@@ -27,12 +26,12 @@ public class SpeedLimiter
         return scaleToMagnitudeCopy(delta, wantedMag);
     }
 
-    private KPoint scaleToMagnitudeCopy(KPoint direction, double wantedMagnitude)
+    private Vector scaleToMagnitudeCopy(Vector direction, double wantedMagnitude)
     {
         if (direction.magnitude() == 0)
-            return new KPoint();
+            return new Vector();
 
         double scale = wantedMagnitude / direction.magnitude();
-        return new KPoint(direction.x * scale, direction.y * scale);
+        return new Vector(direction.x * scale, direction.y * scale);
     }
 }

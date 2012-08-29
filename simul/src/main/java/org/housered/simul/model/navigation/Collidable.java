@@ -1,12 +1,11 @@
 package org.housered.simul.model.navigation;
 
 import org.housered.simul.model.location.Locatable;
-
-import straightedge.geom.KPoint;
+import org.housered.simul.model.location.Vector;
 
 public interface Collidable extends Locatable
 {
-    KPoint getBounds();
+    Vector getBounds();
     
     boolean isColliding();
 }

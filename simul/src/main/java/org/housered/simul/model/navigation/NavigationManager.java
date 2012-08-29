@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.housered.simul.model.location.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import straightedge.geom.KPoint;
 import straightedge.geom.KPolygon;
 import straightedge.geom.path.NodeConnector;
 import straightedge.geom.path.PathBlockingObstacle;
@@ -23,14 +23,14 @@ public class NavigationManager
     private static final float MAX_CONNECTION_DISTANCE = 1000f;
     private static Logger LOGGER = LoggerFactory.getLogger(NavigationManager.class);
 
-    private final KPoint worldBounds;
+    private final Vector worldBounds;
     private Set<Collidable> collidables = new HashSet<Collidable>();
 
     private PathFinder pathfinder = new PathFinder();
     private ArrayList<PathBlockingObstacle> obstacles = new ArrayList<PathBlockingObstacle>();
     private NodeConnector<PathBlockingObstacle> nodeConnector = new NodeConnector<PathBlockingObstacle>();
 
-    public NavigationManager(KPoint worldBounds)
+    public NavigationManager(Vector worldBounds)
     {
         this.worldBounds = worldBounds;
     }
@@ -46,11 +46,11 @@ public class NavigationManager
         refreshNavigationMesh();
     }
 
-    public PathData findPath(KPoint start, KPoint end)
+    public PathData findPath(Vector start, Vector end)
     {
         long startTime = System.currentTimeMillis();
-        KPoint kStart = new KPoint(start.getX(), start.getY());
-        KPoint kEnd = new KPoint(end.getX(), end.getY());
+        Vector kStart = new Vector(start.getX(), start.getY());
+        Vector kEnd = new Vector(end.getX(), end.getY());
 
         PathData result = pathfinder.calc(kStart, kEnd, MAX_CONNECTION_DISTANCE, nodeConnector, obstacles);
 
@@ -66,11 +66,11 @@ public class NavigationManager
         nodeConnector = new NodeConnector<PathBlockingObstacle>();
         for (Collidable c : collidables)
         {
-            KPoint b = c.getBounds();
-            KPoint topLeft = c.getPosition().copy();
-            KPoint topRight = topLeft.translateCopy(b.x, 0);
-            KPoint bottomRight = topLeft.translateCopy(b.x, b.y);
-            KPoint bottomLeft = topLeft.translateCopy(0, b.y);
+            Vector b = c.getBounds();
+            Vector topLeft = c.getPosition().copy();
+            Vector topRight = topLeft.translateCopy(b.x, 0);
+            Vector bottomRight = topLeft.translateCopy(b.x, b.y);
+            Vector bottomLeft = topLeft.translateCopy(0, b.y);
 
             KPolygon poly = new KPolygon(topLeft, topRight, bottomRight, bottomLeft);
             obstacles.add(PathBlockingObstacleImpl.createObstacleFromInnerPolygon(poly));

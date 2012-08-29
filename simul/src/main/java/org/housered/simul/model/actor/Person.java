@@ -9,14 +9,13 @@ import org.housered.simul.model.actor.brain.NavigationMeshBrain;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.SpeedLimiter;
+import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import straightedge.geom.KPoint;
 
 public class Person implements Renderable, Tickable, Actor
 {
@@ -36,7 +35,7 @@ public class Person implements Renderable, Tickable, Actor
     }
 
     @Override
-    public KPoint getPosition()
+    public Vector getPosition()
     {
         return navigation.getPosition();
     }
@@ -63,25 +62,28 @@ public class Person implements Renderable, Tickable, Actor
 
         if (target != null)
         {
-            KPoint justOutside = new KPoint(target.getPosition().getX(), target.getPosition().getY());
+            Vector justOutside = new Vector(target.getPosition().getX(), target.getPosition().getY());
             justOutside.translate(-1, -1);
             navigation.setTarget(justOutside);
-            LOGGER.debug("[{}]Moving towards target - {}@{}", new Object[] {this, target, target.getPosition()});
+            LOGGER.debug("[{}]Moving towards target - {}", new Object[] {this, target});
         }
 
         if (navigation.hasTarget())
         {
-            LOGGER.debug("I'm at {}", getPosition());
-            KPoint targetPoint = navigation.getNextPoint();
-            LOGGER.debug("targetPoint = {}", targetPoint);
-            KPoint negativeGetPosition = new KPoint(-getPosition().x, -getPosition().y);
-            incrementPosition(targetPoint.translateCopy(negativeGetPosition));
+            Vector targetPoint = navigation.getNextPoint();
+            incrementPosition(targetPoint.translateCopy(getPosition().negateCopy()));
         }
     }
 
-    private void incrementPosition(KPoint delta)
+    private void incrementPosition(Vector delta)
     {
-        KPoint move = speedLimiter.incrementPosition(delta);
+        Vector move = speedLimiter.incrementPosition(delta);
         getPosition().translate(move);
+    }
+
+    @Override
+    public String toString()
+    {
+        return "Person [id=" + id + "]";
     }
 }

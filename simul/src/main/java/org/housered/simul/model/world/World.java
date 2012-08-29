@@ -10,6 +10,7 @@ import org.housered.simul.model.actor.Person;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.AssetManagerImpl;
 import org.housered.simul.model.assets.House;
+import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.BoundingBox;
 import org.housered.simul.model.navigation.Collidable;
 import org.housered.simul.model.navigation.NavigationManager;
@@ -17,8 +18,6 @@ import org.housered.simul.view.Renderable;
 import org.housered.simul.view.RenderableProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import straightedge.geom.KPoint;
 
 public class World implements RenderableProvider, Tickable
 {
@@ -30,7 +29,7 @@ public class World implements RenderableProvider, Tickable
     private List<Renderable> renderables = new LinkedList<Renderable>();
     private List<Tickable> tickables = new LinkedList<Tickable>();
 
-    private NavigationManager navigationManager = new NavigationManager(new KPoint(WORLD_WIDTH, WORLD_HEIGHT));
+    private NavigationManager navigationManager = new NavigationManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
     private AssetManager assetManager = new AssetManagerImpl();
     private GameClockImpl gameClock;
 
@@ -40,7 +39,7 @@ public class World implements RenderableProvider, Tickable
     public World(Camera camera)
     {
         this.camera = camera;
-        addEntity(new BoundingBox(new KPoint(), new KPoint(WORLD_WIDTH, WORLD_HEIGHT)));
+        addEntity(new BoundingBox(new Vector(), new Vector(WORLD_WIDTH, WORLD_HEIGHT)));
     }
 
     public void loadLevel()

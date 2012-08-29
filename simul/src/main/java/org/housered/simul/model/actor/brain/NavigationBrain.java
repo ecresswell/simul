@@ -1,10 +1,10 @@
 package org.housered.simul.model.actor.brain;
 
-import straightedge.geom.KPoint;
+import org.housered.simul.model.location.Vector;
 
 public interface NavigationBrain
 {
-    void setTarget(KPoint position);
+    void setTarget(Vector position);
     
     boolean hasTarget();
 
@@ -12,7 +12,7 @@ public interface NavigationBrain
      * Returns the location to walk to next, i.e. direction and magnitude. Multi-node paths are
      * handled by this brain.
      */
-    KPoint getNextPoint();
+    Vector getNextPoint();
     
-    KPoint getPosition();
+    Vector getPosition();
 }

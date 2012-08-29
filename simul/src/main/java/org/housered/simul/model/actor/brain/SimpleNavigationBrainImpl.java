@@ -1,19 +1,19 @@
 package org.housered.simul.model.actor.brain;
 
-import straightedge.geom.KPoint;
+import org.housered.simul.model.location.Vector;
 
 public class SimpleNavigationBrainImpl implements NavigationBrain
 {
-    private KPoint currentPosition;
-    private KPoint target;
+    private Vector currentPosition;
+    private Vector target;
     
     public SimpleNavigationBrainImpl()
     {
-        currentPosition = new KPoint();
+        currentPosition = new Vector();
     }
     
     @Override
-    public void setTarget(KPoint target)
+    public void setTarget(Vector target)
     {
         this.target = target;
     }
@@ -28,13 +28,13 @@ public class SimpleNavigationBrainImpl implements NavigationBrain
     }
 
     @Override
-    public KPoint getNextPoint()
+    public Vector getNextPoint()
     {
         return target;
     }
     
     @Override
-    public KPoint getPosition()
+    public Vector getPosition()
     {
         return currentPosition;
     }
