@@ -43,6 +43,30 @@ public class SwingGraphicsAdapter implements GraphicsAdapter
         int r = (int) Math.round(camera.scaleIntoScreenSpace(radius));
         g.fillOval(p.x, p.y, r, r);
     }
+    
+    @Override
+    public int getScreenHeight()
+    {
+        return camera.getScreenHeight();
+    }
+    
+    @Override
+    public int getScreenWidth()
+    {
+        return camera.getScreenWidth();
+    }
+    
+    @Override
+    public void drawAbsoluteRect(int x, int y, int width, int height)
+    {
+        g.drawRect(x, y, width, height);
+    }
+    
+    @Override
+    public void drawAbsoluteText(int x, int y, String text)
+    {
+        g.drawString(text, x, y);
+    }
 
     private void drawRect(Vector position, Vector size, boolean filled)
     {

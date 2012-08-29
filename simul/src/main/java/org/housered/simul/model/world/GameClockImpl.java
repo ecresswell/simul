@@ -2,15 +2,14 @@ package org.housered.simul.model.world;
 
 import java.util.concurrent.TimeUnit;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.commons.lang.StringUtils;
 
 public class GameClockImpl implements GameClock, Tickable
 {
-    private static Logger LOGGER = LoggerFactory.getLogger(GameClockImpl.class);
     private int inGameSecondsPerSecond;
     private int secondsSinceMidnight;
     private int milliseconds;
+    private int days = 1;
 
     public GameClockImpl(long secondsSinceMidnight, int inGameSecondsPerSecond)
     {
@@ -21,6 +20,11 @@ public class GameClockImpl implements GameClock, Tickable
     public void setSpeed(int inGameSecondsPerSecond)
     {
         this.inGameSecondsPerSecond = inGameSecondsPerSecond;
+    }
+    
+    public void incrementSpeed(int delta)
+    {
+        inGameSecondsPerSecond += delta;
     }
 
     @Override
@@ -44,6 +48,7 @@ public class GameClockImpl implements GameClock, Tickable
         if (secondsSinceMidnight >= TimeUnit.DAYS.toSeconds(1))
         {
             secondsSinceMidnight -= TimeUnit.DAYS.toSeconds(1);
+            days++;
         }
     }
 
@@ -65,5 +70,26 @@ public class GameClockImpl implements GameClock, Tickable
     {
         return (int) (secondsSinceMidnight - TimeUnit.MINUTES.toSeconds(getMinutes()) - TimeUnit.HOURS
                 .toSeconds(getHour()));
+    }
+
+    @Override
+    public int getDay()
+    {
+        return days;
+    }
+    
+    @Override
+    public int getGameSecondsPerActualSecond()
+    {
+        return inGameSecondsPerSecond;
+    }
+
+    @Override
+    public String getDigitalClock()
+    {
+        String hour = StringUtils.leftPad(String.valueOf(getHour()), 2, "0");
+        String minute = StringUtils.leftPad(String.valueOf(getMinutes()), 2, "0");
+        
+        return hour + ":" + minute;
     }
 }

@@ -16,6 +16,7 @@ import org.housered.simul.model.navigation.Collidable;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.view.Renderable;
 import org.housered.simul.view.RenderableProvider;
+import org.housered.simul.view.gui.GuiManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +24,7 @@ public class World implements RenderableProvider, Tickable
 {
     private static final int WORLD_WIDTH = 800;
     private static final int WORLD_HEIGHT = 600;
+    private static final float REAL_TIME_MULTIPLIER = 0.1f;
     private static Logger LOGGER = LoggerFactory.getLogger(World.class);
 
     private AtomicLong nextId = new AtomicLong();
@@ -32,6 +34,7 @@ public class World implements RenderableProvider, Tickable
     private NavigationManager navigationManager = new NavigationManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
     private AssetManager assetManager = new AssetManagerImpl();
     private GameClockImpl gameClock;
+    private GuiManager guiManager;
 
     private InputManager inputManager = new InputManager();
     private final Camera camera;
@@ -39,13 +42,16 @@ public class World implements RenderableProvider, Tickable
     public World(Camera camera)
     {
         this.camera = camera;
+
+        //TODO: move this 
         addEntity(new BoundingBox(new Vector(), new Vector(WORLD_WIDTH, WORLD_HEIGHT)));
     }
 
     public void loadLevel()
     {
-        gameClock = new GameClockImpl(TimeUnit.HOURS.toSeconds(7), 30);
-        tickables.add(gameClock);
+        gameClock = new GameClockImpl(TimeUnit.HOURS.toSeconds(7), 60);
+        guiManager = new GuiManager(gameClock);
+        addEntity(guiManager);
 
         Person p1 = new Person(getNextId(), assetManager, navigationManager);
         Person p2 = new Person(getNextId(), assetManager, navigationManager);
@@ -101,10 +107,11 @@ public class World implements RenderableProvider, Tickable
     public void tick(float dt)
     {
         processInput();
+        gameClock.tick(dt);
 
         for (Tickable tickable : tickables)
         {
-            tickable.tick(dt);
+            tickable.tick(dt * gameClock.getGameSecondsPerActualSecond() * REAL_TIME_MULTIPLIER);
         }
     }
 
@@ -133,6 +140,18 @@ public class World implements RenderableProvider, Tickable
         if (inputManager.isKeyDown(KeyEvent.VK_C))
         {
             camera.zoom(Camera.DEFAULT_CAMERA_ZOOM_IN);
+        }
+        if (inputManager.isKeyDown(KeyEvent.VK_1))
+        {
+            gameClock.setSpeed(60);
+        }
+        if (inputManager.isKeyDown(KeyEvent.VK_2))
+        {
+            gameClock.setSpeed(180);
+        }
+        if (inputManager.isKeyDown(KeyEvent.VK_3))
+        {
+            gameClock.setSpeed(600);
         }
     }
 

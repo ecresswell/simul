@@ -24,4 +24,10 @@ public interface GameClock
      * Returns the number of seconds since midnight.
      */
     int getSecondsSinceMidnight();
+
+    String getDigitalClock();
+
+    int getDay();
+    
+    int getGameSecondsPerActualSecond();
 }

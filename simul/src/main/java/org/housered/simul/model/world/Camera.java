@@ -83,4 +83,14 @@ public class Camera
     {
         return length * getUnitsPerWorldUnit();
     }
+    
+    public int getScreenWidth()
+    {
+        return screenWidth;
+    }
+    
+    public int getScreenHeight()
+    {
+        return screenWidth;
+    }
 }

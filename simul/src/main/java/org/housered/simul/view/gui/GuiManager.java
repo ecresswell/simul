@@ -1,16 +1,25 @@
 package org.housered.simul.view.gui;
 
+import java.awt.Color;
+
+import org.housered.simul.model.world.GameClock;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
 
 public class GuiManager implements Renderable
 {
+    private final GameClock gameClock;
 
+    public GuiManager(GameClock gameClock)
+    {
+        this.gameClock = gameClock;
+        
+    }
+    
     @Override
     public void render(GraphicsAdapter r)
     {
-        // TODO Auto-generated method stub
-        
+        r.setColour(Color.white);
+        r.drawAbsoluteText(20, 20, gameClock.getDigitalClock());
     }
-
 }

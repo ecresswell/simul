@@ -18,7 +18,11 @@ public interface GraphicsAdapter
     
     void fillCircle(Vector position, float radius);
     
-    //int getScreenWidth();
+    int getScreenWidth();
     
-    //int getScreenHeight();
+    int getScreenHeight();
+    
+    void drawAbsoluteRect(int x, int y, int width, int height);
+    
+    void drawAbsoluteText(int x, int y, String text);
 }

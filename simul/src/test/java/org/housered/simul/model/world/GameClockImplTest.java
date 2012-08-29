@@ -14,7 +14,9 @@ public class GameClockImplTest
         assertEquals(30, g.getSeconds());
         assertEquals(25, g.getMinutes());
         assertEquals(7, g.getHour());
+        assertEquals(1, g.getDay());
         assertEquals(26730, g.getSecondsSinceMidnight());
+        assertEquals("07:25", g.getDigitalClock());
     }
     
     @Test
@@ -25,11 +27,23 @@ public class GameClockImplTest
         assertEquals(59, g.getSeconds());
         assertEquals(59, g.getMinutes());
         assertEquals(23, g.getHour());
+        assertEquals(1, g.getDay());
+        assertEquals("23:59", g.getDigitalClock());
         
         g.tick(3);
         
         assertEquals(2, g.getSeconds());
         assertEquals(0, g.getMinutes());
         assertEquals(0, g.getHour());
+        assertEquals(2, g.getDay());
+        assertEquals("00:00", g.getDigitalClock());
+    }
+    
+    @Test
+    public void shouldReturnHumanReadableClock()
+    {
+        GameClock g = new GameClockImpl(86399, 3);
+        
+        assertEquals("23:59", g.getDigitalClock());
     }
 }

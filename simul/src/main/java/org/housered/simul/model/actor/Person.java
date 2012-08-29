@@ -29,7 +29,7 @@ public class Person implements Renderable, Tickable, Actor
     public Person(long id, AssetManager assetManager, NavigationManager navigationManager)
     {
         this.id = id;
-        speedLimiter.setSpeedLimit(75);
+        speedLimiter.setSpeedLimit(3);
         highLevel = new HighLevelBrainImpl(this, assetManager);
         navigation = new NavigationMeshBrain(navigationManager);
     }
