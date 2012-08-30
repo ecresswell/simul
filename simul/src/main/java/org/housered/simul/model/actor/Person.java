@@ -7,10 +7,10 @@ import org.housered.simul.model.actor.brain.HighLevelBrainImpl;
 import org.housered.simul.model.actor.brain.NavigationBrain;
 import org.housered.simul.model.actor.brain.NavigationMeshBrain;
 import org.housered.simul.model.assets.AssetManager;
-import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
+import org.housered.simul.model.world.GameClock;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
@@ -26,11 +26,11 @@ public class Person implements Renderable, Tickable, Actor
     private NavigationBrain navigation;
     private SpeedLimiter speedLimiter = new SpeedLimiter();
 
-    public Person(long id, AssetManager assetManager, NavigationManager navigationManager)
+    public Person(long id, AssetManager assetManager, NavigationManager navigationManager, GameClock gameClock)
     {
         this.id = id;
         speedLimiter.setSpeedLimit(3);
-        highLevel = new HighLevelBrainImpl(this, assetManager);
+        highLevel = new HighLevelBrainImpl(this, assetManager, gameClock);
         navigation = new NavigationMeshBrain(navigationManager);
     }
 
@@ -58,13 +58,11 @@ public class Person implements Renderable, Tickable, Actor
     {
         speedLimiter.startNewTick(dt);
 
-        Occupiable target = highLevel.decideWhereToGo();
+        Vector target = highLevel.decideWhereToGo();
 
         if (target != null)
         {
-            Vector justOutside = new Vector(target.getPosition().getX(), target.getPosition().getY());
-            justOutside.translate(-1, -1);
-            navigation.setTarget(justOutside);
+            navigation.setTarget(target);
             LOGGER.debug("[{}]Moving towards target - {}", new Object[] {this, target});
         }
 
@@ -72,6 +70,11 @@ public class Person implements Renderable, Tickable, Actor
         {
             Vector targetPoint = navigation.getNextPoint();
             incrementPosition(targetPoint.translateCopy(getPosition().negateCopy()));
+        }
+
+        if (navigation.hasArrivedAtTarget())
+        {
+            highLevel.arrivedAtTarget();
         }
     }
 

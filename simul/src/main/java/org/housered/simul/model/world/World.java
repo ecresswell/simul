@@ -10,6 +10,7 @@ import org.housered.simul.model.actor.Person;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.AssetManagerImpl;
 import org.housered.simul.model.assets.House;
+import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.BoundingBox;
 import org.housered.simul.model.navigation.Collidable;
@@ -24,7 +25,7 @@ public class World implements RenderableProvider, Tickable
 {
     private static final int WORLD_WIDTH = 800;
     private static final int WORLD_HEIGHT = 600;
-    private static final float REAL_TIME_MULTIPLIER = 0.1f;
+    private static final float SLOW_DOWN_REAL_TIME_FACTOR = 0.1f;
     private static Logger LOGGER = LoggerFactory.getLogger(World.class);
 
     private AtomicLong nextId = new AtomicLong();
@@ -53,8 +54,8 @@ public class World implements RenderableProvider, Tickable
         guiManager = new GuiManager(gameClock);
         addEntity(guiManager);
 
-        Person p1 = new Person(getNextId(), assetManager, navigationManager);
-        Person p2 = new Person(getNextId(), assetManager, navigationManager);
+        Person p1 = new Person(getNextId(), assetManager, navigationManager, gameClock);
+        Person p2 = new Person(getNextId(), assetManager, navigationManager, gameClock);
         p1.getPosition().setX(395);
         p1.getPosition().setY(295);
 
@@ -63,13 +64,46 @@ public class World implements RenderableProvider, Tickable
         h2.getPosition().setX(450);
         h2.getPosition().setY(500);
 
+        House h3 = new House(getNextId());
+        h3.getPosition().setX(150);
+        h3.getPosition().setY(500);
+        House h4 = new House(getNextId());
+        h4.getPosition().setX(250);
+        h4.getPosition().setY(500);
+        House h5 = new House(getNextId());
+        h5.getPosition().setX(350);
+        h5.getPosition().setY(500);
+        House h6 = new House(getNextId());
+        h6.getPosition().setX(450);
+        h6.getPosition().setY(100);
+        House h7 = new House(getNextId());
+        h7.getPosition().setX(450);
+        h7.getPosition().setY(200);
+        House h8 = new House(getNextId());
+        h8.getPosition().setX(450);
+        h8.getPosition().setY(300);
+
         assetManager.createDeed(p1, h1);
         assetManager.createDeed(p2, h2);
 
         addEntity(p1);
         addEntity(p2);
+        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
+        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
+        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
+        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
+        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
+        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
+        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
+        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
         addEntity(h1);
         addEntity(h2);
+        addEntity(h3);
+        addEntity(h4);
+        addEntity(h5);
+        addEntity(h6);
+        addEntity(h7);
+        addEntity(h8);
     }
 
     private void addEntity(Object entity)
@@ -85,6 +119,8 @@ public class World implements RenderableProvider, Tickable
             tickables.add((Tickable) entity);
         if (entity instanceof Collidable)
             navigationManager.addCollidable((Collidable) entity);
+        if (entity instanceof Occupiable)
+            assetManager.addOccupiable((Occupiable) entity);
     }
 
     @Override
@@ -111,7 +147,7 @@ public class World implements RenderableProvider, Tickable
 
         for (Tickable tickable : tickables)
         {
-            tickable.tick(dt * gameClock.getGameSecondsPerActualSecond() * REAL_TIME_MULTIPLIER);
+            tickable.tick(dt * gameClock.getGameSecondsPerActualSecond() * SLOW_DOWN_REAL_TIME_FACTOR);
         }
     }
 

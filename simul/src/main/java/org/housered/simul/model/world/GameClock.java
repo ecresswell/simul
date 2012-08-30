@@ -6,12 +6,12 @@ package org.housered.simul.model.world;
 public interface GameClock
 {
     /**
-     * Returns the number of hours since midnight.
+     * Returns the number of hours since midnight (today)
      */
     int getHour();
 
     /**
-     * Returns the number of minutes past the hour.
+     * Returns the number of minutes past the hour (today)
      */
     int getMinutes();
 
@@ -21,13 +21,13 @@ public interface GameClock
     int getSeconds();
 
     /**
-     * Returns the number of seconds since midnight.
+     * Returns the number of seconds since midnight (on the first day).
      */
-    int getSecondsSinceMidnight();
+    long getSecondsSinceGameStart();
 
     String getDigitalClock();
 
     int getDay();
-    
+
     int getGameSecondsPerActualSecond();
 }

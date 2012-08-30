@@ -9,11 +9,17 @@ import straightedge.geom.path.PathData;
 
 public class NavigationMeshBrain implements NavigationBrain
 {
+    private enum NavigationState
+    {
+        NO_TARGET, MOVING, ARRIVED
+    }
+
     private static Logger LOGGER = LoggerFactory.getLogger(NavigationMeshBrain.class);
     private final NavigationManager navigationManager;
     private Vector currentPosition;
     private Vector target;
     private PathData path;
+    private NavigationState state = NavigationState.NO_TARGET;
 
     public NavigationMeshBrain(NavigationManager navigationManager)
     {
@@ -26,15 +32,13 @@ public class NavigationMeshBrain implements NavigationBrain
     {
         this.target = target;
         path = navigationManager.findPath(getPosition(), target);
+        state = NavigationState.MOVING;
     }
 
     @Override
     public boolean hasTarget()
     {
-        if (getPosition().equals(target))
-            target = null;
-
-        return target != null;
+        return state == NavigationState.MOVING || state == NavigationState.ARRIVED;
     }
 
     @Override
@@ -46,6 +50,9 @@ public class NavigationMeshBrain implements NavigationBrain
             target = null;
             return currentPosition;
         }
+        
+        if (state == NavigationState.ARRIVED)
+            return currentPosition;
 
         //TODO: don't keep checking this
         Vector nextPoint = new Vector(path.getPoints().get(0));
@@ -55,12 +62,14 @@ public class NavigationMeshBrain implements NavigationBrain
             if (path.getPoints().size() == 1)
             {
                 //TODO: check if we are actually where we want to be
-                LOGGER.debug("Arrived at final destination");
+                LOGGER.debug("Arrived at final destination, {}", path.getPoints().get(0));
+                state = NavigationState.ARRIVED;
                 target = null;
             }
             else
             {
-                LOGGER.debug("Arrived at waypoint, moving to next");
+                LOGGER.debug("Arrived at waypoint {}, moving to next {}", path.getPoints().get(0), path.getPoints()
+                        .get(1));
                 path.getPoints().remove(0);
             }
         }
@@ -71,5 +80,11 @@ public class NavigationMeshBrain implements NavigationBrain
     public Vector getPosition()
     {
         return currentPosition;
+    }
+
+    @Override
+    public boolean hasArrivedAtTarget()
+    {
+        return state == NavigationState.ARRIVED;
     }
 }

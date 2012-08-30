@@ -15,4 +15,6 @@ public interface NavigationBrain
     Vector getNextPoint();
     
     Vector getPosition();
+    
+    boolean hasArrivedAtTarget();
 }

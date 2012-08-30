@@ -6,8 +6,10 @@ import org.apache.commons.lang.StringUtils;
 
 public class GameClockImpl implements GameClock, Tickable
 {
+    private final long SECONDS_PER_DAY = TimeUnit.DAYS.toSeconds(1);
+
     private int inGameSecondsPerSecond;
-    private int secondsSinceMidnight;
+    private long secondsSinceMidnight;
     private int milliseconds;
     private int days = 1;
 
@@ -21,16 +23,16 @@ public class GameClockImpl implements GameClock, Tickable
     {
         this.inGameSecondsPerSecond = inGameSecondsPerSecond;
     }
-    
+
     public void incrementSpeed(int delta)
     {
         inGameSecondsPerSecond += delta;
     }
 
     @Override
-    public int getSecondsSinceMidnight()
+    public long getSecondsSinceGameStart()
     {
-        return Math.round(secondsSinceMidnight);
+        return secondsSinceMidnight + (days - 1) * SECONDS_PER_DAY;
     }
 
     @Override
@@ -77,7 +79,7 @@ public class GameClockImpl implements GameClock, Tickable
     {
         return days;
     }
-    
+
     @Override
     public int getGameSecondsPerActualSecond()
     {
@@ -89,7 +91,7 @@ public class GameClockImpl implements GameClock, Tickable
     {
         String hour = StringUtils.leftPad(String.valueOf(getHour()), 2, "0");
         String minute = StringUtils.leftPad(String.valueOf(getMinutes()), 2, "0");
-        
+
         return hour + ":" + minute;
     }
 }

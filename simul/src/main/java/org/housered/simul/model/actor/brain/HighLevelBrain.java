@@ -1,6 +1,6 @@
 package org.housered.simul.model.actor.brain;
 
-import org.housered.simul.model.assets.Occupiable;
+import org.housered.simul.model.location.Vector;
 
 
 /**
@@ -10,5 +10,7 @@ import org.housered.simul.model.assets.Occupiable;
  */
 public interface HighLevelBrain 
 {
-    Occupiable decideWhereToGo();
+    Vector decideWhereToGo();
+    
+    void arrivedAtTarget();
 }
