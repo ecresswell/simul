@@ -45,7 +45,7 @@ public class SimulMain
 
             timeDiff = System.currentTimeMillis() - beforeTime;
             sleep = DELAY - timeDiff;
-            world.informAverageSleepAmount(sleep);
+            world.informAverageSleepAmount(metrics.getAverageSleepAmount());
             
 
             if (sleep < 0)

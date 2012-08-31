@@ -1,12 +1,12 @@
 package org.housered.simul.model.actor.brain;
 
-import java.util.Iterator;
-import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.assets.AssetManager;
+import org.housered.simul.model.assets.CommercialBuilding;
+import org.housered.simul.model.assets.CommercialManager;
 import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.world.GameClock;
@@ -15,45 +15,67 @@ import org.slf4j.LoggerFactory;
 
 public class HighLevelBrainImpl implements HighLevelBrain
 {
+    private enum State
+    {
+        AT_HOME, AT_WORK, GOING_HOME, GOING_TO_WORK
+    }
+
     private static final Logger LOGGER = LoggerFactory.getLogger(HighLevelBrainImpl.class);
-    private static final long GAME_SECONDS_UNTIL_BORED = TimeUnit.MINUTES.toSeconds(6);
+    private static final long GAME_SECONDS_AT_WORK = TimeUnit.HOURS.toSeconds(8);
     private final Actor actor;
     private final AssetManager assetManager;
+    private final CommercialManager commercialManager;
     private final GameClock gameClock;
 
     private Occupiable currentTarget;
-    private boolean occupying = false;
     private long currentOccupiedStartTime;
+    private State state;
 
-    public HighLevelBrainImpl(Actor actor, AssetManager assetManager, GameClock gameClock)
+    public HighLevelBrainImpl(Actor actor, AssetManager assetManager, CommercialManager commercialManager,
+            GameClock gameClock)
     {
         this.actor = actor;
         this.assetManager = assetManager;
+        this.commercialManager = commercialManager;
         this.gameClock = gameClock;
     }
 
     @Override
     public Vector decideWhereToGo()
     {
-        if (occupying && gameClock.getSecondsSinceGameStart() > currentOccupiedStartTime + GAME_SECONDS_UNTIL_BORED)
+        if (state == State.AT_HOME && gameClock.getHour() == 8)
         {
-            LOGGER.trace("[{}] has decided to frolick", actor);
-            //we're bored, let's bounce
-            currentTarget.exit(actor);
-            occupying = false;
-            currentTarget = null;
+            LOGGER.trace("Time to go to work");
+            Set<CommercialBuilding> placesOfWork = commercialManager.getPlacesOfWork(actor);
+
+            if (!placesOfWork.isEmpty())
+            {
+                currentTarget.exit(actor);
+                state = State.GOING_TO_WORK;
+                currentTarget = placesOfWork.iterator().next();
+
+                return currentTarget.getEntryPoint();
+            }
+            LOGGER.warn("{} is unemployed", actor);
         }
 
-        if (currentTarget == null)
+        if (currentTarget == null
+                || (state == State.AT_WORK && gameClock.getSecondsSinceGameStart() - currentOccupiedStartTime > GAME_SECONDS_AT_WORK))
         {
-            //let's go somewhere
-            Set<Occupiable> allBuildings = assetManager.getAssets();
+            LOGGER.trace("Heading home");
+            Set<Occupiable> assets = assetManager.getAssets(actor);
 
-            if (allBuildings.isEmpty())
-                return null;
+            if (!assets.isEmpty())
+            {
+                if (currentTarget != null)
+                    currentTarget.exit(actor);
 
-            currentTarget = getRandomBuilding(allBuildings);
-            return currentTarget.getEntryPoint();
+                state = State.GOING_HOME;
+                currentTarget = assets.iterator().next();
+
+                return currentTarget.getEntryPoint();
+            }
+            LOGGER.warn("{} is homeless", actor);
         }
 
         //we've already decided where to go
@@ -63,26 +85,19 @@ public class HighLevelBrainImpl implements HighLevelBrain
     @Override
     public void arrivedAtTarget()
     {
-        if (occupying)
-            return;
-
-        currentTarget.occupy(actor);
-        currentOccupiedStartTime = gameClock.getSecondsSinceGameStart();
-        occupying = true;
-    }
-
-    private Occupiable getRandomBuilding(Set<Occupiable> all)
-    {
-        int random = new Random().nextInt(all.size());
-
-        int i = 0;
-        for (Occupiable occupiable : all)
+        if (state == State.GOING_TO_WORK)
         {
-            if (i == random)
-                return occupiable;
-            i += 1;
+            LOGGER.trace("Arrived at work");
+            state = State.AT_WORK;
+            currentTarget.occupy(actor);
+            currentOccupiedStartTime = gameClock.getSecondsSinceGameStart();
         }
-        
-        return null;
+        else if (state == State.GOING_HOME)
+        {
+            LOGGER.trace("Arrived at home");
+            state = State.AT_HOME;
+            currentTarget.occupy(actor);
+            currentOccupiedStartTime = gameClock.getSecondsSinceGameStart();
+        }
     }
 }

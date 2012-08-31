@@ -7,6 +7,7 @@ import org.housered.simul.model.actor.brain.HighLevelBrainImpl;
 import org.housered.simul.model.actor.brain.NavigationBrain;
 import org.housered.simul.model.actor.brain.NavigationMeshBrain;
 import org.housered.simul.model.assets.AssetManager;
+import org.housered.simul.model.assets.CommercialManager;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
@@ -26,11 +27,12 @@ public class Person implements Renderable, Tickable, Actor
     private NavigationBrain navigation;
     private SpeedLimiter speedLimiter = new SpeedLimiter();
 
-    public Person(long id, AssetManager assetManager, NavigationManager navigationManager, GameClock gameClock)
+    public Person(long id, AssetManager assetManager, CommercialManager commercialManager,
+            NavigationManager navigationManager, GameClock gameClock)
     {
         this.id = id;
         speedLimiter.setSpeedLimit(3);
-        highLevel = new HighLevelBrainImpl(this, assetManager, gameClock);
+        highLevel = new HighLevelBrainImpl(this, assetManager, commercialManager, gameClock);
         navigation = new NavigationMeshBrain(navigationManager);
     }
 

@@ -3,14 +3,19 @@ package org.housered.simul.model.world;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.housered.simul.model.actor.Person;
 import org.housered.simul.model.actor.PersonFactory;
 import org.housered.simul.model.assets.AssetManager;
-import org.housered.simul.model.assets.AssetManagerImpl;
+import org.housered.simul.model.assets.CommercialManager;
+import org.housered.simul.model.assets.House;
 import org.housered.simul.model.assets.HouseFactory;
 import org.housered.simul.model.assets.Occupiable;
+import org.housered.simul.model.assets.Workplace;
+import org.housered.simul.model.assets.WorkplaceFactory;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.BoundingBox;
 import org.housered.simul.model.navigation.Collidable;
@@ -33,7 +38,8 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     private List<Tickable> tickables = new LinkedList<Tickable>();
 
     private NavigationManager navigationManager = new NavigationManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
-    private AssetManager assetManager = new AssetManagerImpl();
+    private AssetManager assetManager = new AssetManager();
+    private CommercialManager commercialManager = new CommercialManager();
     private GameClockImpl gameClock;
     private GuiManager guiManager;
 
@@ -54,22 +60,39 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         guiManager = new GuiManager(gameClock);
         addEntity(guiManager);
 
-        PersonFactory personFactory = new PersonFactory(this, assetManager, navigationManager, gameClock);
+        PersonFactory personFactory = new PersonFactory(this, assetManager, commercialManager, navigationManager,
+                gameClock);
         HouseFactory houseFactory = new HouseFactory(this);
+        WorkplaceFactory workplaceFactory = new WorkplaceFactory(this);
 
+        Queue<Workplace> workplaces = new LinkedList<Workplace>();
+        
+        for (int x = 600; x < 800; x += 50)
+        {
+            for (int y = 50; y < 600; y += 50)
+            {
+                Workplace workplace = workplaceFactory.createWorkplace(x, y);
+                workplaces.add(workplace);
+                addEntity(workplace);
+            }
+        }
+        
+        
         for (int x = 50; x < 600; x += 50)
         {
             for (int y = 50; y < 600; y += 50)
             {
-                addEntity(houseFactory.createHouse(x, y));
-                addEntity(personFactory.createPerson(x - 1, y - 1));
+                Workplace workplace = workplaces.remove();
+                House house = houseFactory.createHouse(x, y);
+                Person person = personFactory.createPerson(x - 1, y - 1);
+                addEntity(house);
+                addEntity(person);
+                assetManager.createDeed(person, house);
+                commercialManager.createContract(person, workplace);
+                workplaces.add(workplace);
             }
         }
-        
-        for (int i = 0; i < 100; i++)
-        {
-            addEntity(personFactory.createPerson(325, 325));
-        }
+
         
         navigationManager.refreshNavigationMesh();
     }
@@ -89,6 +112,12 @@ public class World implements RenderableProvider, Tickable, IdGenerator
             navigationManager.addColliableWithoutNavMeshRefresh((Collidable) entity);
         if (entity instanceof Occupiable)
             assetManager.addOccupiable((Occupiable) entity);
+    }
+    
+    private void addEntities(Object... entities)
+    {
+        for (Object entity: entities)
+            addEntity(entity);
     }
 
     @Override
@@ -157,6 +186,10 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         {
             gameClock.setSpeed(600);
         }
+        if (inputManager.isKeyDown(KeyEvent.VK_4))
+        {
+            gameClock.setSpeed(6000);
+        }
     }
 
     public long getNextId()
@@ -177,6 +210,6 @@ public class World implements RenderableProvider, Tickable, IdGenerator
 
     public void informAverageSleepAmount(double averageSleep)
     {
-        LOGGER.debug("Average sleep is {}", averageSleep);
+        //LOGGER.trace("Average sleep is {}", averageSleep);
     }
 }

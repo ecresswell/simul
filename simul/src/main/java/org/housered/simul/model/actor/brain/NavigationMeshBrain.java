@@ -32,6 +32,8 @@ public class NavigationMeshBrain implements NavigationBrain
     {
         this.target = target;
         path = navigationManager.findPath(getPosition(), target);
+        //the first point is where we are at the moment
+        path.getPoints().remove(0);
         state = NavigationState.MOVING;
     }
 
