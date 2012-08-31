@@ -3,6 +3,8 @@ package org.housered.simul.controller;
 import org.housered.simul.model.world.Camera;
 import org.housered.simul.model.world.World;
 import org.housered.simul.view.swing.SwingFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SimulMain
 {
@@ -30,6 +32,7 @@ public class SimulMain
 
     private void run()
     {
+        FrameMetrics metrics = new FrameMetrics();
         long beforeTime, sleep, timeDiff, currentTime;
         long dt = 0;
 
@@ -42,11 +45,14 @@ public class SimulMain
 
             timeDiff = System.currentTimeMillis() - beforeTime;
             sleep = DELAY - timeDiff;
+            world.informAverageSleepAmount(sleep);
+            
 
             if (sleep < 0)
                 sleep = 2;
             try
             {
+                metrics.logSleep(sleep);
                 Thread.sleep(sleep);
             }
             catch (InterruptedException e)

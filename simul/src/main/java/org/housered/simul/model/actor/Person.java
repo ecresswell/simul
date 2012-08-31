@@ -63,7 +63,7 @@ public class Person implements Renderable, Tickable, Actor
         if (target != null)
         {
             navigation.setTarget(target);
-            LOGGER.debug("[{}]Moving towards target - {}", new Object[] {this, target});
+            LOGGER.trace("[{}]Moving towards target - {}", new Object[] {this, target});
         }
 
         if (navigation.hasTarget())

@@ -37,7 +37,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
     {
         if (occupying && gameClock.getSecondsSinceGameStart() > currentOccupiedStartTime + GAME_SECONDS_UNTIL_BORED)
         {
-            LOGGER.debug("[{}] has decided to frolick", actor);
+            LOGGER.trace("[{}] has decided to frolick", actor);
             //we're bored, let's bounce
             currentTarget.exit(actor);
             occupying = false;

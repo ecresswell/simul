@@ -37,13 +37,18 @@ public class NavigationManager
 
     public void addCollidable(Collidable collidable)
     {
+        addColliableWithoutNavMeshRefresh(collidable);
+        refreshNavigationMesh();
+    }
+    
+    public void addColliableWithoutNavMeshRefresh(Collidable collidable)
+    {
         if (!isInsideWorldBounds(collidable))
         {
             LOGGER.error("Attempt to add collidable outside the bounds - {}", collidable);
         }
 
         collidables.add(collidable);
-        refreshNavigationMesh();
     }
 
     public PathData findPath(Vector start, Vector end)
@@ -54,11 +59,11 @@ public class NavigationManager
 
         PathData result = pathfinder.calc(kStart, kEnd, MAX_CONNECTION_DISTANCE, nodeConnector, obstacles);
 
-        LOGGER.debug("Path calculation took {} ms", System.currentTimeMillis() - startTime);
+        LOGGER.trace("Path calculation took {} ms", System.currentTimeMillis() - startTime);
         return result;
     }
 
-    void refreshNavigationMesh()
+    public void refreshNavigationMesh()
     {
         long start = System.currentTimeMillis();
 

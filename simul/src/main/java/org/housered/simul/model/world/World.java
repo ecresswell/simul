@@ -6,10 +6,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.housered.simul.model.actor.Person;
+import org.housered.simul.model.actor.PersonFactory;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.AssetManagerImpl;
-import org.housered.simul.model.assets.House;
+import org.housered.simul.model.assets.HouseFactory;
 import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.BoundingBox;
@@ -21,7 +21,7 @@ import org.housered.simul.view.gui.GuiManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class World implements RenderableProvider, Tickable
+public class World implements RenderableProvider, Tickable, IdGenerator
 {
     private static final int WORLD_WIDTH = 800;
     private static final int WORLD_HEIGHT = 600;
@@ -54,56 +54,24 @@ public class World implements RenderableProvider, Tickable
         guiManager = new GuiManager(gameClock);
         addEntity(guiManager);
 
-        Person p1 = new Person(getNextId(), assetManager, navigationManager, gameClock);
-        Person p2 = new Person(getNextId(), assetManager, navigationManager, gameClock);
-        p1.getPosition().setX(395);
-        p1.getPosition().setY(295);
+        PersonFactory personFactory = new PersonFactory(this, assetManager, navigationManager, gameClock);
+        HouseFactory houseFactory = new HouseFactory(this);
 
-        House h1 = new House(getNextId());
-        House h2 = new House(getNextId());
-        h2.getPosition().setX(450);
-        h2.getPosition().setY(500);
-
-        House h3 = new House(getNextId());
-        h3.getPosition().setX(150);
-        h3.getPosition().setY(500);
-        House h4 = new House(getNextId());
-        h4.getPosition().setX(250);
-        h4.getPosition().setY(500);
-        House h5 = new House(getNextId());
-        h5.getPosition().setX(350);
-        h5.getPosition().setY(500);
-        House h6 = new House(getNextId());
-        h6.getPosition().setX(450);
-        h6.getPosition().setY(100);
-        House h7 = new House(getNextId());
-        h7.getPosition().setX(450);
-        h7.getPosition().setY(200);
-        House h8 = new House(getNextId());
-        h8.getPosition().setX(450);
-        h8.getPosition().setY(300);
-
-        assetManager.createDeed(p1, h1);
-        assetManager.createDeed(p2, h2);
-
-        addEntity(p1);
-        addEntity(p2);
-        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
-        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
-        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
-        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
-        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
-        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
-        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
-        addEntity(new Person(getNextId(), assetManager, navigationManager, gameClock));
-        addEntity(h1);
-        addEntity(h2);
-        addEntity(h3);
-        addEntity(h4);
-        addEntity(h5);
-        addEntity(h6);
-        addEntity(h7);
-        addEntity(h8);
+        for (int x = 50; x < 600; x += 50)
+        {
+            for (int y = 50; y < 600; y += 50)
+            {
+                addEntity(houseFactory.createHouse(x, y));
+                addEntity(personFactory.createPerson(x - 1, y - 1));
+            }
+        }
+        
+        for (int i = 0; i < 100; i++)
+        {
+            addEntity(personFactory.createPerson(325, 325));
+        }
+        
+        navigationManager.refreshNavigationMesh();
     }
 
     private void addEntity(Object entity)
@@ -118,7 +86,7 @@ public class World implements RenderableProvider, Tickable
         if (entity instanceof Tickable)
             tickables.add((Tickable) entity);
         if (entity instanceof Collidable)
-            navigationManager.addCollidable((Collidable) entity);
+            navigationManager.addColliableWithoutNavMeshRefresh((Collidable) entity);
         if (entity instanceof Occupiable)
             assetManager.addOccupiable((Occupiable) entity);
     }
@@ -191,7 +159,7 @@ public class World implements RenderableProvider, Tickable
         }
     }
 
-    private long getNextId()
+    public long getNextId()
     {
         return nextId.getAndIncrement();
     }
@@ -205,5 +173,10 @@ public class World implements RenderableProvider, Tickable
     public Camera getCamera()
     {
         return camera;
+    }
+
+    public void informAverageSleepAmount(double averageSleep)
+    {
+        LOGGER.debug("Average sleep is {}", averageSleep);
     }
 }

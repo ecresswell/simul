@@ -50,7 +50,7 @@ public class NavigationMeshBrain implements NavigationBrain
             target = null;
             return currentPosition;
         }
-        
+
         if (state == NavigationState.ARRIVED)
             return currentPosition;
 
@@ -62,14 +62,14 @@ public class NavigationMeshBrain implements NavigationBrain
             if (path.getPoints().size() == 1)
             {
                 //TODO: check if we are actually where we want to be
-                LOGGER.debug("Arrived at final destination, {}", path.getPoints().get(0));
+                LOGGER.trace("Arrived at final destination, {}", path.getPoints().get(0));
                 state = NavigationState.ARRIVED;
                 target = null;
             }
             else
             {
-                LOGGER.debug("Arrived at waypoint {}, moving to next {}", path.getPoints().get(0), path.getPoints()
-                        .get(1));
+                LOGGER.trace("Arrived at waypoint {}, moving to next {}", path.getPoints().get(0),
+                        path.getPoints().get(1));
                 path.getPoints().remove(0);
             }
         }
