@@ -3,7 +3,7 @@ package org.housered.simul.model.world;
 import java.awt.event.KeyEvent;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -30,7 +30,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
 {
     private static final int WORLD_WIDTH = 800;
     private static final int WORLD_HEIGHT = 600;
-    private static final float SLOW_DOWN_REAL_TIME_FACTOR = 0.1f;
+    private static final float SLOW_DOWN_REAL_TIME_FACTOR = 0.25f;
     private static Logger LOGGER = LoggerFactory.getLogger(World.class);
 
     private AtomicLong nextId = new AtomicLong();
@@ -65,8 +65,8 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         HouseFactory houseFactory = new HouseFactory(this);
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(this);
 
-        Queue<Workplace> workplaces = new LinkedList<Workplace>();
-        
+        List<Workplace> workplaces = new LinkedList<Workplace>();
+
         for (int x = 600; x < 800; x += 50)
         {
             for (int y = 50; y < 600; y += 50)
@@ -76,24 +76,23 @@ public class World implements RenderableProvider, Tickable, IdGenerator
                 addEntity(workplace);
             }
         }
-        
-        
+
         for (int x = 50; x < 600; x += 50)
         {
             for (int y = 50; y < 600; y += 50)
             {
-                Workplace workplace = workplaces.remove();
                 House house = houseFactory.createHouse(x, y);
-                Person person = personFactory.createPerson(x - 1, y - 1);
                 addEntity(house);
-                addEntity(person);
-                assetManager.createDeed(person, house);
-                commercialManager.createContract(person, workplace);
-                workplaces.add(workplace);
+                for (int i = 0; i < 3; i++)
+                {
+                    Person person = personFactory.createPerson(x - 1, y - 1);
+                    addEntity(person);
+                    assetManager.createDeed(person, house);
+                    commercialManager.createContract(person, workplaces.get(new Random().nextInt(workplaces.size())));
+                }
             }
         }
 
-        
         navigationManager.refreshNavigationMesh();
     }
 
@@ -113,10 +112,10 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         if (entity instanceof Occupiable)
             assetManager.addOccupiable((Occupiable) entity);
     }
-    
+
     private void addEntities(Object... entities)
     {
-        for (Object entity: entities)
+        for (Object entity : entities)
             addEntity(entity);
     }
 

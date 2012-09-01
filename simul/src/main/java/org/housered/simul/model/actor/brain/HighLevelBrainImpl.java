@@ -21,7 +21,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HighLevelBrainImpl.class);
-    private static final long GAME_SECONDS_AT_WORK = TimeUnit.HOURS.toSeconds(8);
+    private static final long GAME_SECONDS_AT_WORK = TimeUnit.HOURS.toSeconds(1);
     private final Actor actor;
     private final AssetManager assetManager;
     private final CommercialManager commercialManager;
@@ -43,7 +43,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
     @Override
     public Vector decideWhereToGo()
     {
-        if (state == State.AT_HOME && gameClock.getHour() == 8)
+        if (state == State.AT_HOME)// && gameClock.getHour() == 8)
         {
             LOGGER.trace("Time to go to work");
             Set<CommercialBuilding> placesOfWork = commercialManager.getPlacesOfWork(actor);
