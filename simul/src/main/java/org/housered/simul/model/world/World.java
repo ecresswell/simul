@@ -44,7 +44,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     private NavigationManager navigationManager = new NavigationManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
     private AssetManager assetManager = new AssetManager();
     private CommercialManager commercialManager = new CommercialManager();
-    private RoadNetworkManager roadNetwork = new RoadNetworkManager();
+    private RoadNetworkManager roadNetwork = new RoadNetworkManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
     private GuiManager guiManager;
     private GameClockImpl gameClock;
 
