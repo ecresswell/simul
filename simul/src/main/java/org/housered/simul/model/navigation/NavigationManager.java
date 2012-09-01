@@ -85,7 +85,7 @@ public class NavigationManager
         {
             nodeConnector.addObstacle(o, obstacles, MAX_CONNECTION_DISTANCE);
         }
-
+        
         LOGGER.debug("Refresh of nav mesh took {} ms", System.currentTimeMillis() - start);
     }
 

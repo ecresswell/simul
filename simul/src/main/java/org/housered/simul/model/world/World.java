@@ -7,8 +7,6 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -22,6 +20,7 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.Collidable;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.RenderableBoundingBox;
+import org.housered.simul.model.navigation.RoadNetworkManager;
 import org.housered.simul.model.work.CommercialManager;
 import org.housered.simul.model.work.Workplace;
 import org.housered.simul.model.work.WorkplaceFactory;
@@ -45,8 +44,9 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     private NavigationManager navigationManager = new NavigationManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
     private AssetManager assetManager = new AssetManager();
     private CommercialManager commercialManager = new CommercialManager();
-    private GameClockImpl gameClock;
+    private RoadNetworkManager roadNetwork = new RoadNetworkManager();
     private GuiManager guiManager;
+    private GameClockImpl gameClock;
 
     private InputManager inputManager = new InputManager();
     private final Camera camera;
