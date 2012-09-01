@@ -1,4 +1,4 @@
-package org.housered.simul.model.assets;
+package org.housered.simul.model.work;
 
 import java.util.Collections;
 import java.util.HashMap;

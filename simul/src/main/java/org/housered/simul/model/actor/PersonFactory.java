@@ -1,8 +1,8 @@
 package org.housered.simul.model.actor;
 
 import org.housered.simul.model.assets.AssetManager;
-import org.housered.simul.model.assets.CommercialManager;
 import org.housered.simul.model.navigation.NavigationManager;
+import org.housered.simul.model.work.CommercialManager;
 import org.housered.simul.model.world.GameClock;
 import org.housered.simul.model.world.IdGenerator;
 

@@ -10,16 +10,16 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.housered.simul.model.actor.Person;
 import org.housered.simul.model.actor.PersonFactory;
 import org.housered.simul.model.assets.AssetManager;
-import org.housered.simul.model.assets.CommercialManager;
 import org.housered.simul.model.assets.House;
 import org.housered.simul.model.assets.HouseFactory;
 import org.housered.simul.model.assets.Occupiable;
-import org.housered.simul.model.assets.Workplace;
-import org.housered.simul.model.assets.WorkplaceFactory;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.BoundingBox;
 import org.housered.simul.model.navigation.Collidable;
 import org.housered.simul.model.navigation.NavigationManager;
+import org.housered.simul.model.work.CommercialManager;
+import org.housered.simul.model.work.Workplace;
+import org.housered.simul.model.work.WorkplaceFactory;
 import org.housered.simul.view.Renderable;
 import org.housered.simul.view.RenderableProvider;
 import org.housered.simul.view.gui.GuiManager;
@@ -164,6 +164,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         if (inputManager.isKeyDown(KeyEvent.VK_DOWN))
         {
             camera.incrementYOffset(-Camera.DEFAULT_CAMERA_MOVE);
+            System.gc();
         }
         if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
         {

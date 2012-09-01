@@ -1,7 +1,8 @@
-package org.housered.simul.model.assets;
+package org.housered.simul.model.work;
 
 import java.awt.Color;
 
+import org.housered.simul.model.assets.AbstractOccupiable;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;

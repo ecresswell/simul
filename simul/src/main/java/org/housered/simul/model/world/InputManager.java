@@ -129,7 +129,7 @@ public final class InputManager implements KeyListener, Tickable
     @Override
     public void tick(float dt)
     {
-      //clear out the key up states
+        //clear out the key up states
         key_state_up = new boolean[256];
         keyReleased = false;
         if (keyCache.length() > 1024)

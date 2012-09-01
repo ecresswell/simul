@@ -5,10 +5,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.assets.AssetManager;
-import org.housered.simul.model.assets.CommercialBuilding;
-import org.housered.simul.model.assets.CommercialManager;
 import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Vector;
+import org.housered.simul.model.work.CommercialBuilding;
+import org.housered.simul.model.work.CommercialManager;
 import org.housered.simul.model.world.GameClock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
