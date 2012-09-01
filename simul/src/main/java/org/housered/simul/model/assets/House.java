@@ -29,6 +29,12 @@ public class House extends AbstractOccupiable implements Tickable
         r.setColour(Color.RED);
         r.drawRect(position, size);
     }
+    
+    @Override
+    public byte getZOrder()
+    {
+        return BUILDING_Z_ORDER;
+    }
 
     @Override
     public String toString()

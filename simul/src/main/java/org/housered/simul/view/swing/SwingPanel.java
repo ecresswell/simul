@@ -35,7 +35,7 @@ public class SwingPanel extends JPanel
         renderables.beginRender();
         GraphicsAdapter adapter = new SwingGraphicsAdapter(g2, renderables.getCamera());
         
-        for (Renderable r : renderables.getRenderables())
+        for (Renderable r : renderables.getZOrderedRenderables())
         {
             r.render(adapter);
         }

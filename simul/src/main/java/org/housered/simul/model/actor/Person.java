@@ -54,6 +54,12 @@ public class Person implements Renderable, Tickable, Actor
         r.setColour(Color.GREEN);
         r.fillCircle(getPosition(), 3);
     }
+    
+    @Override
+    public byte getZOrder()
+    {
+        return PERSON_Z_ORDER;
+    }
 
     @Override
     public void tick(float dt)

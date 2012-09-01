@@ -12,9 +12,9 @@ public interface GraphicsAdapter
      * Render a filled rectangle at the given world position, with the passed dimensions. The
      * position is the top left.
      */
-    void fillRect(Vector position, Vector dimension);
+    void fillRect(Vector position, Vector size);
     
-    void drawRect(Vector position, Vector dimension);
+    void drawRect(Vector position, Vector size);
     
     void fillCircle(Vector position, float radius);
     

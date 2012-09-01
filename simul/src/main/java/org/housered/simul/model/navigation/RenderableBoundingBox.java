@@ -2,22 +2,28 @@ package org.housered.simul.model.navigation;
 
 import java.awt.Color;
 
-import org.housered.simul.model.location.Locatable;
+import org.housered.simul.model.location.BoundingBox;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
 
-public class BoundingBox implements Locatable, Renderable
+public class RenderableBoundingBox implements Renderable, BoundingBox
 {
     private Vector position;
     private Vector size;
-    
-    public BoundingBox(Vector position, Vector size)
+
+    public RenderableBoundingBox(Vector position, Vector size)
     {
         this.position = position;
         this.size = size;
     }
     
+    @Override
+    public byte getZOrder()
+    {
+        return BUILDING_Z_ORDER;
+    }
+
     @Override
     public Vector getPosition()
     {
@@ -28,6 +34,12 @@ public class BoundingBox implements Locatable, Renderable
     public void render(GraphicsAdapter r)
     {
         r.setColour(Color.red);
-        r.drawRect(position, size);        
+        r.drawRect(position, size);
+    }
+
+    @Override
+    public Vector getSize()
+    {
+        return size;
     }
 }

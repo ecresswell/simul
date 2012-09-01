@@ -22,4 +22,10 @@ public class GuiManager implements Renderable
         r.setColour(Color.white);
         r.drawAbsoluteText(20, 20, gameClock.getDigitalClock());
     }
+    
+    @Override
+    public byte getZOrder()
+    {
+        return GUI_Z_ORDER;
+    }
 }

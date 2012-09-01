@@ -21,6 +21,12 @@ public class Workplace extends AbstractOccupiable implements Tickable, Commercia
         r.setColour(Color.blue);
         r.drawRect(position, size);
     }
+    
+    @Override
+    public byte getZOrder()
+    {
+        return BUILDING_Z_ORDER;
+    }
 
     @Override
     public Vector getEntryPoint()
