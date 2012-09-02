@@ -28,9 +28,10 @@ public class Person implements Renderable, Tickable, Actor
     private HighLevelBrain highLevel;
     private NavigationBrain navigation;
     private SpeedLimiter speedLimiter = new SpeedLimiter();
+    private boolean invisible;
 
-    public Person(long id, AssetManager assetManager, JobManager jobManager,
-            NavigationManager navigationManager, GameClock gameClock, RoadNetworkManager roadNetworkManager)
+    public Person(long id, AssetManager assetManager, JobManager jobManager, NavigationManager navigationManager,
+            GameClock gameClock, RoadNetworkManager roadNetworkManager)
     {
         this.id = id;
         speedLimiter.setSpeedLimit(3);
@@ -53,6 +54,9 @@ public class Person implements Renderable, Tickable, Actor
     @Override
     public void render(GraphicsAdapter r)
     {
+        if (invisible)
+            return;
+
         r.setColour(Color.GREEN);
         //draw in the middle
         r.fillCircle(getPosition(), 3);
@@ -87,6 +91,12 @@ public class Person implements Renderable, Tickable, Actor
         {
             highLevel.arrivedAtTarget();
         }
+    }
+
+    @Override
+    public void setInvisible(boolean invisible)
+    {
+        this.invisible = invisible;
     }
 
     private void incrementPosition(Vector delta)

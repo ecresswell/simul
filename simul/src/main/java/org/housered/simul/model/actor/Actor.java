@@ -7,4 +7,5 @@ import org.housered.simul.model.world.Identifiable;
 
 public interface Actor extends Identifiable, Locatable, Occupant, Employee
 {
+    void setInvisible(boolean invisible);
 }

@@ -64,6 +64,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
                     currentTarget.exit(actor);
 
                 state = State.GOING_HOME;
+                actor.setInvisible(false);
                 currentTarget = home;
 
                 queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()), NavigationType.WALK);
@@ -81,6 +82,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
                 LOGGER.trace("Time to go to work via the car");
                 currentTarget.exit(actor);
                 state = State.GOING_TO_WORK;
+                actor.setInvisible(false);
                 currentTarget = job.getJobLocation();
 
                 queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()), NavigationType.WALK);
@@ -113,16 +115,20 @@ public class HighLevelBrainImpl implements HighLevelBrain
             if (state == State.GOING_HOME)
             {
                 LOGGER.trace("Arrived at home");
+                
                 currentTarget.occupy(actor);
                 job.leftWork();
                 state = State.AT_HOME;
+                actor.setInvisible(true);
             }
             else if (state == State.GOING_TO_WORK)
             {
                 LOGGER.trace("Arrived at work");
+                
                 currentTarget.occupy(actor);
                 job.arrivedAtWork();
                 state = State.AT_WORK;
+                actor.setInvisible(true);
             }
         }
     }

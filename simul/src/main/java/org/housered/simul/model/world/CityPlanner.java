@@ -41,8 +41,8 @@ public class CityPlanner
 
     public void loadLevel(World world)
     {
-        loadSimpleMap(world);
-        //loadComplicatedMap(world);
+        //loadSimpleMap(world);
+        loadComplicatedMap(world);
     }
 
     private void loadSimpleMap(World world)
@@ -91,14 +91,14 @@ public class CityPlanner
             {
                 House house = houseFactory.createHouse(x, y);
                 world.addEntity(house);
-                for (int i = 0; i < 30; i++)
+                for (int i = 0; i < 3; i++)
                 {
                     Person person = personFactory.createPerson(x - 1, y - 1);
                     world.addEntity(person);
                     assetManager.createDeed(person, house);
                     Workplace randomWorkplace = workplaces.get(new Random().nextInt(workplaces.size()));
                     jobManager.createContract(person, new JobDefinition(gameClock, randomWorkplace, 7, 30,
-                            TimeUnit.HOURS.toSeconds(8)));
+                            TimeUnit.HOURS.toSeconds(1)));
                 }
             }
         }

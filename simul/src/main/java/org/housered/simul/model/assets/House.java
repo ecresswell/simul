@@ -45,12 +45,12 @@ public class House extends AbstractOccupiable implements Tickable
     @Override
     public Vector getEntryPoint()
     {
-        return getPosition().translateCopy(-1, -1);
+        return getPosition().translateCopy(size.x / 2 + 1, size.y + 1);
     }
 
     @Override
     public Vector getExitPoint()
     {
-        return getPosition().translateCopy(-1, -1);
+        return getPosition().translateCopy(size.x / 2 + 1, size.y + 1);
     }
 }

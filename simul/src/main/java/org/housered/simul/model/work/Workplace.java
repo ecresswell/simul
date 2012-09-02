@@ -1,6 +1,9 @@
 package org.housered.simul.model.work;
 
+import static java.lang.Math.round;
+
 import java.awt.Color;
+import java.util.Random;
 
 import org.housered.simul.model.assets.AbstractOccupiable;
 import org.housered.simul.model.location.Vector;
@@ -19,6 +22,16 @@ public class Workplace extends AbstractOccupiable implements Tickable
     {
         r.setColour(Color.blue);
         r.drawRect(position, size);
+
+        Random random = new Random();
+        r.setColour(Color.GREEN);
+
+        for (int i = 0; i < occupants.size(); i++)
+        {
+            r.fillCircle(
+                    new Vector(position.x + random.nextInt((int) round(size.x)), position.y
+                            + random.nextInt((int) round(size.y))), 3);
+        }
     }
 
     @Override
@@ -30,13 +43,13 @@ public class Workplace extends AbstractOccupiable implements Tickable
     @Override
     public Vector getEntryPoint()
     {
-        return position.translateCopy(-1, -1);
+        return getPosition().translateCopy(size.x / 2 + 1, size.y + 1);
     }
 
     @Override
     public Vector getExitPoint()
     {
-        return position.translateCopy(-1, -1);
+        return getPosition().translateCopy(size.x / 2 + 1, size.y + 1);
     }
 
     @Override
@@ -44,5 +57,4 @@ public class Workplace extends AbstractOccupiable implements Tickable
     {
         // TODO Auto-generated method stub
     }
-
 }
