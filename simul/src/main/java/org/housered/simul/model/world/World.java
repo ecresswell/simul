@@ -6,15 +6,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.housered.simul.model.actor.Person;
-import org.housered.simul.model.actor.PersonFactory;
 import org.housered.simul.model.assets.AssetManager;
-import org.housered.simul.model.assets.House;
-import org.housered.simul.model.assets.HouseFactory;
 import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.Collidable;
@@ -22,9 +17,7 @@ import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.RenderableBoundingBox;
 import org.housered.simul.model.navigation.Road;
 import org.housered.simul.model.navigation.RoadNetworkManager;
-import org.housered.simul.model.work.CommercialManager;
-import org.housered.simul.model.work.Workplace;
-import org.housered.simul.model.work.WorkplaceFactory;
+import org.housered.simul.model.work.JobManager;
 import org.housered.simul.view.Renderable;
 import org.housered.simul.view.RenderableProvider;
 import org.housered.simul.view.gui.GuiManager;
@@ -44,7 +37,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
 
     private NavigationManager navigationManager = new NavigationManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
     private AssetManager assetManager = new AssetManager();
-    private CommercialManager commercialManager = new CommercialManager();
+    private JobManager jobManager = new JobManager();
     private RoadNetworkManager roadNetwork = new RoadNetworkManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
     private GuiManager guiManager;
     private GameClockImpl gameClock;
@@ -66,7 +59,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         guiManager = new GuiManager(gameClock);
         addEntity(guiManager);
 
-        CityPlanner cityPlanner = new CityPlanner(this, gameClock, assetManager, commercialManager, navigationManager,
+        CityPlanner cityPlanner = new CityPlanner(this, gameClock, assetManager, jobManager, navigationManager,
                 roadNetwork);
         cityPlanner.loadLevel(this);
 

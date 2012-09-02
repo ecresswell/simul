@@ -12,7 +12,7 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.NavigationOrder;
 import org.housered.simul.model.navigation.RoadNetworkManager;
-import org.housered.simul.model.work.CommercialManager;
+import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.world.GameClock;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
@@ -29,12 +29,12 @@ public class Person implements Renderable, Tickable, Actor
     private NavigationBrain navigation;
     private SpeedLimiter speedLimiter = new SpeedLimiter();
 
-    public Person(long id, AssetManager assetManager, CommercialManager commercialManager,
+    public Person(long id, AssetManager assetManager, JobManager jobManager,
             NavigationManager navigationManager, GameClock gameClock, RoadNetworkManager roadNetworkManager)
     {
         this.id = id;
         speedLimiter.setSpeedLimit(3);
-        highLevel = new HighLevelBrainImpl(this, assetManager, commercialManager, gameClock, roadNetworkManager);
+        highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager);
         navigation = new NavigationMeshBrain(navigationManager, roadNetworkManager);
     }
 

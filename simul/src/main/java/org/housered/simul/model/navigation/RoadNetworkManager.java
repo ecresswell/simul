@@ -82,7 +82,8 @@ public class RoadNetworkManager
             Vector bottomLeft = new Vector(r.getMinX(), r.getMaxY());
 
             KPolygon poly = new KPolygon(topLeft, topRight, bottomRight, bottomLeft);
-            obstacles.add(PathBlockingObstacleImpl.createObstacleFromInnerPolygon(poly));
+            PathBlockingObstacle o = PathBlockingObstacleImpl.createObstacleFromInnerPolygon(poly);
+            obstacles.add(o);
         }
 
         return obstacles;

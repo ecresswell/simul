@@ -7,21 +7,20 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
 
-
-public class Workplace extends AbstractOccupiable implements Tickable, CommercialBuilding
+public class Workplace extends AbstractOccupiable implements Tickable
 {
     public Workplace(long id, Vector position, Vector size)
     {
         super(id, position, size);
     }
-    
+
     @Override
     public void render(GraphicsAdapter r)
     {
         r.setColour(Color.blue);
         r.drawRect(position, size);
     }
-    
+
     @Override
     public byte getZOrder()
     {
