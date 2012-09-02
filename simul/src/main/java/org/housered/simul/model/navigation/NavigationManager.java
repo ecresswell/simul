@@ -40,7 +40,7 @@ public class NavigationManager
         addColliableWithoutNavMeshRefresh(collidable);
         refreshNavigationMesh();
     }
-    
+
     public void addColliableWithoutNavMeshRefresh(Collidable collidable)
     {
         if (!isInsideWorldBounds(collidable))
@@ -59,7 +59,7 @@ public class NavigationManager
 
         PathData result = pathfinder.calc(kStart, kEnd, MAX_CONNECTION_DISTANCE, nodeConnector, obstacles);
 
-        LOGGER.trace("Path calculation took {} ms", System.currentTimeMillis() - startTime);
+        LOGGER.trace("Path calculation took {} ms - {}", System.currentTimeMillis() - startTime, result.getResult());
         return result;
     }
 
@@ -85,7 +85,7 @@ public class NavigationManager
         {
             nodeConnector.addObstacle(o, obstacles, MAX_CONNECTION_DISTANCE);
         }
-        
+
         LOGGER.debug("Refresh of nav mesh took {} ms", System.currentTimeMillis() - start);
     }
 

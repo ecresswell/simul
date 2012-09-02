@@ -2,6 +2,9 @@ package org.housered.simul.model.actor.brain;
 
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
+import org.housered.simul.model.navigation.NavigationOrder;
+import org.housered.simul.model.navigation.RoadNetworkManager;
+import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,7 +14,7 @@ public class NavigationMeshBrain implements NavigationBrain
 {
     private enum NavigationState
     {
-        NO_TARGET, MOVING, ARRIVED
+        NO_TARGET, MOVING, ARRIVED, WAITING
     }
 
     private static Logger LOGGER = LoggerFactory.getLogger(NavigationMeshBrain.class);
@@ -20,18 +23,33 @@ public class NavigationMeshBrain implements NavigationBrain
     private Vector target;
     private PathData path;
     private NavigationState state = NavigationState.NO_TARGET;
+    private final RoadNetworkManager networkManager;
 
-    public NavigationMeshBrain(NavigationManager navigationManager)
+    public NavigationMeshBrain(NavigationManager navigationManager, RoadNetworkManager networkManager)
     {
         this.navigationManager = navigationManager;
+        this.networkManager = networkManager;
         currentPosition = new Vector();
     }
 
     @Override
-    public void setTarget(Vector target)
+    public void setTarget(NavigationOrder order)
     {
-        this.target = target;
-        path = navigationManager.findPath(getPosition(), target);
+        target = order.getTarget();
+
+        if (order.getType() == NavigationType.CAR)
+        {
+            path = networkManager.findPath(getPosition(), target);
+        }
+        else if (order.getType() == NavigationType.WALK)
+        {
+            path = navigationManager.findPath(getPosition(), target);
+        }
+        else
+        {
+            throw new IllegalArgumentException("Unrecognised NavigationType - " + order.getType());
+        }
+
         //the first point is where we are at the moment
         path.getPoints().remove(0);
         state = NavigationState.MOVING;
@@ -70,8 +88,8 @@ public class NavigationMeshBrain implements NavigationBrain
             }
             else
             {
-                LOGGER.trace("Arrived at waypoint {}, moving to next {}", path.getPoints().get(0),
-                        path.getPoints().get(1));
+                LOGGER.trace("Arrived at waypoint {}, moving to next {}", path.getPoints().get(0), path.getPoints()
+                        .get(1));
                 path.getPoints().remove(0);
             }
         }
@@ -87,6 +105,11 @@ public class NavigationMeshBrain implements NavigationBrain
     @Override
     public boolean hasArrivedAtTarget()
     {
-        return state == NavigationState.ARRIVED;
+        if (state == NavigationState.ARRIVED)
+        {
+            state = NavigationState.WAITING;
+            return true;
+        }
+        return false;
     }
 }

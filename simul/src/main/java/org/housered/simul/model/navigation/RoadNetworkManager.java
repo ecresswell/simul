@@ -1,35 +1,49 @@
 package org.housered.simul.model.navigation;
 
-import static java.util.Arrays.asList;
-
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import org.housered.simul.model.location.Vector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import straightedge.geom.KPoint;
 import straightedge.geom.KPolygon;
+import straightedge.geom.path.NodeConnector;
 import straightedge.geom.path.PathBlockingObstacle;
 import straightedge.geom.path.PathBlockingObstacleImpl;
 import straightedge.geom.path.PathData;
-import straightedge.geom.path.PathData.Result;
+import straightedge.geom.path.PathFinder;
 
 public class RoadNetworkManager
 {
-    private static final Set<Result> BAD_RESULTS = new HashSet<PathData.Result>(asList(Result.ERROR1, Result.ERROR2,
-            Result.ERROR3, Result.ERROR4, Result.NO_RESULT));
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoadNetworkManager.class);
+    private static final float MAX_CONNECTION_DISTANCE = 1000f;
+    private static final double ROAD_EXPANSION_MARGIN = 0.01d;
     private List<Road> roads = new LinkedList<Road>();
     private final Vector worldBounds;
+    private PathFinder pathfinder = new PathFinder();
+    private ArrayList<PathBlockingObstacle> obstacles = new ArrayList<PathBlockingObstacle>();
+    private NodeConnector<PathBlockingObstacle> nodeConnector = new NodeConnector<PathBlockingObstacle>();
 
     public RoadNetworkManager(Vector worldBounds)
     {
         this.worldBounds = worldBounds;
+    }
+
+    public PathData findPath(Vector start, Vector end)
+    {
+        long startTime = System.currentTimeMillis();
+        Vector kStart = new Vector(start.getX(), start.getY());
+        Vector kEnd = new Vector(end.getX(), end.getY());
+
+        PathData result = pathfinder.calc(kStart, kEnd, MAX_CONNECTION_DISTANCE, nodeConnector, obstacles);
+
+        LOGGER.trace("Path calculation took {} ms - {}", System.currentTimeMillis() - startTime, result.getResult());
+        return result;
     }
 
     public void addRoad(Road road)
@@ -37,9 +51,25 @@ public class RoadNetworkManager
         roads.add(road);
     }
 
-    List<PathBlockingObstacle> createObstacles()
+    public void refreshNavigationMesh()
     {
-        List<PathBlockingObstacle> obstacles = new LinkedList<PathBlockingObstacle>();
+        long start = System.currentTimeMillis();
+
+        obstacles.clear();
+        nodeConnector = new NodeConnector<PathBlockingObstacle>();
+        obstacles = createObstacles();
+
+        for (PathBlockingObstacle o : obstacles)
+        {
+            nodeConnector.addObstacle(o, obstacles, MAX_CONNECTION_DISTANCE);
+        }
+
+        LOGGER.debug("Refresh of nav mesh took {} ms", System.currentTimeMillis() - start);
+    }
+
+    ArrayList<PathBlockingObstacle> createObstacles()
+    {
+        ArrayList<PathBlockingObstacle> obstacles = new ArrayList<PathBlockingObstacle>();
 
         if (roads.size() == 0)
             return obstacles;
@@ -63,8 +93,9 @@ public class RoadNetworkManager
         List<Rectangle2D.Double> rects = new LinkedList<Rectangle2D.Double>();
         for (Road road : roads)
         {
-            rects.add(new Rectangle2D.Double(road.getPosition().x, road.getPosition().y, road.getSize().x, road
-                    .getSize().y));
+            rects.add(new Rectangle2D.Double(road.getPosition().x - ROAD_EXPANSION_MARGIN, road.getPosition().y
+                    - ROAD_EXPANSION_MARGIN, road.getSize().x + ROAD_EXPANSION_MARGIN * 2, road.getSize().y
+                    + ROAD_EXPANSION_MARGIN * 2));
         }
 
         List<Rectangle2D.Double> outputs = new ArrayList<Rectangle2D.Double>();
@@ -108,7 +139,7 @@ public class RoadNetworkManager
         return rects;
     }
 
-    Vector getClosestRoadPoint(Vector point)
+    public Vector getClosestRoadPoint(Vector point)
     {
         double minDistance = Double.MAX_VALUE;
         Vector minDistancePoint = null;

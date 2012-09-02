@@ -1,11 +1,12 @@
 package org.housered.simul.model.actor.brain;
 
 import org.housered.simul.model.location.Vector;
+import org.housered.simul.model.navigation.NavigationOrder;
 
 public interface NavigationBrain
 {
-    void setTarget(Vector position);
-    
+    void setTarget(NavigationOrder order);
+
     boolean hasTarget();
 
     /**
@@ -13,8 +14,8 @@ public interface NavigationBrain
      * handled by this brain.
      */
     Vector getNextPoint();
-    
+
     Vector getPosition();
-    
+
     boolean hasArrivedAtTarget();
 }

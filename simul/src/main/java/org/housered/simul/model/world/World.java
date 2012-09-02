@@ -20,6 +20,7 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.Collidable;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.RenderableBoundingBox;
+import org.housered.simul.model.navigation.Road;
 import org.housered.simul.model.navigation.RoadNetworkManager;
 import org.housered.simul.model.work.CommercialManager;
 import org.housered.simul.model.work.Workplace;
@@ -65,43 +66,15 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         guiManager = new GuiManager(gameClock);
         addEntity(guiManager);
 
-        PersonFactory personFactory = new PersonFactory(this, assetManager, commercialManager, navigationManager,
-                gameClock);
-        HouseFactory houseFactory = new HouseFactory(this);
-        WorkplaceFactory workplaceFactory = new WorkplaceFactory(this);
+        CityPlanner cityPlanner = new CityPlanner(this, gameClock, assetManager, commercialManager, navigationManager,
+                roadNetwork);
+        cityPlanner.loadLevel(this);
 
-        List<Workplace> workplaces = new LinkedList<Workplace>();
-
-        for (int x = 600; x < 800; x += 50)
-        {
-            for (int y = 50; y < 600; y += 50)
-            {
-                Workplace workplace = workplaceFactory.createWorkplace(x, y);
-                workplaces.add(workplace);
-                addEntity(workplace);
-            }
-        }
-
-        for (int x = 50; x < 600; x += 50)
-        {
-            for (int y = 50; y < 600; y += 50)
-            {
-                House house = houseFactory.createHouse(x, y);
-                addEntity(house);
-                for (int i = 0; i < 3; i++)
-                {
-                    Person person = personFactory.createPerson(x - 1, y - 1);
-                    addEntity(person);
-                    assetManager.createDeed(person, house);
-                    commercialManager.createContract(person, workplaces.get(new Random().nextInt(workplaces.size())));
-                }
-            }
-        }
-
+        roadNetwork.refreshNavigationMesh();
         navigationManager.refreshNavigationMesh();
     }
 
-    private void addEntity(Object entity)
+    public void addEntity(Object entity)
     {
         if (entity instanceof Identifiable)
             LOGGER.debug("Add entity with id {} - {}", ((Identifiable) entity).getId(), entity);
@@ -119,9 +92,11 @@ public class World implements RenderableProvider, Tickable, IdGenerator
             navigationManager.addColliableWithoutNavMeshRefresh((Collidable) entity);
         if (entity instanceof Occupiable)
             assetManager.addOccupiable((Occupiable) entity);
+        if (entity instanceof Road)
+            roadNetwork.addRoad((Road) entity);
     }
 
-    private void addEntities(Object... entities)
+    public void addEntities(Object... entities)
     {
         for (Object entity : entities)
             addEntity(entity);

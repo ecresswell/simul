@@ -10,6 +10,8 @@ import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
+import org.housered.simul.model.navigation.NavigationOrder;
+import org.housered.simul.model.navigation.RoadNetworkManager;
 import org.housered.simul.model.work.CommercialManager;
 import org.housered.simul.model.world.GameClock;
 import org.housered.simul.model.world.Tickable;
@@ -28,12 +30,12 @@ public class Person implements Renderable, Tickable, Actor
     private SpeedLimiter speedLimiter = new SpeedLimiter();
 
     public Person(long id, AssetManager assetManager, CommercialManager commercialManager,
-            NavigationManager navigationManager, GameClock gameClock)
+            NavigationManager navigationManager, GameClock gameClock, RoadNetworkManager roadNetworkManager)
     {
         this.id = id;
         speedLimiter.setSpeedLimit(3);
-        highLevel = new HighLevelBrainImpl(this, assetManager, commercialManager, gameClock);
-        navigation = new NavigationMeshBrain(navigationManager);
+        highLevel = new HighLevelBrainImpl(this, assetManager, commercialManager, gameClock, roadNetworkManager);
+        navigation = new NavigationMeshBrain(navigationManager, roadNetworkManager);
     }
 
     @Override
@@ -52,9 +54,10 @@ public class Person implements Renderable, Tickable, Actor
     public void render(GraphicsAdapter r)
     {
         r.setColour(Color.GREEN);
+        //draw in the middle
         r.fillCircle(getPosition(), 3);
     }
-    
+
     @Override
     public byte getZOrder()
     {
@@ -66,7 +69,7 @@ public class Person implements Renderable, Tickable, Actor
     {
         speedLimiter.startNewTick(dt);
 
-        Vector target = highLevel.decideWhereToGo();
+        NavigationOrder target = highLevel.decideWhereToGo();
 
         if (target != null)
         {

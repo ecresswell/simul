@@ -4,7 +4,7 @@ import straightedge.geom.KPoint;
 
 public class Vector extends KPoint
 {
-    private static final double EPSILON = 0.000001f;
+    public static final double EPSILON = 0.000001f;
 
     public Vector()
     {

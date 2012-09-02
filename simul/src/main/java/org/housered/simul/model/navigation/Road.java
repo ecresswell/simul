@@ -9,7 +9,7 @@ import org.housered.simul.view.Renderable;
 
 public class Road implements Renderable, BoundingBox
 {
-    enum Direction
+    public enum Direction
     {
         NORTH, EAST, SOUTH, WEST
     }
@@ -18,6 +18,11 @@ public class Road implements Renderable, BoundingBox
     private Vector size;
     private Direction direction;
 
+    public Road(Vector position, Vector size)
+    {
+        this(position, size, Direction.NORTH);
+    }
+    
     public Road(Vector position, Vector size, Direction direction)
     {
         this.position = position;
