@@ -3,10 +3,11 @@ package org.housered.simul.view.gui;
 import java.awt.Color;
 
 import org.housered.simul.model.world.GameClock;
+import org.housered.simul.model.world.GameObject;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
 
-public class GuiManager implements Renderable
+public class GuiManager implements Renderable, GameObject
 {
     private final GameClock gameClock;
 

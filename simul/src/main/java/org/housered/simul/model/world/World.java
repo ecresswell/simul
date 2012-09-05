@@ -2,6 +2,7 @@ package org.housered.simul.model.world;
 
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -67,7 +68,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         navigationManager.refreshNavigationMesh();
     }
 
-    public void addEntity(Object entity)
+    public void addEntity(GameObject entity)
     {
         if (entity instanceof Identifiable)
             LOGGER.debug("Add entity with id {} - {}", ((Identifiable) entity).getId(), entity);
@@ -89,9 +90,15 @@ public class World implements RenderableProvider, Tickable, IdGenerator
             roadNetwork.addRoad((Road) entity);
     }
 
-    public void addEntities(Object... entities)
+    public void addEntities(GameObject... entities)
     {
-        for (Object entity : entities)
+        for (GameObject entity : entities)
+            addEntity(entity);
+    }
+
+    public void addEntities(Collection<? extends GameObject> entities)
+    {
+        for (GameObject entity : entities)
             addEntity(entity);
     }
 

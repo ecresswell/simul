@@ -19,6 +19,8 @@ import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.work.Workplace;
 import org.housered.simul.model.work.WorkplaceFactory;
 
+import straightedge.geom.path.PathData.Result;
+
 public class CityPlanner
 {
     private final GameClock gameClock;
@@ -42,7 +44,68 @@ public class CityPlanner
     public void loadLevel(World world)
     {
         //loadSimpleMap(world);
-        loadComplicatedMap(world);
+        //loadComplicatedMap(world);
+        loadSemiComplexCity(world);
+    }
+
+    private List<House> createCityBlock(double x, double y, double width, double height, int houses)
+    {
+        HouseFactory houseFactory = new HouseFactory(idGenerator);
+        List<House> result = new LinkedList<House>();
+
+        //TODO: check we can actually fit square houses in the width
+        double houseWidth = width / houses;
+        double xCursor = x;
+
+        for (int i = 0; i < houses; i++)
+        {
+            House upper = houseFactory.createHouse(xCursor, y, houseWidth, houseWidth);
+            House lower = houseFactory.createHouse(xCursor, y + height - houseWidth, houseWidth, houseWidth);
+            xCursor += houseWidth;
+
+            result.add(upper);
+            result.add(lower);
+        }
+
+        final double offset = 5;
+        double fillWidth = height - houseWidth * 2 - offset;
+        if (fillWidth <= 0)
+            throw new IllegalStateException("Cannot create fill house with 0 or negative area");
+        House bigLeft = houseFactory.createHouse(x, y + houseWidth, fillWidth, fillWidth);
+        House bigRight = houseFactory.createHouse(x + width - fillWidth, y + houseWidth + offset, fillWidth, fillWidth);
+        result.add(bigLeft);
+        result.add(bigRight);
+
+        return result;
+    }
+    
+    private void loadSemiComplexCity(World world)
+    {
+        PersonFactory personFactory = new PersonFactory(idGenerator, assetManager, jobManager, navigationManager,
+                gameClock, roadNetworkManager);
+        HouseFactory houseFactory = new HouseFactory(idGenerator);
+        WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
+
+        int blocks = 3;
+        double blockWidth = 200;
+        double blockHeight = 100;
+        double xCursor = 10;
+        double yCursor = 10;
+        
+        List<House> houses = new LinkedList<House>();
+        
+        for (int x = 0; x < blocks; x++)
+        {
+            yCursor = 10;
+            for (int y = 0; y < blocks; y++)
+            {
+                houses.addAll(createCityBlock(xCursor, yCursor, blockWidth, blockHeight, 10));
+                yCursor += blockHeight * 1.2;
+            }
+            xCursor += blockWidth * 1.2;
+        }
+        
+        world.addEntities(houses);
     }
 
     private void loadSimpleMap(World world)
@@ -64,6 +127,9 @@ public class CityPlanner
         Road road3 = new Road(new Vector(290, 220), new Vector(20, 200));
 
         world.addEntities(person, house, workplace, road1, road2, road3);
+
+        List<House> block = createCityBlock(400, 400, 200, 100, 10);
+        world.addEntities(block);
     }
 
     private void loadComplicatedMap(World world)

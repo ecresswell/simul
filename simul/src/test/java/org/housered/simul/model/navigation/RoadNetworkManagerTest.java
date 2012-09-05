@@ -4,6 +4,7 @@ import static org.housered.simul.model.location.Vector.EPSILON;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
@@ -18,12 +19,14 @@ import straightedge.geom.path.PathData;
 
 public class RoadNetworkManagerTest
 {
+    private static final double WORLD_WIDTH = 1000;
+    private static final double WORLD_HEIGHT = 1000;
     private RoadNetworkManager network;
 
     @Before
     public void setUp()
     {
-        network = new RoadNetworkManager(new Vector(1000, 1000));
+        network = new RoadNetworkManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
     }
 
     @Test
@@ -48,32 +51,35 @@ public class RoadNetworkManagerTest
     @Test
     public void shouldReturn4ObstaclesForASingleRoad()
     {
-        network.addRoad(new Road(new Vector(50, 50), new Vector(10, 50), Direction.NORTH));
+        List<Rectangle2D.Double> rects = new LinkedList<Rectangle2D.Double>();
+        rects.add(new Rectangle2D.Double(50, 50, 10, 50));
 
-        List<Rectangle2D.Double> obstacles = network.inverseRoads();
+        List<Rectangle2D.Double> obstacles = RectangleInverseUtility.inverseRectangles(WORLD_WIDTH, WORLD_HEIGHT, rects);
 
         assertEquals(4, obstacles.size());
-        assertTrue(listFuzzyContains(obstacles, 0, 0, 1000, 49.99));
-        assertTrue(listFuzzyContains(obstacles, 0, 100.01, 1000, 899.99));
-        assertTrue(listFuzzyContains(obstacles, 0, 49.99, 49.99, 50.02));
-        assertTrue(listFuzzyContains(obstacles, 60.01, 49.99, 939.99, 50.02));
+        assertTrue(listFuzzyContains(obstacles, 0, 0, 1000, 50));
+        assertTrue(listFuzzyContains(obstacles, 0, 100, 1000, 900));
+        assertTrue(listFuzzyContains(obstacles, 0, 50, 50, 50));
+        assertTrue(listFuzzyContains(obstacles, 60, 50, 940, 50));
     }
 
     @Test
     public void shouldReturnManyObstaclesForManyRoads()
     {
-        network.addRoad(new Road(new Vector(50, 50), new Vector(10, 50), Direction.NORTH));
-        network.addRoad(new Road(new Vector(250, 200), new Vector(40, 30), Direction.NORTH));
+        List<Rectangle2D.Double> rects = new LinkedList<Rectangle2D.Double>();
+        rects.add(new Rectangle2D.Double(50, 50, 10, 50));
+        rects.add(new Rectangle2D.Double(250, 200, 40, 30));
 
-        List<Rectangle2D.Double> obstacles = network.inverseRoads();
+        List<Rectangle2D.Double> obstacles = RectangleInverseUtility.inverseRectangles(WORLD_WIDTH, WORLD_HEIGHT, rects);
+                
         assertEquals(7, obstacles.size());
-        assertTrue(listFuzzyContains(obstacles, 0, 0, 1000, 49.99));
-        assertTrue(listFuzzyContains(obstacles, 0, 49.99, 49.99, 50.02));
-        assertTrue(listFuzzyContains(obstacles, 60.01, 49.99, 939.99, 50.02));
-        assertTrue(listFuzzyContains(obstacles, 0, 230.01, 1000, 769.99));
-        assertTrue(listFuzzyContains(obstacles, 0, 199.99, 249.99, 30.02));
-        assertTrue(listFuzzyContains(obstacles, 290.01, 199.99, 709.99, 30.02));
-        assertTrue(listFuzzyContains(obstacles, 0, 100.01, 1000, 99.98));
+        assertTrue(listFuzzyContains(obstacles, 0, 0, 1000, 50));
+        assertTrue(listFuzzyContains(obstacles, 0, 50, 50, 50));
+        assertTrue(listFuzzyContains(obstacles, 60, 50, 940, 50));
+        assertTrue(listFuzzyContains(obstacles, 0, 230, 1000, 770));
+        assertTrue(listFuzzyContains(obstacles, 0, 200, 250, 30));
+        assertTrue(listFuzzyContains(obstacles, 290, 200, 710, 30));
+        assertTrue(listFuzzyContains(obstacles, 0, 100, 1000, 100));
     }
 
     @Test
