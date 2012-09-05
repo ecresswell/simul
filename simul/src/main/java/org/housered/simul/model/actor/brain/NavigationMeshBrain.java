@@ -50,6 +50,13 @@ public class NavigationMeshBrain implements NavigationBrain
             throw new IllegalArgumentException("Unrecognised NavigationType - " + order.getType());
         }
 
+        if (path.isError())
+        {
+            LOGGER.error("Could not find path (for {}) between {} and {} - {}", new Object[] {order.getType(),
+                    getPosition(), target, path.getResult()});
+            return;
+        }
+
         //the first point is where we are at the moment
         path.getPoints().remove(0);
         state = NavigationState.MOVING;

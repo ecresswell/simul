@@ -1,6 +1,7 @@
 package org.housered.simul.model.navigation;
 
 import java.awt.Color;
+import java.awt.geom.Rectangle2D;
 
 import org.housered.simul.model.location.BoundingBox;
 import org.housered.simul.model.location.Vector;
@@ -23,6 +24,11 @@ public class Road implements Renderable, BoundingBox, GameObject
     public Road(Vector position, Vector size)
     {
         this(position, size, Direction.NORTH);
+    }
+    
+    public Road(Rectangle2D.Double bounds)
+    {
+        this(new Vector(bounds.x, bounds.y), new Vector(bounds.width, bounds.height));
     }
     
     public Road(Vector position, Vector size, Direction direction)

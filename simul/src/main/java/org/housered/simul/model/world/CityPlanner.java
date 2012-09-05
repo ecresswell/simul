@@ -1,5 +1,9 @@
 package org.housered.simul.model.world;
 
+import static org.housered.simul.model.navigation.RectangleInverseUtility.inverseRectangles;
+
+import java.awt.geom.Rectangle2D;
+import java.awt.geom.Rectangle2D.Double;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -12,14 +16,13 @@ import org.housered.simul.model.assets.House;
 import org.housered.simul.model.assets.HouseFactory;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
+import org.housered.simul.model.navigation.RectangleInverseUtility;
 import org.housered.simul.model.navigation.Road;
 import org.housered.simul.model.navigation.RoadNetworkManager;
 import org.housered.simul.model.work.JobDefinition;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.work.Workplace;
 import org.housered.simul.model.work.WorkplaceFactory;
-
-import straightedge.geom.path.PathData.Result;
 
 public class CityPlanner
 {
@@ -73,39 +76,96 @@ public class CityPlanner
             throw new IllegalStateException("Cannot create fill house with 0 or negative area");
         House bigLeft = houseFactory.createHouse(x, y + houseWidth, fillWidth, fillWidth);
         House bigRight = houseFactory.createHouse(x + width - fillWidth, y + houseWidth + offset, fillWidth, fillWidth);
-        result.add(bigLeft);
-        result.add(bigRight);
+        //result.add(bigLeft);
+        //result.add(bigRight);
 
         return result;
     }
-    
+
     private void loadSemiComplexCity(World world)
     {
-        PersonFactory personFactory = new PersonFactory(idGenerator, assetManager, jobManager, navigationManager,
-                gameClock, roadNetworkManager);
-        HouseFactory houseFactory = new HouseFactory(idGenerator);
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
+        int numberOfPeople = 10000;
+        double pavementOffset = 5;
         int blocks = 3;
         double blockWidth = 200;
         double blockHeight = 100;
+
         double xCursor = 10;
         double yCursor = 10;
-        
+
+        List<Rectangle2D.Double> blockBounds = new LinkedList<Rectangle2D.Double>();
+
+        //houses
         List<House> houses = new LinkedList<House>();
-        
         for (int x = 0; x < blocks; x++)
         {
             yCursor = 10;
             for (int y = 0; y < blocks; y++)
             {
+                blockBounds.add(new Rectangle2D.Double(xCursor - pavementOffset, yCursor - pavementOffset, blockWidth
+                        + pavementOffset * 2, blockHeight + pavementOffset * 2));
                 houses.addAll(createCityBlock(xCursor, yCursor, blockWidth, blockHeight, 10));
                 yCursor += blockHeight * 1.2;
             }
             xCursor += blockWidth * 1.2;
         }
-        
+
+        //work buildings
+        List<Workplace> workplaces = new LinkedList<Workplace>();
+        xCursor = 10;
+        blocks = 2;
+        double yCursorOriginal = yCursor;
+
+        for (int x = 0; x < blocks; x++)
+        {
+            for (int y = 0; y < blocks; y++)
+            {
+                blockBounds.add(new Rectangle2D.Double(xCursor - pavementOffset, yCursor - pavementOffset, blockWidth
+                        + pavementOffset * 2, blockHeight + pavementOffset * 2));
+                Workplace workplace = workplaceFactory.createWorkplace(xCursor, yCursor, blockWidth, blockHeight);
+                workplaces.add(workplace);
+                yCursor += blockHeight * 1.2;
+            }
+            yCursor = yCursorOriginal;
+            xCursor += blockWidth * 1.2;
+        }
+
+        //roads fill the gaps
+        List<Double> roads = inverseRectangles(world.getWorldWidth(), world.getWorldHeight(), blockBounds);
+        for (Double roadRect : roads)
+            world.addEntity(new Road(roadRect));
+
+        List<Person> people = createAndAssignPeople(numberOfPeople, world, houses, workplaces);
+
+        world.addEntities(workplaces);
         world.addEntities(houses);
+        world.addEntities(people);
+    }
+
+    private List<Person> createAndAssignPeople(int numPeople, World world, List<House> houses, List<Workplace> works)
+    {
+        PersonFactory personFactory = new PersonFactory(idGenerator, assetManager, jobManager, navigationManager,
+                gameClock, roadNetworkManager);
+
+        List<Person> people = new LinkedList<Person>();
+        Random r = new Random();
+
+        for (int i = 0; i < numPeople; i++)
+        {
+            House randomHouse = houses.get(r.nextInt(houses.size()));
+            Person person = personFactory.createPerson(randomHouse.getEntryPoint().x, randomHouse.getEntryPoint().y);
+            assetManager.createDeed(person, randomHouse);
+
+            Workplace randomWork = works.get(r.nextInt(works.size()));
+            JobDefinition job = new JobDefinition(gameClock, randomWork, 7, 30, TimeUnit.HOURS.toSeconds(1));
+            jobManager.createContract(person, job.createJob());
+
+            people.add(person);
+        }
+
+        return people;
     }
 
     private void loadSimpleMap(World world)

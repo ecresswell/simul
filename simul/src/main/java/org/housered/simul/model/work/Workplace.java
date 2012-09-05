@@ -1,9 +1,6 @@
 package org.housered.simul.model.work;
 
-import static java.lang.Math.round;
-
 import java.awt.Color;
-import java.util.Random;
 
 import org.housered.simul.model.assets.AbstractOccupiable;
 import org.housered.simul.model.location.Vector;
@@ -23,15 +20,19 @@ public class Workplace extends AbstractOccupiable implements Tickable
         r.setColour(Color.blue);
         r.drawRect(position, size);
 
-        Random random = new Random();
         r.setColour(Color.GREEN);
 
-        for (int i = 0; i < occupants.size(); i++)
-        {
-            r.fillCircle(
-                    new Vector(position.x + random.nextInt((int) round(size.x)), position.y
-                            + random.nextInt((int) round(size.y))), 3);
-        }
+        double percentFull = (double) occupants.size() / 2500;
+        float radius = (float) (Math.min(size.x, size.y) * percentFull);
+
+        r.fillCircle(position, radius);
+
+        //        for (int i = 0; i < occupants.size(); i++)
+        //        {
+        //            r.fillCircle(
+        //                    new Vector(position.x + random.nextInt((int) round(size.x)), position.y
+        //                            + random.nextInt((int) round(size.y))), 3);
+        //        }
     }
 
     @Override

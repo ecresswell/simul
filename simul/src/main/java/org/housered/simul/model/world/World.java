@@ -194,6 +194,16 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     {
         //LOGGER.trace("Average sleep is {}", averageSleep);
     }
+    
+    public double getWorldWidth()
+    {
+        return WORLD_WIDTH;
+    }
+    
+    public double getWorldHeight()
+    {
+        return WORLD_HEIGHT;
+    }
 
     private static class RenderableComparator implements Comparator<Renderable>
     {
