@@ -1,5 +1,11 @@
 package org.housered.simul.model.actor.brain;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
+
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.NavigationOrder;
@@ -12,6 +18,9 @@ import straightedge.geom.path.PathData;
 
 public class NavigationMeshBrain implements NavigationBrain
 {
+    private static final int THREADS = 1;
+    private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREADS);
+
     private enum NavigationState
     {
         NO_TARGET, MOVING, ARRIVED, WAITING
@@ -21,9 +30,12 @@ public class NavigationMeshBrain implements NavigationBrain
     private final NavigationManager navigationManager;
     private Vector currentPosition;
     private Vector target;
+    private NavigationType type;
     private PathData path;
     private NavigationState state = NavigationState.NO_TARGET;
     private final RoadNetworkManager networkManager;
+
+    private FutureTask<PathData> currentTask;
 
     public NavigationMeshBrain(NavigationManager navigationManager, RoadNetworkManager networkManager)
     {
@@ -36,35 +48,74 @@ public class NavigationMeshBrain implements NavigationBrain
     public void setTarget(NavigationOrder order)
     {
         target = order.getTarget();
+        type = order.getType();
 
         if (order.getType() == NavigationType.CAR)
         {
-            path = networkManager.findPath(getPosition(), target);
+            currentTask = new FutureTask<PathData>(new Callable<PathData>() {
+                @Override
+                public PathData call() throws Exception
+                {
+                    // TODO Auto-generated method stub
+                    return networkManager.findPath(getPosition(), target);
+                }
+            });
         }
         else if (order.getType() == NavigationType.WALK)
         {
-            path = navigationManager.findPath(getPosition(), target);
+            currentTask = new FutureTask<PathData>(new Callable<PathData>() {
+                @Override
+                public PathData call() throws Exception
+                {
+                    // TODO Auto-generated method stub
+                    return navigationManager.findPath(getPosition(), target);
+                }
+            });
         }
         else
         {
             throw new IllegalArgumentException("Unrecognised NavigationType - " + order.getType());
         }
 
+        EXECUTOR_SERVICE.execute(currentTask);
+    }
+
+    private void startMoving()
+    {
+        try
+        {
+            path = currentTask.get();
+        }
+        catch (InterruptedException e)
+        {
+            throw new IllegalStateException(e);
+        }
+        catch (ExecutionException e)
+        {
+            throw new IllegalStateException(e);
+        }
+
         if (path.isError())
         {
-            LOGGER.error("Could not find path (for {}) between {} and {} - {}", new Object[] {order.getType(),
-                    getPosition(), target, path.getResult()});
+            LOGGER.error("Could not find path (for {}) between {} and {} - {}", new Object[] {type, getPosition(),
+                    target, path.getResult()});
             return;
         }
 
         //the first point is where we are at the moment
         path.getPoints().remove(0);
         state = NavigationState.MOVING;
+        currentTask = null;
     }
 
     @Override
     public boolean hasTarget()
     {
+        if (currentTask != null && currentTask.isDone())
+        {
+            startMoving();
+        }
+
         return state == NavigationState.MOVING || state == NavigationState.ARRIVED;
     }
 

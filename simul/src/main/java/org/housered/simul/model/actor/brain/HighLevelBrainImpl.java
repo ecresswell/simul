@@ -2,8 +2,6 @@ package org.housered.simul.model.actor.brain;
 
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.assets.AssetManager;
@@ -117,7 +115,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
                 LOGGER.trace("Arrived at home");
                 
                 currentTarget.occupy(actor);
-                job.leftWork();
+                job.arrivedAtHome();
                 state = State.AT_HOME;
                 actor.setInvisible(true);
             }

@@ -1,6 +1,10 @@
 package org.housered.simul.model.actor;
 
 import java.awt.Color;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 
 import org.housered.simul.model.actor.brain.HighLevelBrain;
 import org.housered.simul.model.actor.brain.HighLevelBrainImpl;
@@ -24,7 +28,6 @@ public class Person implements Renderable, Tickable, Actor
 {
     private static Logger LOGGER = LoggerFactory.getLogger(Person.class);
     private final long id;
-
     private HighLevelBrain highLevel;
     private NavigationBrain navigation;
     private SpeedLimiter speedLimiter = new SpeedLimiter();
