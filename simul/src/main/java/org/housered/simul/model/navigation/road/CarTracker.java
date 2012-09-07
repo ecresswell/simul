@@ -1,19 +1,21 @@
 package org.housered.simul.model.navigation.road;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.housered.simul.model.location.Vector;
-import org.housered.simul.model.world.Tickable;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.index.quadtree.Quadtree;
 
 public class CarTracker
 {
+    private static final double ENVELOPE_MARGIN = 0;
+    private final Quadtree cars = new Quadtree();
+    private final Map<CarController, Envelope> positions = new HashMap<CarController, Envelope>();
     private double maxX = 0;
     private double maxY = 0;
-    private Quadtree cars = new Quadtree();
 
     public void addCar(CarController car)
     {
@@ -22,21 +24,29 @@ public class CarTracker
         if (car.getPosition().y > maxY)
             maxY = car.getPosition().y;
 
-        cars.insert(new Envelope(new Coordinate(car.getPosition().x, car.getPosition().y)), car);
+        Envelope e = new Envelope(car.getPosition().x - ENVELOPE_MARGIN, car.getPosition().x + ENVELOPE_MARGIN * 2,
+                car.getPosition().y - ENVELOPE_MARGIN, car.getPosition().y + ENVELOPE_MARGIN * 2);
+
+        cars.insert(e, car);
+        positions.put(car, e);
     }
 
     public List<CarController> getCars(Vector position, Vector size)
     {
+        Envelope e = new Envelope(position.x, position.x + size.x, position.y, position.y + size.y);
         @SuppressWarnings("unchecked")
-        List<CarController> results = cars.query(new Envelope(position.x, position.x + size.x, position.y, position.y
-                + size.y));
+        List<CarController> results = cars.query(e);
         return results;
     }
 
-    public void removeCar(CarController car)
+    public boolean removeCar(CarController car)
     {
         //performance increase here by keeping a map of cars to their envelope
-        cars.remove(new Envelope(0, maxX, 0, maxY), car);
+        Envelope e = positions.get(car);
+        if (e == null)
+            return false;
+
+        return cars.remove(positions.get(car), car);
     }
 
     public void updateCarPosition()

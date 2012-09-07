@@ -20,7 +20,7 @@ public class CarTrackerTest
         CarController car2 = mock(CarController.class);
         when(car2.getPosition()).thenReturn(new Vector(15, 15));
         CarController car3 = mock(CarController.class);
-        when(car3.getPosition()).thenReturn(new Vector(5, 5));
+        when(car3.getPosition()).thenReturn(new Vector(4, 4));
 
         CarTracker tracker = new CarTracker();
         tracker.addCar(car1);
@@ -44,7 +44,7 @@ public class CarTrackerTest
         tracker.addCar(car);
         assertEquals(1, tracker.getCars(new Vector(6, 6), new Vector(10, 10)).size());
 
-        tracker.removeCar(car);
+        assertTrue(tracker.removeCar(car));
         assertEquals(0, tracker.getCars(new Vector(6, 6), new Vector(10, 10)).size());
     }
 
