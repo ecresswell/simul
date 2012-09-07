@@ -59,6 +59,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         gameClock = new GameClockImpl(TimeUnit.HOURS.toSeconds(7), 60);
         guiManager = new GuiManager(gameClock);
         addEntity(guiManager);
+        addEntity(roadNetwork);
 
         CityPlanner cityPlanner = new CityPlanner(this, gameClock, assetManager, jobManager, navigationManager,
                 roadNetwork);

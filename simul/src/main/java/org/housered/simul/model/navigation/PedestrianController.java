@@ -18,13 +18,8 @@ public class PedestrianController implements ActorController
         this.actor = actor;
         this.highLevel = highLevel;
         this.navigation = navigation;
-        
-        speedLimiter.setSpeedLimit(3);
-    }
 
-    @Override
-    public void giveDirectControl()
-    {
+        speedLimiter.setSpeedLimit(3);
     }
 
     @Override
@@ -49,5 +44,21 @@ public class PedestrianController implements ActorController
     {
         Vector move = speedLimiter.incrementPosition(delta);
         actor.getPosition().translate(move);
+    }
+
+    @Override
+    public Vector getPosition()
+    {
+        return actor.getPosition();
+    }
+
+    @Override
+    public void giveDirectControl()
+    {
+    }
+
+    @Override
+    public void relinquishControl()
+    {
     }
 }

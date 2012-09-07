@@ -23,15 +23,6 @@ public class SpeedLimiter
         double wantedMag = Math.min(maxDistancePerSecond * dt - distanceMovedThisTick, delta.magnitude());
         wantedMag = Math.max(wantedMag, 0);
         distanceMovedThisTick += wantedMag;
-        return scaleToMagnitudeCopy(delta, wantedMag);
-    }
-
-    private Vector scaleToMagnitudeCopy(Vector direction, double wantedMagnitude)
-    {
-        if (direction.magnitude() == 0)
-            return new Vector();
-
-        double scale = wantedMagnitude / direction.magnitude();
-        return new Vector(direction.x * scale, direction.y * scale);
+        return delta.scaleToMagnitudeCopy(wantedMag);
     }
 }

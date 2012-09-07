@@ -95,13 +95,22 @@ public class Vector extends KPoint
         }
         else if (a * b == 0)
         { // a or b or both are zero
-            // relative error is not meaningful here
+          // relative error is not meaningful here
             return diff < (epsilon * epsilon);
         }
         else
         { // use relative error
             return diff / (absA + absB) < epsilon;
         }
+    }
+
+    public Vector scaleToMagnitudeCopy(double wantedMagnitude)
+    {
+        if (magnitude() == 0)
+            return new Vector();
+
+        double scale = wantedMagnitude / magnitude();
+        return new Vector(x * scale, y * scale);
     }
 
 }

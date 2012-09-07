@@ -43,7 +43,7 @@ public class Person implements Renderable, Tickable, Actor
         highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager);
         navigation = new NavigationMeshBrain(navigationManager, roadNetworkManager);
 
-        carController = new CarController(this, navigation, roadNetworkManager);
+        carController = new CarController(this, highLevel, navigation, roadNetworkManager.getCarTracker());
         pedestrianController = new PedestrianController(this, highLevel, navigation);
     }
 
@@ -92,17 +92,25 @@ public class Person implements Renderable, Tickable, Actor
         if (target != null)
         {
             if (target.getType() == NavigationType.CAR)
+            {
                 inACar = true;
+                pedestrianController.relinquishControl();
+                carController.giveDirectControl();
+            }
             else if (target.getType() == NavigationType.WALK)
+            {
                 inACar = false;
+                carController.relinquishControl();
+                pedestrianController.giveDirectControl();
+            }
 
             navigation.setTarget(target);
             LOGGER.trace("[{}]Moving towards target - {}", new Object[] {this, target});
         }
 
-//        if (inACar)
-//            carController.tick(dt);
-//        else
+        if (inACar)
+            carController.tick(dt);
+        else
             pedestrianController.tick(dt);
     }
 

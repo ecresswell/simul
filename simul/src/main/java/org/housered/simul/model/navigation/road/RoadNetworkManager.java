@@ -2,28 +2,28 @@ package org.housered.simul.model.navigation.road;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.RectangleInverseUtility;
+import org.housered.simul.model.world.GameObject;
+import org.housered.simul.model.world.Tickable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import straightedge.geom.KPoint;
-import straightedge.geom.KPolygon;
 import straightedge.geom.path.NodeConnector;
 import straightedge.geom.path.PathBlockingObstacle;
-import straightedge.geom.path.PathBlockingObstacleImpl;
 import straightedge.geom.path.PathData;
 import straightedge.geom.path.PathFinder;
 
-public class RoadNetworkManager
+public class RoadNetworkManager implements Tickable, GameObject
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoadNetworkManager.class);
     private static final float MAX_CONNECTION_DISTANCE = 1000f;
     private static final double ROAD_EXPANSION_MARGIN = 0.01d;
+    private final CarTracker carTracker;
     private List<Road> roads = new LinkedList<Road>();
     private final Vector worldBounds;
     private PathFinder pathfinder = new PathFinder();
@@ -33,6 +33,12 @@ public class RoadNetworkManager
     public RoadNetworkManager(Vector worldBounds)
     {
         this.worldBounds = worldBounds;
+        this.carTracker = new CarTracker();
+    }
+    
+    public CarTracker getCarTracker()
+    {
+        return carTracker;
     }
 
     public PathData findPath(Vector start, Vector end)
@@ -131,5 +137,11 @@ public class RoadNetworkManager
         }
 
         return new Vector(minDistancePoint);
+    }
+
+    @Override
+    public void tick(float dt)
+    {
+        carTracker.updateCarPosition();
     }
 }
