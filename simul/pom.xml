@@ -38,7 +38,7 @@
 			<artifactId>straightedge</artifactId>
 			<version>0.3</version>
 		</dependency>
-
+		
 		<!-- Logging -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -61,6 +61,11 @@
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
 			<version>2.6</version>
+		</dependency>
+		<dependency>
+			<groupId>com.vividsolutions</groupId>
+			<artifactId>jts</artifactId>
+			<version>1.12</version>
 		</dependency>
 	</dependencies>
 

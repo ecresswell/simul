@@ -1,4 +1,4 @@
-package org.housered.simul.model.navigation;
+package org.housered.simul.model.navigation.road;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;

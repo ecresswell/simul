@@ -1,4 +1,4 @@
-package org.housered.simul.model.navigation;
+package org.housered.simul.model.navigation.road;
 
 import static org.housered.simul.model.location.Vector.EPSILON;
 import static org.junit.Assert.assertEquals;
@@ -10,7 +10,10 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.housered.simul.model.location.Vector;
-import org.housered.simul.model.navigation.Road.Direction;
+import org.housered.simul.model.navigation.RectangleInverseUtility;
+import org.housered.simul.model.navigation.road.Road;
+import org.housered.simul.model.navigation.road.RoadNetworkManager;
+import org.housered.simul.model.navigation.road.Road.Direction;
 import org.junit.Before;
 import org.junit.Test;
 

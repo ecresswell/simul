@@ -1,10 +1,6 @@
 package org.housered.simul.model.actor;
 
 import java.awt.Color;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.FutureTask;
 
 import org.housered.simul.model.actor.brain.HighLevelBrain;
 import org.housered.simul.model.actor.brain.HighLevelBrainImpl;
@@ -13,9 +9,13 @@ import org.housered.simul.model.actor.brain.NavigationMeshBrain;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
+import org.housered.simul.model.navigation.ActorController;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.NavigationOrder;
-import org.housered.simul.model.navigation.RoadNetworkManager;
+import org.housered.simul.model.navigation.PedestrianController;
+import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
+import org.housered.simul.model.navigation.road.CarController;
+import org.housered.simul.model.navigation.road.RoadNetworkManager;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.world.GameClock;
 import org.housered.simul.model.world.Tickable;
@@ -28,18 +28,23 @@ public class Person implements Renderable, Tickable, Actor
 {
     private static Logger LOGGER = LoggerFactory.getLogger(Person.class);
     private final long id;
+    private final ActorController carController;
+    private final ActorController pedestrianController;
     private HighLevelBrain highLevel;
     private NavigationBrain navigation;
-    private SpeedLimiter speedLimiter = new SpeedLimiter();
+
     private boolean invisible;
+    private boolean inACar;
 
     public Person(long id, AssetManager assetManager, JobManager jobManager, NavigationManager navigationManager,
             GameClock gameClock, RoadNetworkManager roadNetworkManager)
     {
         this.id = id;
-        speedLimiter.setSpeedLimit(3);
         highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager);
         navigation = new NavigationMeshBrain(navigationManager, roadNetworkManager);
+
+        carController = new CarController(this, navigation, roadNetworkManager);
+        pedestrianController = new PedestrianController(this, highLevel, navigation);
     }
 
     @Override
@@ -60,9 +65,17 @@ public class Person implements Renderable, Tickable, Actor
         if (invisible)
             return;
 
-        r.setColour(Color.GREEN);
         //draw in the middle
-        r.fillCircle(getPosition(), 3);
+        if (inACar)
+        {
+            r.setColour(Color.ORANGE);
+            r.drawRect(getPosition(), new Vector(3, 3));
+        }
+        else
+        {
+            r.setColour(Color.GREEN);
+            r.fillCircle(getPosition(), 3);
+        }
     }
 
     @Override
@@ -74,38 +87,29 @@ public class Person implements Renderable, Tickable, Actor
     @Override
     public void tick(float dt)
     {
-        speedLimiter.startNewTick(dt);
-
         NavigationOrder target = highLevel.decideWhereToGo();
 
         if (target != null)
         {
+            if (target.getType() == NavigationType.CAR)
+                inACar = true;
+            else if (target.getType() == NavigationType.WALK)
+                inACar = false;
+
             navigation.setTarget(target);
             LOGGER.trace("[{}]Moving towards target - {}", new Object[] {this, target});
         }
 
-        if (navigation.hasTarget())
-        {
-            Vector targetPoint = navigation.getNextPoint();
-            incrementPosition(targetPoint.translateCopy(getPosition().negateCopy()));
-        }
-
-        if (navigation.hasArrivedAtTarget())
-        {
-            highLevel.arrivedAtTarget();
-        }
+//        if (inACar)
+//            carController.tick(dt);
+//        else
+            pedestrianController.tick(dt);
     }
 
     @Override
     public void setInvisible(boolean invisible)
     {
         this.invisible = invisible;
-    }
-
-    private void incrementPosition(Vector delta)
-    {
-        Vector move = speedLimiter.incrementPosition(delta);
-        getPosition().translate(move);
     }
 
     @Override

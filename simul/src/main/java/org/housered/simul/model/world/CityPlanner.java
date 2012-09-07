@@ -17,8 +17,8 @@ import org.housered.simul.model.assets.HouseFactory;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.RectangleInverseUtility;
-import org.housered.simul.model.navigation.Road;
-import org.housered.simul.model.navigation.RoadNetworkManager;
+import org.housered.simul.model.navigation.road.Road;
+import org.housered.simul.model.navigation.road.RoadNetworkManager;
 import org.housered.simul.model.work.JobDefinition;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.work.Workplace;
@@ -46,9 +46,9 @@ public class CityPlanner
 
     public void loadLevel(World world)
     {
-        //loadSimpleMap(world);
+        loadSimpleMap(world);
         //loadComplicatedMap(world);
-        loadSemiComplexCity(world);
+        //loadSemiComplexCity(world);
     }
 
     private List<House> createCityBlock(double x, double y, double width, double height, int houses)
@@ -175,21 +175,40 @@ public class CityPlanner
         HouseFactory houseFactory = new HouseFactory(idGenerator);
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
-        Person person = personFactory.createPerson(50, 50);
-        House house = houseFactory.createHouse(100, 100);
-        Workplace workplace = workplaceFactory.createWorkplace(300, 200);
+        House house = houseFactory.createHouse(200, 200);
+        House house2 = houseFactory.createHouse(200, 280);
+        Workplace workplace = workplaceFactory.createWorkplace(400, 200);
+        Workplace workplace2 = workplaceFactory.createWorkplace(400, 280);
 
-        assetManager.createDeed(person, house);
-        jobManager.createContract(person, new JobDefinition(gameClock, workplace, 7, 30, TimeUnit.HOURS.toSeconds(1)));
+        Random r = new Random();
+        for (int i = 0; i < 100; i++)
+        {
+            Person person = personFactory.createPerson(r.nextInt(200), r.nextInt(200));
+            if (r.nextDouble() < 0.5f)
+            {
+                jobManager.createContract(person,
+                        new JobDefinition(gameClock, workplace, 7, 30, TimeUnit.MINUTES.toSeconds(10)));
+            }
+            else
+            {
+                jobManager.createContract(person,
+                        new JobDefinition(gameClock, workplace2, 7, 30, TimeUnit.MINUTES.toSeconds(20)));
+            }
+            if (r.nextDouble() < 0.5f)
+            {
+                assetManager.createDeed(person, house);
+            }
+            else
+            {
+                assetManager.createDeed(person, house2);
+            }
 
-        Road road1 = new Road(new Vector(130, 130), new Vector(20, 400));
-        Road road2 = new Road(new Vector(150, 330), new Vector(400, 20));
-        Road road3 = new Road(new Vector(290, 220), new Vector(20, 200));
+            world.addEntity(person);
+        }
 
-        world.addEntities(person, house, workplace, road1, road2, road3);
+        Road road1 = new Road(new Vector(180, 240), new Vector(420, 20));
 
-        List<House> block = createCityBlock(400, 400, 200, 100, 10);
-        world.addEntities(block);
+        world.addEntities(house, workplace, workplace2, road1, house2);
     }
 
     private void loadComplicatedMap(World world)

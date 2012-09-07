@@ -2,7 +2,7 @@ package org.housered.simul.model.actor;
 
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.navigation.NavigationManager;
-import org.housered.simul.model.navigation.RoadNetworkManager;
+import org.housered.simul.model.navigation.road.RoadNetworkManager;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.world.GameClock;
 import org.housered.simul.model.world.IdGenerator;

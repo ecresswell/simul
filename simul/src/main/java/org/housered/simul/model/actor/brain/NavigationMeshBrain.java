@@ -9,8 +9,8 @@ import java.util.concurrent.FutureTask;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.NavigationOrder;
-import org.housered.simul.model.navigation.RoadNetworkManager;
 import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
+import org.housered.simul.model.navigation.road.RoadNetworkManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

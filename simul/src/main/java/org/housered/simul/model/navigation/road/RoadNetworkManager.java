@@ -1,4 +1,4 @@
-package org.housered.simul.model.navigation;
+package org.housered.simul.model.navigation.road;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.housered.simul.model.location.Vector;
+import org.housered.simul.model.navigation.RectangleInverseUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

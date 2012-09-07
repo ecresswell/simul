@@ -9,7 +9,7 @@ import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationOrder;
 import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
-import org.housered.simul.model.navigation.RoadNetworkManager;
+import org.housered.simul.model.navigation.road.RoadNetworkManager;
 import org.housered.simul.model.work.Job;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.world.GameClock;
