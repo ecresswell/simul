@@ -4,15 +4,12 @@ import static org.housered.simul.model.location.Vector.EPSILON;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.RectangleInverseUtility;
-import org.housered.simul.model.navigation.road.Road;
-import org.housered.simul.model.navigation.road.RoadNetworkManager;
 import org.housered.simul.model.navigation.road.Road.Direction;
 import org.junit.Before;
 import org.junit.Test;
