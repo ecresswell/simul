@@ -31,6 +31,30 @@ public class CarTracker
         positions.put(car, e);
     }
 
+    public CarController getClosestCar(CarController car, Vector direction, double minWidth)
+    {
+        Vector position = car.getPosition();
+        Envelope e = CarController.getLookAheadEnvelope(position, direction, minWidth);
+
+        CarController minCar = null;
+        double minDistance = 0;
+
+        for (CarController possibleCloseCar : getCars(e))
+        {
+            if (possibleCloseCar == car)
+                continue;
+            
+            double distance = getDistanceToCar(position, car);
+            if (minCar == null || distance < minDistance)
+            {
+                minCar = possibleCloseCar;
+                minDistance = distance;
+            }
+        }
+
+        return minCar;
+    }
+
     public List<CarController> getCars(Vector position, Vector size)
     {
         Envelope e = new Envelope(position.x, position.x + size.x, position.y, position.y + size.y);
@@ -39,9 +63,15 @@ public class CarTracker
         return results;
     }
 
+    public List<CarController> getCars(Envelope query)
+    {
+        @SuppressWarnings("unchecked")
+        List<CarController> results = cars.query(query);
+        return results;
+    }
+
     public boolean removeCar(CarController car)
     {
-        //performance increase here by keeping a map of cars to their envelope
         Envelope e = positions.get(car);
         if (e == null)
             return false;
@@ -61,5 +91,17 @@ public class CarTracker
             removeCar(car);
             addCar(car);
         }
+    }
+
+    static double getDistanceToCar(CarController me, CarController them)
+    {
+        Vector difference = me.getPosition().translateCopy(them.getPosition().negateCopy());
+        return difference.magnitude();
+    }
+    
+    static double getDistanceToCar(Vector me, CarController them)
+    {
+        Vector difference = me.translateCopy(them.getPosition().negateCopy());
+        return difference.magnitude();
     }
 }

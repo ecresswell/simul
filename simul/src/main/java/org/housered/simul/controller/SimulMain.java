@@ -3,8 +3,6 @@ package org.housered.simul.controller;
 import org.housered.simul.model.world.Camera;
 import org.housered.simul.model.world.World;
 import org.housered.simul.view.swing.SwingFrame;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SimulMain
 {

@@ -5,6 +5,7 @@ import org.housered.simul.model.actor.brain.HighLevelBrain;
 import org.housered.simul.model.actor.brain.NavigationBrain;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
+import org.housered.simul.view.GraphicsAdapter;
 
 public class PedestrianController implements ActorController
 {
@@ -60,5 +61,19 @@ public class PedestrianController implements ActorController
     @Override
     public void relinquishControl()
     {
+    }
+
+    @Override
+    public void render(GraphicsAdapter r)
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public byte getZOrder()
+    {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

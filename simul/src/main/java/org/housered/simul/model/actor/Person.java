@@ -68,11 +68,13 @@ public class Person implements Renderable, Tickable, Actor
         //draw in the middle
         if (inACar)
         {
+            carController.render(r);
             r.setColour(Color.ORANGE);
             r.drawRect(getPosition(), new Vector(3, 3));
         }
         else
         {
+            pedestrianController.render(r);
             r.setColour(Color.GREEN);
             r.fillCircle(getPosition(), 3);
         }

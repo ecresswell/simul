@@ -159,19 +159,19 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         }
         if (inputManager.isKeyDown(KeyEvent.VK_1))
         {
-            gameClock.setSpeed(60);
+            gameClock.setSpeed(10);
         }
         if (inputManager.isKeyDown(KeyEvent.VK_2))
         {
-            gameClock.setSpeed(180);
+            gameClock.setSpeed(60);
         }
         if (inputManager.isKeyDown(KeyEvent.VK_3))
         {
-            gameClock.setSpeed(600);
+            gameClock.setSpeed(180);
         }
         if (inputManager.isKeyDown(KeyEvent.VK_4))
         {
-            gameClock.setSpeed(6000);
+            gameClock.setSpeed(600);
         }
     }
 

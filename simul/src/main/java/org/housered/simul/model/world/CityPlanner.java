@@ -16,7 +16,6 @@ import org.housered.simul.model.assets.House;
 import org.housered.simul.model.assets.HouseFactory;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
-import org.housered.simul.model.navigation.RectangleInverseUtility;
 import org.housered.simul.model.navigation.road.Road;
 import org.housered.simul.model.navigation.road.RoadNetworkManager;
 import org.housered.simul.model.work.JobDefinition;
@@ -86,7 +85,7 @@ public class CityPlanner
     {
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
-        int numberOfPeople = 10000;
+        int numberOfPeople = 1000;
         double pavementOffset = 5;
         int blocks = 3;
         double blockWidth = 200;

@@ -7,7 +7,7 @@ public class SpeedLimiter
     private double distanceMovedThisTick;
     private float dt;
 
-    public void setSpeedLimit(float maxDistancePerSecond)
+    public void setSpeedLimit(double maxDistancePerSecond)
     {
         this.maxDistancePerSecond = maxDistancePerSecond;
     }
