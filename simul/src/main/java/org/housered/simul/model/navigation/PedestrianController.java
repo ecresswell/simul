@@ -76,4 +76,10 @@ public class PedestrianController implements ActorController
         // TODO Auto-generated method stub
         return 0;
     }
+    
+    @Override
+    public Vector getSize()
+    {
+        return actor.getSize();
+    }
 }

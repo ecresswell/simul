@@ -37,7 +37,7 @@ public class SwingGraphicsAdapter implements GraphicsAdapter
     }
 
     @Override
-    public void fillCircle(Vector position, float radius)
+    public void fillCircle(Vector position, double radius)
     {
         IntVector p = new IntVector(camera.translateIntoScreenSpace(position));
         int r = (int) Math.round(camera.scaleIntoScreenSpace(radius));

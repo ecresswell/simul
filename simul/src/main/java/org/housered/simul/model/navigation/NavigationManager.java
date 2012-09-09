@@ -71,7 +71,7 @@ public class NavigationManager
         nodeConnector = new NodeConnector<PathBlockingObstacle>();
         for (Collidable c : collidables)
         {
-            Vector b = c.getBounds();
+            Vector b = c.getSize();
             Vector topLeft = c.getPosition().copy();
             Vector topRight = topLeft.translateCopy(b.x, 0);
             Vector bottomRight = topLeft.translateCopy(b.x, b.y);
@@ -93,8 +93,8 @@ public class NavigationManager
     {
         if (c.getPosition().getX() < 0 || c.getPosition().getY() < 0)
             return false;
-        if (c.getPosition().getX() + c.getBounds().getX() > worldBounds.getX()
-                || c.getPosition().getY() + c.getBounds().getY() > worldBounds.getY())
+        if (c.getPosition().getX() + c.getSize().getX() > worldBounds.getX()
+                || c.getPosition().getY() + c.getSize().getY() > worldBounds.getY())
             return false;
         return true;
     }

@@ -33,7 +33,7 @@ public abstract class AbstractOccupiable implements Renderable, Identifiable, Oc
     }
 
     @Override
-    public Vector getBounds()
+    public Vector getSize()
     {
         return size;
     }

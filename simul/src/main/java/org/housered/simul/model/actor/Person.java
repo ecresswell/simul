@@ -32,6 +32,7 @@ public class Person implements Renderable, Tickable, Actor
     private final ActorController pedestrianController;
     private HighLevelBrain highLevel;
     private NavigationBrain navigation;
+    private Vector size = new Vector(3, 3);
 
     private boolean invisible;
     private boolean inACar;
@@ -70,13 +71,13 @@ public class Person implements Renderable, Tickable, Actor
         {
             carController.render(r);
             r.setColour(Color.ORANGE);
-            r.drawRect(getPosition(), new Vector(3, 3));
+            r.drawRect(getPosition(), getSize());
         }
         else
         {
             pedestrianController.render(r);
             r.setColour(Color.GREEN);
-            r.fillCircle(getPosition(), 3);
+            r.fillCircle(getPosition(), getSize().x);
         }
     }
 
@@ -126,5 +127,11 @@ public class Person implements Renderable, Tickable, Actor
     public String toString()
     {
         return "Person [id=" + id + "]";
+    }
+    
+    @Override
+    public Vector getSize()
+    {
+        return size;
     }
 }

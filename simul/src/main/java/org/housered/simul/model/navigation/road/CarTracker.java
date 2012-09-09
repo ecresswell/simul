@@ -34,7 +34,7 @@ public class CarTracker
     public CarController getClosestCar(CarController car, Vector direction, double minWidth)
     {
         Vector position = car.getPosition();
-        Envelope e = CarController.getLookAheadEnvelope(position, direction, minWidth);
+        Envelope e = CarController.getLookAheadEnvelope(car, direction, minWidth);
 
         CarController minCar = null;
         double minDistance = 0;
@@ -93,6 +93,9 @@ public class CarTracker
         }
     }
 
+    /**
+     * Returns the distance between centre of cars.
+     */
     static double getDistanceToCar(CarController me, CarController them)
     {
         Vector difference = me.getPosition().translateCopy(them.getPosition().negateCopy());
