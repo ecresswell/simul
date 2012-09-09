@@ -649,9 +649,10 @@ public class KPoint
         return ccw;
     }
 
+    @Override
     public String toString()
     {
-        return "" + x + ", " + y;
+        return "KPoint [x=" + x + ", y=" + y + "]";
     }
 
     public double findSignedAngle(double ox, double oy)

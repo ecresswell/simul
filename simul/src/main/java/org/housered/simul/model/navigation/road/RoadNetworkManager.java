@@ -2,8 +2,10 @@ package org.housered.simul.model.navigation.road;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.RectangleInverseUtility;
@@ -20,13 +22,14 @@ import straightedge.geom.path.PathFinder;
 
 public class RoadNetworkManager implements Tickable, GameObject
 {
+    static final double ROAD_EXPANSION_MARGIN = 0.01d;
     private static final Logger LOGGER = LoggerFactory.getLogger(RoadNetworkManager.class);
     private static final float MAX_CONNECTION_DISTANCE = 1000f;
-    private static final double ROAD_EXPANSION_MARGIN = 0.01d;
     private final CarTracker carTracker;
     private List<Road> roads = new LinkedList<Road>();
     private final Vector worldBounds;
     private PathFinder pathfinder = new PathFinder();
+    private RoadLaneAugmentor laneAugmentor = new RoadLaneAugmentor(roads);
     private ArrayList<PathBlockingObstacle> obstacles = new ArrayList<PathBlockingObstacle>();
     private NodeConnector<PathBlockingObstacle> nodeConnector = new NodeConnector<PathBlockingObstacle>();
 
@@ -35,7 +38,7 @@ public class RoadNetworkManager implements Tickable, GameObject
         this.worldBounds = worldBounds;
         this.carTracker = new CarTracker();
     }
-    
+
     public CarTracker getCarTracker()
     {
         return carTracker;
@@ -48,8 +51,9 @@ public class RoadNetworkManager implements Tickable, GameObject
         Vector kEnd = new Vector(end.getX(), end.getY());
 
         PathData result = pathfinder.calc(kStart, kEnd, MAX_CONNECTION_DISTANCE, nodeConnector, obstacles);
-
         LOGGER.trace("Path calculation took {} ms - {}", System.currentTimeMillis() - startTime, result.getResult());
+        result = laneAugmentor.augmentPathWithLanes(result);
+
         return result;
     }
 
@@ -120,7 +124,7 @@ public class RoadNetworkManager implements Tickable, GameObject
         return minDistancePoint;
     }
 
-    Vector getClosestPoint(Vector point, KPoint... vs)
+    static Vector getClosestPoint(Vector point, KPoint... vs)
     {
         double minDistance = Double.MAX_VALUE;
         KPoint minDistancePoint = null;
@@ -138,6 +142,8 @@ public class RoadNetworkManager implements Tickable, GameObject
 
         return new Vector(minDistancePoint);
     }
+
+   
 
     @Override
     public void tick(float dt)

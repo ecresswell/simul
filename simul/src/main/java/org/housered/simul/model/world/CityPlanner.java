@@ -45,9 +45,9 @@ public class CityPlanner
 
     public void loadLevel(World world)
     {
-        //        loadSimpleMap(world);
+        loadSimpleMap(world);
         //loadComplicatedMap(world);
-        loadSemiComplexCity(world);
+        //        loadSemiComplexCity(world);
     }
 
     private List<House> createCityBlock(double x, double y, double width, double height, int houses)
@@ -180,7 +180,7 @@ public class CityPlanner
         Workplace workplace2 = workplaceFactory.createWorkplace(400, 280);
 
         Random r = new Random();
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 100; i++)
         {
             Person person = personFactory.createPerson(r.nextInt(200), r.nextInt(200));
             if (r.nextDouble() < 0.5f)

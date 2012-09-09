@@ -112,5 +112,10 @@ public class Vector extends KPoint
         double scale = wantedMagnitude / magnitude();
         return new Vector(x * scale, y * scale);
     }
+    
+    public static Vector v(double x, double y)
+    {
+        return new Vector(x, y);
+    }
 
 }

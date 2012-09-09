@@ -34,6 +34,7 @@ public class CarTracker
     public CarController getClosestCar(CarController car, Vector direction, double minWidth)
     {
         Envelope e = CarController.getLookAheadEnvelope(car, direction, minWidth);
+        //TODO: remove our actual car's space from the envelope, so we don't freak out if we're in the middle of someone else
 
         CarController minCar = null;
         double minDistance = 0;
