@@ -19,7 +19,7 @@ public class CarControllerTest
         
         Envelope e = CarController.getLookAheadEnvelope(car, direction, 5);
         
-        assertEquals(10, e.getMinX(), EPSILON);
+        assertEquals(13, e.getMinX(), EPSILON);
         assertEquals(10, e.getMinY(), EPSILON);
         assertEquals(10, e.getWidth(), EPSILON);
         assertEquals(5, e.getHeight(), EPSILON);
@@ -33,7 +33,7 @@ public class CarControllerTest
         
         Envelope e = CarController.getLookAheadEnvelope(car, direction, 5);
         
-        assertEquals(3, e.getMinX(), EPSILON);
+        assertEquals(0, e.getMinX(), EPSILON);
         assertEquals(10, e.getMinY(), EPSILON);
         assertEquals(10, e.getWidth(), EPSILON);
         assertEquals(5, e.getHeight(), EPSILON);
@@ -48,7 +48,7 @@ public class CarControllerTest
         Envelope e = CarController.getLookAheadEnvelope(car, direction, 5);
         
         assertEquals(10, e.getMinX(), EPSILON);
-        assertEquals(3, e.getMinY(), EPSILON);
+        assertEquals(0, e.getMinY(), EPSILON);
         assertEquals(5, e.getWidth(), EPSILON);
         assertEquals(10, e.getHeight(), EPSILON);
     }
@@ -62,7 +62,7 @@ public class CarControllerTest
         Envelope e = CarController.getLookAheadEnvelope(car, direction, 5);
         
         assertEquals(10, e.getMinX(), EPSILON);
-        assertEquals(10, e.getMinY(), EPSILON);
+        assertEquals(13, e.getMinY(), EPSILON);
         assertEquals(5, e.getWidth(), EPSILON);
         assertEquals(10, e.getHeight(), EPSILON);
     }

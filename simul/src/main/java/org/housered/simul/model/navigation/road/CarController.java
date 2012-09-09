@@ -17,9 +17,11 @@ import com.vividsolutions.jts.geom.Envelope;
 public class CarController implements ActorController
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(CarController.class);
-    private static final double HOW_FAR_TO_LOOK_AHEAD = 20;
+    private static final double HOW_FAR_TO_LOOK_AHEAD = 5;
     private static final double MINIMUM_LOOK_AHEAD_WIDTH = 5;
     private static final double CARELESSNESS_FACTOR = 10;
+    private static final double MINIMUM_SPEED = 1;
+    private static final double MAX_SPEED = 8;
     private final Actor actor;
     private final NavigationBrain navigation;
     private final CarTracker carTracker;
@@ -59,26 +61,26 @@ public class CarController implements ActorController
 
             CarController closestCar = carTracker.getClosestCar(this, direction, actor.getSize().x);
 
-            double breaking = 0;
+            double braking = 0;
             actuallyBreaking = false;
 
             if (closestCar != null)
             {
                 double distance = CarTracker.getDistanceToCar(this, closestCar);
                 distance -= getSize().x * 2;
-                breaking = (CARELESSNESS_FACTOR - distance) / CARELESSNESS_FACTOR;
-                breaking = Math.max(0, breaking);
+                braking = (CARELESSNESS_FACTOR - distance) / CARELESSNESS_FACTOR;
+                braking = Math.max(0, braking);
 
-                if (breaking > 0)
+                if (braking > 0)
                 {
-                    LOGGER.trace("Breaking {} - closest car to {} is {}, {} away", new Object[] {breaking, this,
+                    LOGGER.trace("Breaking {} - closest car to {} is {}, {} away", new Object[] {braking, this,
                             closestCar, distance});
                     actuallyBreaking = true;
                 }
             }
 
-            double maxSpeed = 5 * (1 - breaking);
-            maxSpeed = Math.max(maxSpeed, 0.01f);
+            double maxSpeed = MAX_SPEED * (1 - braking);
+            maxSpeed = Math.max(maxSpeed, MINIMUM_SPEED);
             speedLimiter.setSpeedLimit(maxSpeed);
         }
 
@@ -113,6 +115,7 @@ public class CarController implements ActorController
             return;
 
         r.setColour(Color.CYAN);
+//        r.fillRect(lookAheadPosition, lookAheadSize);
 //        r.fillCircle(actor.getPosition(), actor.getSize().x);
     }
 
@@ -139,8 +142,8 @@ public class CarController implements ActorController
             otherY = -minWidth;
 
         Vector size = car.getSize();
-        double xOffset = direction.x < 0 ? size.x : 0;
-        double yOffset = direction.y < 0 ? size.y : 0;
+        double xOffset = direction.x <= 0 ? 0: size.x;
+        double yOffset = direction.y <= 0 ? 0 : size.y;
 
         return new Envelope(position.x + xOffset, position.x + otherX + xOffset, position.y + yOffset, position.y
                 + otherY + yOffset);
