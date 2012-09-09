@@ -57,7 +57,7 @@ public class CarController implements ActorController
             lookAheadPosition = new Vector(e.getMinX(), e.getMinY());
             lookAheadSize = new Vector(e.getWidth(), e.getHeight());
 
-            CarController closestCar = carTracker.getClosestCar(this, direction, MINIMUM_LOOK_AHEAD_WIDTH);
+            CarController closestCar = carTracker.getClosestCar(this, direction, actor.getSize().x);
 
             double breaking = 0;
             actuallyBreaking = false;
@@ -65,6 +65,7 @@ public class CarController implements ActorController
             if (closestCar != null)
             {
                 double distance = CarTracker.getDistanceToCar(this, closestCar);
+                distance -= getSize().x * 2;
                 breaking = (CARELESSNESS_FACTOR - distance) / CARELESSNESS_FACTOR;
                 breaking = Math.max(0, breaking);
 
@@ -77,7 +78,7 @@ public class CarController implements ActorController
             }
 
             double maxSpeed = 5 * (1 - breaking);
-            //maxSpeed = Math.max(maxSpeed, 0.01f);
+            maxSpeed = Math.max(maxSpeed, 0.01f);
             speedLimiter.setSpeedLimit(maxSpeed);
         }
 

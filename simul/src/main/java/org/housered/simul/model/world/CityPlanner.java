@@ -85,7 +85,7 @@ public class CityPlanner
     {
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
-        int numberOfPeople = 10000;
+        int numberOfPeople = 1000;
         double pavementOffset = 5;
         int blocks = 3;
         double blockWidth = 200;
@@ -180,7 +180,7 @@ public class CityPlanner
         Workplace workplace2 = workplaceFactory.createWorkplace(400, 280);
 
         Random r = new Random();
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 10; i++)
         {
             Person person = personFactory.createPerson(r.nextInt(200), r.nextInt(200));
             if (r.nextDouble() < 0.5f)

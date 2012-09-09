@@ -33,7 +33,6 @@ public class CarTracker
 
     public CarController getClosestCar(CarController car, Vector direction, double minWidth)
     {
-        Vector position = car.getPosition();
         Envelope e = CarController.getLookAheadEnvelope(car, direction, minWidth);
 
         CarController minCar = null;
@@ -43,8 +42,8 @@ public class CarTracker
         {
             if (possibleCloseCar == car)
                 continue;
-            
-            double distance = getDistanceToCar(position, car);
+
+            double distance = getDistanceToCar(car, possibleCloseCar);
             if (minCar == null || distance < minDistance)
             {
                 minCar = possibleCloseCar;
@@ -98,13 +97,14 @@ public class CarTracker
      */
     static double getDistanceToCar(CarController me, CarController them)
     {
-        Vector difference = me.getPosition().translateCopy(them.getPosition().negateCopy());
-        return difference.magnitude();
+        Vector centre = me.getPosition().translateCopy(me.getSize().x / 2, me.getSize().y / 2);
+        return getDistanceToCar(centre, them);
     }
-    
+
     static double getDistanceToCar(Vector me, CarController them)
     {
-        Vector difference = me.translateCopy(them.getPosition().negateCopy());
+        Vector themCentre = them.getPosition().translateCopy(them.getSize().x / 2, them.getSize().y / 2);
+        Vector difference = me.translateCopy(themCentre.negateCopy());
         return difference.magnitude();
     }
 }
