@@ -55,22 +55,73 @@ public class CarTrackerTest
         CarController car2 = mock(CarController.class);
         when(car1.getPosition()).thenReturn(new Vector(10, 10));
         when(car2.getPosition()).thenReturn(new Vector(0, 10));
-        
+
         CarTracker tracker = new CarTracker();
         tracker.addCar(car1);
         tracker.addCar(car2);
         assertEquals(1, tracker.getCars(new Vector(9, 9), new Vector(1, 1)).size());
         assertEquals(1, tracker.getCars(new Vector(0, 9), new Vector(1, 1)).size());
-        
+
         when(car1.getPosition()).thenReturn(new Vector(50, 20));
         when(car2.getPosition()).thenReturn(new Vector(30, 5));
         assertEquals(1, tracker.getCars(new Vector(10, 10), new Vector(1, 1)).size());
         assertEquals(1, tracker.getCars(new Vector(0, 9), new Vector(1, 1)).size());
-        
+
         tracker.updateCarPosition();
         assertEquals(0, tracker.getCars(new Vector(9, 9), new Vector(1, 1)).size());
         assertEquals(0, tracker.getCars(new Vector(0, 9), new Vector(1, 1)).size());
         assertEquals(1, tracker.getCars(new Vector(50, 20), new Vector(1, 1)).size());
         assertEquals(1, tracker.getCars(new Vector(30, 5), new Vector(1, 1)).size());
+    }
+
+    @Test
+    public void shouldReturnDistanceBetweenCars()
+    {
+        CarController me = qM(new Vector(10, 10), new Vector(5, 5));
+        CarController them = qM(new Vector(302, -45.1), new Vector(10, 3));
+
+        assertEquals(299.7956971, CarTracker.getDistanceToCar(me, them), Vector.EPSILON);
+    }
+
+    @Test
+    public void shouldReturnClosestCarInTheRightDirection()
+    {
+        CarController car1 = qM(new Vector(10, 10));
+        CarController car2 = qM(new Vector(15, 15));
+        CarController car3 = qM(new Vector(4, 4));
+
+        CarTracker tracker = new CarTracker();
+        tracker.addCar(car1);
+        tracker.addCar(car2);
+        tracker.addCar(car3);
+
+        assertEquals(car1, tracker.getClosestCar(qM(new Vector(9, 10)), new Vector(10, 0), 5));
+        assertEquals(car1, tracker.getClosestCar(qM(new Vector(5, 10)), new Vector(10, 0), 5));
+        assertEquals(car1, tracker.getClosestCar(qM(new Vector(5, 10)), new Vector(10, 0), 1));
+        assertEquals(null, tracker.getClosestCar(qM(new Vector(-1, 10)), new Vector(10, 0), 5));
+
+        assertEquals(car1, tracker.getClosestCar(qM(new Vector(9, 9)), new Vector(5, 5), 1));
+        assertEquals(car2, tracker.getClosestCar(car1, new Vector(5, 5), 1));
+        assertEquals(car2, tracker.getClosestCar(qM(new Vector(11, 11)), new Vector(5, 5), 1));
+        assertEquals(car3, tracker.getClosestCar(qM(new Vector(7, 7)), new Vector(-10, -10), 1));
+    }
+
+    @Test
+    public void shouldReturnClosestCarWhenJustInsideMinimumWidth()
+    {
+        //TODO: this
+    }
+
+    static CarController qM(Vector pos)
+    {
+        return qM(pos, new Vector(3, 3));
+    }
+
+    static CarController qM(Vector pos, Vector size)
+    {
+        CarController car = mock(CarController.class);
+        when(car.getPosition()).thenReturn(pos);
+        when(car.getSize()).thenReturn(size);
+        return car;
     }
 }
