@@ -15,6 +15,7 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.RectangleInverseUtility;
 import org.housered.simul.model.navigation.road.Road.Orientation;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import straightedge.geom.path.PathBlockingObstacle;
@@ -181,6 +182,7 @@ public class RoadNetworkManagerTest
     }
 
     @Test
+    @Ignore
     public void shouldAugmentRoadPathDataToAbideByLanes()
     {
         network.addRoad(new Road(new Vector(5, 10), new Vector(20, 50)));

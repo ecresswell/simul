@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 
 import org.housered.simul.model.location.Vector;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class CarTrackerTest
@@ -15,12 +16,9 @@ public class CarTrackerTest
     @Test
     public void shouldReturnCarsInArea()
     {
-        CarController car1 = mock(CarController.class);
-        when(car1.getPosition()).thenReturn(new Vector(10, 10));
-        CarController car2 = mock(CarController.class);
-        when(car2.getPosition()).thenReturn(new Vector(15, 15));
-        CarController car3 = mock(CarController.class);
-        when(car3.getPosition()).thenReturn(new Vector(4, 4));
+        CarController car1 = qM(new Vector(10, 10), new Vector(1, 1));
+        CarController car2 = qM(new Vector(15, 15), new Vector(1, 1));
+        CarController car3 = qM(new Vector(4, 4), new Vector(1, 1));
 
         CarTracker tracker = new CarTracker();
         tracker.addCar(car1);
@@ -37,8 +35,7 @@ public class CarTrackerTest
     @Test
     public void shouldAllowRemovingOfCars()
     {
-        CarController car = mock(CarController.class);
-        when(car.getPosition()).thenReturn(new Vector(10, 10));
+        CarController car = qM(new Vector(10, 10), new Vector(1, 1));
 
         CarTracker tracker = new CarTracker();
         tracker.addCar(car);
@@ -51,10 +48,8 @@ public class CarTrackerTest
     @Test
     public void shouldUpdateCarPositionsWhenTicked()
     {
-        CarController car1 = mock(CarController.class);
-        CarController car2 = mock(CarController.class);
-        when(car1.getPosition()).thenReturn(new Vector(10, 10));
-        when(car2.getPosition()).thenReturn(new Vector(0, 10));
+        CarController car1 = qM(new Vector(10, 10), new Vector(1, 1));
+        CarController car2 = qM(new Vector(0, 10), new Vector(1, 1));
 
         CarTracker tracker = new CarTracker();
         tracker.addCar(car1);
@@ -84,37 +79,41 @@ public class CarTrackerTest
     }
 
     @Test
-    public void shouldReturnClosestCarInTheRightDirection()
+    public void shouldReturnClosestCarToTheRay()
     {
-        CarController car1 = qM(new Vector(10, 10));
-        CarController car2 = qM(new Vector(15, 15));
-        CarController car3 = qM(new Vector(4, 4));
+        CarController car1 = qM(new Vector(10, 10), new Vector(3, 3));
+        CarController car2 = qM(new Vector(15, 15), new Vector(3, 3));
+        CarController car3 = qM(new Vector(4, 4), new Vector(3, 3));
 
         CarTracker tracker = new CarTracker();
         tracker.addCar(car1);
         tracker.addCar(car2);
         tracker.addCar(car3);
 
-        assertEquals(car1, tracker.getClosestCar(qM(new Vector(9, 10)), new Vector(10, 0), 5));
-        assertEquals(car1, tracker.getClosestCar(qM(new Vector(5, 10)), new Vector(10, 0), 5));
-        assertEquals(car1, tracker.getClosestCar(qM(new Vector(5, 10)), new Vector(10, 0), 1));
-        assertEquals(null, tracker.getClosestCar(qM(new Vector(-1, 10)), new Vector(10, 0), 5));
+        assertEquals(car1, tracker.performRayCollision((new Vector(6, 10)), new Vector(10, 0)));
+        assertEquals(car1, tracker.performRayCollision((new Vector(5, 10)), new Vector(10, 0)));
+        assertEquals(car1, tracker.performRayCollision((new Vector(5, 10)), new Vector(10, 0)));
+        assertEquals(null, tracker.performRayCollision((new Vector(-4, 10)), new Vector(10, 0)));
 
-        assertEquals(car1, tracker.getClosestCar(qM(new Vector(9, 9)), new Vector(5, 5), 1));
-        assertEquals(car2, tracker.getClosestCar(car1, new Vector(5, 5), 1));
-        assertEquals(car2, tracker.getClosestCar(qM(new Vector(11, 11)), new Vector(5, 5), 1));
-        assertEquals(car3, tracker.getClosestCar(qM(new Vector(7, 7)), new Vector(-10, -10), 1));
+        assertEquals(car1, tracker.performRayCollision((new Vector(5, 10)), new Vector(10, 5)));
+        assertEquals(car1, tracker.performRayCollision((new Vector(11, 11)), new Vector(5, 5)));
+        assertEquals(car2, tracker.performRayCollision((new Vector(20, 20)), new Vector(-50, -50)));
+        assertEquals(car3, tracker.performRayCollision((new Vector(7, 7)), new Vector(-10, -10)));
     }
-
+    
     @Test
-    public void shouldReturnClosestCarWhenJustInsideMinimumWidth()
+    public void shouldFireRayFromCentreOfCarAndExcludeSelf()
     {
-        //TODO: this
-    }
+        CarController car1 = qM(new Vector(10, 10), new Vector(3, 3));
+        CarController car2 = qM(new Vector(15, 15), new Vector(3, 3));
+        CarController car3 = qM(new Vector(4, 4), new Vector(3, 3));
 
-    static CarController qM(Vector pos)
-    {
-        return qM(pos, new Vector(3, 3));
+        CarTracker tracker = new CarTracker();
+        tracker.addCar(car1);
+        tracker.addCar(car2);
+        tracker.addCar(car3);
+        
+        assertEquals(car2, tracker.getClosestCar(car1, new Vector(5, 5)));
     }
 
     static CarController qM(Vector pos, Vector size)

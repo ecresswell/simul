@@ -5,7 +5,6 @@ import java.awt.geom.Rectangle2D;
 
 import org.housered.simul.model.location.BoundingBox;
 import org.housered.simul.model.location.Vector;
-import org.housered.simul.model.navigation.road.Road.Orientation;
 import org.housered.simul.model.world.GameObject;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;

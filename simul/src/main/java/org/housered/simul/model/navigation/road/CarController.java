@@ -54,12 +54,11 @@ public class CarController implements ActorController
             Vector actualMove = speedLimiter.incrementPosition(direction);
             getPosition().translate(actualMove);
 
-            Envelope e = getLookAheadEnvelope(this, direction.scaleToMagnitudeCopy(HOW_FAR_TO_LOOK_AHEAD),
-                    MINIMUM_LOOK_AHEAD_WIDTH);
+            Envelope e = getLookAheadEnvelope(this, direction.scaleToMagnitudeCopy(HOW_FAR_TO_LOOK_AHEAD));
             lookAheadPosition = new Vector(e.getMinX(), e.getMinY());
             lookAheadSize = new Vector(e.getWidth(), e.getHeight());
 
-            CarController closestCar = carTracker.getClosestCar(this, direction, actor.getSize().x);
+            CarController closestCar = carTracker.getClosestCar(this, direction);
 
             double braking = 0;
             actuallyBreaking = false;
@@ -115,7 +114,7 @@ public class CarController implements ActorController
             return;
 
         r.setColour(Color.CYAN);
-//        r.fillRect(lookAheadPosition, lookAheadSize);
+        r.fillRect(lookAheadPosition, lookAheadSize);
 //        r.fillCircle(actor.getPosition(), actor.getSize().x);
     }
 
@@ -125,21 +124,11 @@ public class CarController implements ActorController
         return BUILDING_Z_ORDER;
     }
 
-    static Envelope getLookAheadEnvelope(CarController car, Vector direction, double minWidth)
+    static Envelope getLookAheadEnvelope(CarController car, Vector direction)
     {
         double otherX = direction.x;
         double otherY = direction.y;
         Vector position = car.getPosition();
-
-        if (otherX >= 0 && otherX < minWidth)
-            otherX = minWidth;
-        else if (otherX < 0 && otherX > -minWidth)
-            otherX = -minWidth;
-
-        if (otherY >= 0 && otherY < minWidth)
-            otherY = minWidth;
-        else if (otherY < 0 && otherY > -minWidth)
-            otherY = -minWidth;
 
         Vector size = car.getSize();
         double xOffset = direction.x <= 0 ? 0: size.x;

@@ -1,5 +1,6 @@
 package org.housered.simul.model.navigation.road;
 
+import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,6 @@ import com.vividsolutions.jts.index.quadtree.Quadtree;
 
 public class CarTracker
 {
-    private static final double ENVELOPE_MARGIN = 0;
     private final Quadtree cars = new Quadtree();
     private final Map<CarController, Envelope> positions = new HashMap<CarController, Envelope>();
     private double maxX = 0;
@@ -24,35 +24,34 @@ public class CarTracker
         if (car.getPosition().y > maxY)
             maxY = car.getPosition().y;
 
-        Envelope e = new Envelope(car.getPosition().x - ENVELOPE_MARGIN, car.getPosition().x + ENVELOPE_MARGIN * 2,
-                car.getPosition().y - ENVELOPE_MARGIN, car.getPosition().y + ENVELOPE_MARGIN * 2);
+        Envelope e = new Envelope(car.getPosition().x, car.getPosition().x + car.getSize().x, car.getPosition().y,
+                car.getPosition().y + car.getSize().y);
 
         cars.insert(e, car);
         positions.put(car, e);
     }
 
-    public CarController getClosestCar(CarController car, Vector direction, double minWidth)
+    public CarController performRayCollision(Vector origin, Vector direction)
     {
-        Envelope e = CarController.getLookAheadEnvelope(car, direction, minWidth);
-        //TODO: remove our actual car's space from the envelope, so we don't freak out if we're in the middle of someone else
+        Envelope e = new Envelope(origin.x, origin.x + direction.x, origin.y, origin.y + direction.y);
 
-        CarController minCar = null;
-        double minDistance = 0;
+        RayTestingItemVisitor v = new RayTestingItemVisitor(origin, direction);
+        cars.query(e, v);
 
-        for (CarController possibleCloseCar : getCars(e))
-        {
-            if (possibleCloseCar == car)
-                continue;
+        return v.getClosestCar();
+    }
 
-            double distance = getDistanceToCar(car, possibleCloseCar);
-            if (minCar == null || distance < minDistance)
-            {
-                minCar = possibleCloseCar;
-                minDistance = distance;
-            }
-        }
+    public CarController getClosestCar(final CarController car, Vector direction)
+    {
+        Rectangle2D.Double d = new Rectangle2D.Double(car.getPosition().x, car.getPosition().y, car.getSize().x,
+                car.getSize().y);
+        Vector origin = new Vector(d.getCenterX(), d.getCenterY());
+        Envelope e = new Envelope(origin.x, origin.x + direction.x, origin.y, origin.y + direction.y);
 
-        return minCar;
+        RayTestingItemVisitor v = new RayTestingItemVisitor(origin, direction, car);
+        cars.query(e, v);
+
+        return v.getClosestCar();
     }
 
     public List<CarController> getCars(Vector position, Vector size)

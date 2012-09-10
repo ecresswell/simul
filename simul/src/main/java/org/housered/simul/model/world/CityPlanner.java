@@ -45,9 +45,9 @@ public class CityPlanner
 
     public void loadLevel(World world)
     {
-        //        loadSimpleMap(world);
+//        loadSimpleMap(world);
         //loadComplicatedMap(world);
-        loadSemiComplexCity(world);
+                loadSemiComplexCity(world);
     }
 
     private List<House> createCityBlock(double x, double y, double width, double height, int houses)
@@ -85,7 +85,7 @@ public class CityPlanner
     {
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
-        int numberOfPeople = 10000;
+        int numberOfPeople = 5000;
         double pavementOffset = 5;
         int blocks = 3;
         double blockWidth = 200;
