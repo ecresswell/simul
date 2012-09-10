@@ -16,6 +16,8 @@ public interface GraphicsAdapter
     
     void drawRect(Vector position, Vector size);
     
+    void drawLine(Vector origin, Vector direction);
+    
     void fillCircle(Vector position, double radius);
     
     int getScreenWidth();

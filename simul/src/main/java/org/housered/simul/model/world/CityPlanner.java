@@ -85,7 +85,7 @@ public class CityPlanner
     {
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
-        int numberOfPeople = 5000;
+        int numberOfPeople = 10000;
         double pavementOffset = 5;
         int blocks = 3;
         double blockWidth = 200;

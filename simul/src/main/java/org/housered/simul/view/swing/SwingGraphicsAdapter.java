@@ -35,7 +35,7 @@ public class SwingGraphicsAdapter implements GraphicsAdapter
     {
         drawRect(position, dimension, false);
     }
-
+    
     @Override
     public void fillCircle(Vector position, double radius)
     {
@@ -66,6 +66,15 @@ public class SwingGraphicsAdapter implements GraphicsAdapter
     public void drawAbsoluteText(int x, int y, String text)
     {
         g.drawString(text, x, y);
+    }
+    
+    @Override
+    public void drawLine(Vector origin, Vector direction)
+    {
+        IntVector o = new IntVector(camera.translateIntoScreenSpace(origin));
+        IntVector d = new IntVector(camera.scaleIntoScreenSpace(direction));
+        
+        g.drawLine(o.x, o.y, o.x + d.x, o.y + d.y);
     }
 
     private void drawRect(Vector position, Vector size, boolean filled)

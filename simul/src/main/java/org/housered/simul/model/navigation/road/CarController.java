@@ -12,13 +12,10 @@ import org.housered.simul.view.GraphicsAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.vividsolutions.jts.geom.Envelope;
-
 public class CarController implements ActorController
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(CarController.class);
-    private static final double HOW_FAR_TO_LOOK_AHEAD = 5;
-    private static final double MINIMUM_LOOK_AHEAD_WIDTH = 5;
+    private static final double HOW_FAR_TO_LOOK_AHEAD = 4;
     private static final double CARELESSNESS_FACTOR = 10;
     private static final double MINIMUM_SPEED = 1;
     private static final double MAX_SPEED = 8;
@@ -29,8 +26,7 @@ public class CarController implements ActorController
     private final HighLevelBrain highLevel;
 
     private Vector lookAheadPosition;
-    private Vector lookAheadSize;
-    private boolean actuallyBreaking;
+    private Vector lookAheadDirection;
 
     public CarController(Actor actor, HighLevelBrain highLevel, NavigationBrain navigation, CarTracker carTracker)
     {
@@ -54,14 +50,11 @@ public class CarController implements ActorController
             Vector actualMove = speedLimiter.incrementPosition(direction);
             getPosition().translate(actualMove);
 
-            Envelope e = getLookAheadEnvelope(this, direction.scaleToMagnitudeCopy(HOW_FAR_TO_LOOK_AHEAD));
-            lookAheadPosition = new Vector(e.getMinX(), e.getMinY());
-            lookAheadSize = new Vector(e.getWidth(), e.getHeight());
-
-            CarController closestCar = carTracker.getClosestCar(this, direction);
+            lookAheadDirection = direction.scaleToMagnitudeCopy(HOW_FAR_TO_LOOK_AHEAD);
+            lookAheadPosition = getPosition().translateCopy(getSize().x / 2, getSize().y / 2);
+            CarController closestCar = carTracker.getClosestCar(this, lookAheadDirection);
 
             double braking = 0;
-            actuallyBreaking = false;
 
             if (closestCar != null)
             {
@@ -74,7 +67,6 @@ public class CarController implements ActorController
                 {
                     LOGGER.trace("Breaking {} - closest car to {} is {}, {} away", new Object[] {braking, this,
                             closestCar, distance});
-                    actuallyBreaking = true;
                 }
             }
 
@@ -110,32 +102,17 @@ public class CarController implements ActorController
     @Override
     public void render(GraphicsAdapter r)
     {
-        if (lookAheadPosition == null || lookAheadSize == null)
+        if (lookAheadPosition == null || lookAheadDirection == null)
             return;
 
         r.setColour(Color.CYAN);
-        r.fillRect(lookAheadPosition, lookAheadSize);
-//        r.fillCircle(actor.getPosition(), actor.getSize().x);
+        r.drawLine(lookAheadPosition, lookAheadDirection);
     }
 
     @Override
     public byte getZOrder()
     {
         return BUILDING_Z_ORDER;
-    }
-
-    static Envelope getLookAheadEnvelope(CarController car, Vector direction)
-    {
-        double otherX = direction.x;
-        double otherY = direction.y;
-        Vector position = car.getPosition();
-
-        Vector size = car.getSize();
-        double xOffset = direction.x <= 0 ? 0: size.x;
-        double yOffset = direction.y <= 0 ? 0 : size.y;
-
-        return new Envelope(position.x + xOffset, position.x + otherX + xOffset, position.y + yOffset, position.y
-                + otherY + yOffset);
     }
 
     @Override
