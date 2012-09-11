@@ -2,6 +2,7 @@ package org.housered.simul.model.navigation.road;
 
 import java.awt.Color;
 
+import org.housered.simul.controller.SimulMain;
 import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.actor.brain.HighLevelBrain;
 import org.housered.simul.model.actor.brain.NavigationBrain;
@@ -25,6 +26,7 @@ public class CarController implements ActorController
     private final SpeedLimiter speedLimiter = new SpeedLimiter();
     private final HighLevelBrain highLevel;
 
+    private int checkInFrontSkip = 0;
     private Vector lookAheadPosition;
     private Vector lookAheadDirection;
 
@@ -48,31 +50,41 @@ public class CarController implements ActorController
             Vector targetPoint = navigation.getNextPoint();
             Vector direction = targetPoint.translateCopy(actor.getPosition().negateCopy());
             Vector actualMove = speedLimiter.incrementPosition(direction);
-            getPosition().translate(actualMove);
 
-            lookAheadDirection = direction.scaleToMagnitudeCopy(HOW_FAR_TO_LOOK_AHEAD);
-            lookAheadPosition = getPosition().translateCopy(getSize().x / 2, getSize().y / 2);
-            CarController closestCar = carTracker.getClosestCar(this, lookAheadDirection);
-
-            double braking = 0;
-
-            if (closestCar != null)
+            if (checkInFrontSkip == 0)
             {
-                double distance = CarTracker.getDistanceToCar(this, closestCar);
-                distance -= getSize().x * 2;
-                braking = (CARELESSNESS_FACTOR - distance) / CARELESSNESS_FACTOR;
-                braking = Math.max(0, braking);
+                lookAheadDirection = direction.scaleToMagnitudeCopy(HOW_FAR_TO_LOOK_AHEAD);
+                lookAheadPosition = getPosition().translateCopy(getSize().x / 2, getSize().y / 2);
+                CarController closestCar = carTracker.getClosestCar(this, lookAheadDirection);
 
-                if (braking > 0)
+                double braking = 0;
+
+                if (closestCar != null)
                 {
-                    LOGGER.trace("Breaking {} - closest car to {} is {}, {} away", new Object[] {braking, this,
-                            closestCar, distance});
+                    double distance = CarTracker.getDistanceToCar(this, closestCar);
+                    distance -= getSize().x * 2;
+                    braking = (CARELESSNESS_FACTOR - distance) / CARELESSNESS_FACTOR;
+                    braking = Math.max(0, braking);
+
+                    if (braking > 0)
+                    {
+                        LOGGER.trace("Breaking {} - closest car to {} is {}, {} away", new Object[] {braking, this,
+                                closestCar, distance});
+                    }
                 }
+
+                double maxSpeed = MAX_SPEED * (1 - braking);
+                maxSpeed = Math.max(maxSpeed, MINIMUM_SPEED);
+                speedLimiter.setSpeedLimit(maxSpeed);
+                
+                checkInFrontSkip = SimulMain.carControllerDelay;
+            }
+            else
+            {
+                checkInFrontSkip--;
             }
 
-            double maxSpeed = MAX_SPEED * (1 - braking);
-            maxSpeed = Math.max(maxSpeed, MINIMUM_SPEED);
-            speedLimiter.setSpeedLimit(maxSpeed);
+            getPosition().translate(actualMove);
         }
 
         if (navigation.hasArrivedAtTarget())

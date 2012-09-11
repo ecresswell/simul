@@ -3,9 +3,14 @@ package org.housered.simul.controller;
 import org.housered.simul.model.world.Camera;
 import org.housered.simul.model.world.World;
 import org.housered.simul.view.swing.SwingFrame;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SimulMain
 {
+    public static int carControllerDelay = 0;
+    private static final int MAX_CAR_CONTROLLER_DELAY = 5;
+    private static final Logger LOGGER = LoggerFactory.getLogger(SimulMain.class);
     private static final long DELAY = 20;
 
     private World world;
@@ -44,10 +49,21 @@ public class SimulMain
             timeDiff = System.currentTimeMillis() - beforeTime;
             sleep = DELAY - timeDiff;
             world.informAverageSleepAmount(metrics.getAverageSleepAmount());
-            
 
             if (sleep < 0)
-                sleep = 2;
+            {
+                sleep = 1;
+                if (carControllerDelay < MAX_CAR_CONTROLLER_DELAY)
+                {
+                    carControllerDelay++;
+                    LOGGER.debug("Increasing car controller delay to {}", carControllerDelay);
+                }
+            }
+            else if (sleep > 10 && carControllerDelay > 0)
+            {
+                carControllerDelay--;
+                LOGGER.debug("Reducing car controller delay to {}", carControllerDelay);
+            }
             try
             {
                 metrics.logSleep(sleep);
