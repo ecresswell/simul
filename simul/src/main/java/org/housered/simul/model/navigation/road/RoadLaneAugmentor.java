@@ -3,16 +3,19 @@ package org.housered.simul.model.navigation.road;
 import static org.housered.simul.model.navigation.road.RoadNetworkManager.ROAD_EXPANSION_MARGIN;
 
 import java.awt.geom.Rectangle2D;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.housered.simul.model.location.Vector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import straightedge.geom.KPoint;
 import straightedge.geom.path.PathData;
 
 public class RoadLaneAugmentor
 {
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoadLaneAugmentor.class);
     private final List<Road> roads;
 
     public RoadLaneAugmentor(List<Road> roads)
@@ -25,59 +28,77 @@ public class RoadLaneAugmentor
         if (path.isError())
             return path;
 
-        int pathLength = path.getPoints().size();
-        addLaneWayPoints(path, 0);
-        //addLaneWayPoints(path, 2);
+        ArrayList<KPoint> laneWayPoints = calculateLaneWayPoints(path);
+
+        laneWayPoints.add(0, path.getPoints().get(0));
+        laneWayPoints.add(laneWayPoints.size(), path.getPoints().get(path.getPoints().size() - 1));
+
+        path.getPoints().clear();
+        path.getPoints().addAll(laneWayPoints);
 
         return path;
     }
 
-    void addLaneWayPoints(PathData path, int index)
+    ArrayList<KPoint> calculateLaneWayPoints(PathData path)
     {
-        KPoint startPoint = path.getPoints().get(index);
-        KPoint nextPoint = path.getPoints().get(index + 1);
-        Vector direction = new Vector(nextPoint.x - startPoint.x, nextPoint.y - startPoint.y);
+        ArrayList<KPoint> augmentedList = new ArrayList<KPoint>();
 
-        Road road = getRoadThatPointIsOn(startPoint);
-
-        if (road.getOrientation() == Road.Orientation.HORIZONTAL)
+        for (int index = 0; index < path.getPoints().size() - 1; index++)
         {
-            if (direction.x > 0)
+            KPoint startPoint = path.getPoints().get(index);
+            KPoint nextPoint = path.getPoints().get(index + 1);
+            Vector direction = new Vector(nextPoint.x - startPoint.x, nextPoint.y - startPoint.y);
+
+            Road road = getRoadThatPointIsOn(startPoint);
+
+            if (road == null)
             {
-                double yLane = road.getPosition().y + road.getSize().y / 4;
-                path.getPoints().add(index + 1, new Vector(startPoint.x, yLane));
-                path.getPoints().add(index + 2, new Vector(nextPoint.x, yLane));
+                LOGGER.warn("Null road");
+                continue;
+            }
+
+            if (road.getOrientation() == Road.Orientation.HORIZONTAL)
+            {
+                if (direction.x > 0)
+                {
+                    double yLane = road.getPosition().y + road.getSize().y / 4;
+                    augmentedList.add(new Vector(startPoint.x, yLane));
+                    augmentedList.add(new Vector(nextPoint.x, yLane));
+                }
+                else
+                {
+                    double yLane = road.getPosition().y + road.getSize().y * (3f / 4);
+                    augmentedList.add(new Vector(startPoint.x, yLane));
+                    augmentedList.add(new Vector(nextPoint.x, yLane));
+                }
             }
             else
             {
-                double yLane = road.getPosition().y + road.getSize().y * (3f / 4);
-                path.getPoints().add(index + 1, new Vector(startPoint.x, yLane));
-                path.getPoints().add(index + 2, new Vector(nextPoint.x, yLane));
+                if (direction.y > 0)
+                {
+                    double xLane = road.getPosition().x + road.getSize().x * (3f / 4);
+                    augmentedList.add(new Vector(xLane, startPoint.y));
+                    augmentedList.add(new Vector(xLane, nextPoint.y));
+                }
+                else
+                {
+                    double xLane = road.getPosition().x + road.getSize().x / 4;
+                    augmentedList.add(new Vector(xLane, startPoint.y));
+                    augmentedList.add(new Vector(xLane, nextPoint.y));
+                }
             }
         }
-        else
-        {
-            if (direction.y > 0)
-            {
-                double xLane = road.getPosition().x + road.getSize().x * (3f / 4);
-                path.getPoints().add(index + 1, new Vector(xLane, startPoint.y));
-                path.getPoints().add(index + 2, new Vector(xLane, nextPoint.y));
-            }
-            else
-            {
-                double xLane = road.getPosition().x + road.getSize().x / 4;
-                path.getPoints().add(index + 1, new Vector(xLane, startPoint.y));
-                path.getPoints().add(index + 2, new Vector(xLane, nextPoint.y));
-            }
-        }
+
+        return augmentedList;
     }
 
     Road getRoadThatPointIsOn(KPoint point)
     {
         for (Road road : roads)
         {
-            Rectangle2D.Double r = new Rectangle2D.Double(road.getPosition().x, road.getPosition().y, road.getSize().x
-                    + ROAD_EXPANSION_MARGIN, road.getSize().y + ROAD_EXPANSION_MARGIN);
+            Rectangle2D.Double r = new Rectangle2D.Double(road.getPosition().x - ROAD_EXPANSION_MARGIN,
+                    road.getPosition().y - ROAD_EXPANSION_MARGIN, road.getSize().x + ROAD_EXPANSION_MARGIN * 2,
+                    road.getSize().y + ROAD_EXPANSION_MARGIN * 2);
             if (r.contains(point.x, point.y))
                 return road;
 

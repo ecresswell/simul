@@ -182,7 +182,6 @@ public class RoadNetworkManagerTest
     }
 
     @Test
-    @Ignore
     public void shouldAugmentRoadPathDataToAbideByLanes()
     {
         network.addRoad(new Road(new Vector(5, 10), new Vector(20, 50)));
@@ -218,15 +217,16 @@ public class RoadNetworkManagerTest
         //Vector [x=10.0, y=59.99], Vector [x=10.0, y=59.99], KPoint [x=25.000000000223515, y=59.99], 
         //KPoint [x=25.009999999999998, y=59.999999999776485], Vector [x=37.0, y=65.0]]
 
-
-
         assertFalse(path.isError());
         assertEquals(Vector.v(15, 49), path.getPoints().get(0));
         assertEquals(Vector.v(20, 49), path.getPoints().get(1));
-        assertEquals(Vector.v(20, 62.5), path.getPoints().get(2));
-        assertEquals(Vector.v(37, 62.5), path.getPoints().get(3));
-        assertEquals(Vector.v(37, 65), path.getPoints().get(4));
-        assertEquals(5, path.getPoints().size());
+        assertEquals(Vector.v(20, 59.99), path.getPoints().get(2));
+        assertEquals(Vector.v(20, 59.99), path.getPoints().get(3));
+        assertEquals(Vector.v(20, 59.999999999776485), path.getPoints().get(4));
+        assertEquals(Vector.v(25.009999999999998, 62.5), path.getPoints().get(5));
+        assertEquals(Vector.v(37, 62.5), path.getPoints().get(6));
+        assertEquals(Vector.v(37, 65), path.getPoints().get(7));
+        assertEquals(8, path.getPoints().size());
     }
 
     private boolean listFuzzyContains(List<Rectangle2D.Double> rs, double x, double y, double width, double height)
