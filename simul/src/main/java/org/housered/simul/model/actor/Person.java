@@ -2,18 +2,17 @@ package org.housered.simul.model.actor;
 
 import java.awt.Color;
 
+import org.housered.simul.model.actor.brain.DisplayBrainImpl;
 import org.housered.simul.model.actor.brain.HighLevelBrain;
-import org.housered.simul.model.actor.brain.HighLevelBrainImpl;
 import org.housered.simul.model.actor.brain.NavigationBrain;
 import org.housered.simul.model.actor.brain.NavigationMeshBrain;
 import org.housered.simul.model.assets.AssetManager;
-import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.ActorController;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.NavigationOrder;
-import org.housered.simul.model.navigation.PedestrianController;
 import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
+import org.housered.simul.model.navigation.PedestrianController;
 import org.housered.simul.model.navigation.road.CarController;
 import org.housered.simul.model.navigation.road.RoadNetworkManager;
 import org.housered.simul.model.work.JobManager;
@@ -41,8 +40,9 @@ public class Person implements Renderable, Tickable, Actor
             GameClock gameClock, RoadNetworkManager roadNetworkManager)
     {
         this.id = id;
-        highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager);
+        //        highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager);
         navigation = new NavigationMeshBrain(navigationManager, roadNetworkManager);
+        highLevel = new DisplayBrainImpl(this);
 
         carController = new CarController(this, highLevel, navigation, roadNetworkManager.getCarTracker());
         pedestrianController = new PedestrianController(this, highLevel, navigation);
@@ -128,7 +128,7 @@ public class Person implements Renderable, Tickable, Actor
     {
         return "Person [id=" + id + "]";
     }
-    
+
     @Override
     public Vector getSize()
     {

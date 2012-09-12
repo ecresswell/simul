@@ -10,6 +10,9 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.housered.simul.controller.InputManager;
+import org.housered.simul.model.actor.brain.DisplayBrainImpl;
+import org.housered.simul.model.actor.brain.DisplayBrainImpl.DisplayState;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Vector;
@@ -175,6 +178,24 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         if (inputManager.isKeyDown(KeyEvent.VK_4))
         {
             gameClock.setSpeed(600);
+        }
+        
+        if (inputManager.isKeyDown(KeyEvent.VK_G))
+        {
+            System.out.println("//DISPERSE");
+            DisplayBrainImpl.displayState = DisplayState.DISPERSE;
+        }
+        else if (inputManager.isKeyDown(KeyEvent.VK_H))
+        {
+            DisplayBrainImpl.displayState = DisplayState.HI;
+        }
+        else if (inputManager.isKeyDown(KeyEvent.VK_T))
+        {
+            DisplayBrainImpl.displayState = DisplayState.TIRAMISU;
+        }
+        else if (inputManager.isKeyDown(KeyEvent.VK_Y))
+        {
+            DisplayBrainImpl.displayState = DisplayState.SMILEY;
         }
     }
 

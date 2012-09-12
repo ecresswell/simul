@@ -1,7 +1,9 @@
-package org.housered.simul.model.world;
+package org.housered.simul.controller;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+
+import org.housered.simul.model.world.Tickable;
 
 public final class InputManager implements KeyListener, Tickable
 {
@@ -25,7 +27,7 @@ public final class InputManager implements KeyListener, Tickable
     /**
      * Empty Constructor: nothing really needed here.
      */
-    InputManager()
+    public InputManager()
     {
     }
 

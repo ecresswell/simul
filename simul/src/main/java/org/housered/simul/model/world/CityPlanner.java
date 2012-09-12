@@ -47,9 +47,23 @@ public class CityPlanner
 
     public void loadLevel(World world)
     {
-        loadSimpleMap(world);
+        //        loadSimpleMap(world);
         //loadComplicatedMap(world);
         //                loadSemiComplexCity(world);
+        loadSpecialMap(world);
+    }
+
+    private void loadSpecialMap(World world)
+    {
+        PersonFactory personFactory = new PersonFactory(world, assetManager, jobManager, navigationManager, gameClock,
+                roadNetworkManager);
+
+        Random r = new Random();
+        for (int i = 0; i < 5000; i++)
+        {
+            Person person = personFactory.createPerson(200 + r.nextInt(200), 200 + r.nextInt(200));
+            world.addEntity(person);
+        }
     }
 
     private List<House> createCityBlock(double x, double y, double width, double height, int houses)
@@ -210,7 +224,9 @@ public class CityPlanner
         Road road1 = new Road(new Vector(180, 240), new Vector(420, 20));
 
         TubeLineBuilder builder = new TubeLineBuilder();
-        TubeLine build = builder.addTubeStation(180, 230, 10, 10).addTubeStation(300, 230, 10, 10).buildLine();
+        TubeLine line = builder.addTubeStation(180, 225, 10, 10).addTubeStation(420, 225, 10, 10).buildLine();
+        world.addEntities(line);
+        world.addEntities(line.getStations());
 
         world.addEntities(house, workplace, workplace2, road1, house2);
     }

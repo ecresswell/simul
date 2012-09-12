@@ -1,5 +1,8 @@
 package org.housered.simul.controller;
 
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
+
 import org.housered.simul.model.world.Camera;
 import org.housered.simul.model.world.World;
 import org.housered.simul.view.swing.SwingFrame;
@@ -21,13 +24,29 @@ public class SimulMain
     {
         int width = 800;
         int height = 600;
-        Camera camera = new Camera(width, height);
+        final Camera camera = new Camera(width, height);
 
         world = new World(camera);
         world.loadLevel();
 
         swingFrame = new SwingFrame(width, height, world);
         swingFrame.addKeyListener(world.getInputManager());
+        swingFrame.addMouseMotionListener(new MouseMotionListener() {
+            
+            @Override
+            public void mouseMoved(MouseEvent e)
+            {
+                // TODO Auto-generated method stub
+                
+            }
+            
+            @Override
+            public void mouseDragged(MouseEvent e)
+            {
+                double unitsPerWorldUnit = camera.getUnitsPerWorldUnit();
+//                LOGGER.debug("{}, {}", e.getX() * unitsPerWorldUnit, e.getY() * unitsPerWorldUnit);
+            }
+        });
 
         running = true;
         run();
