@@ -18,6 +18,7 @@ import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.RenderableBoundingBox;
 import org.housered.simul.model.navigation.road.Road;
 import org.housered.simul.model.navigation.road.RoadNetworkManager;
+import org.housered.simul.model.navigation.tube.TubeManager;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.view.Renderable;
 import org.housered.simul.view.RenderableProvider;
@@ -40,6 +41,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     private AssetManager assetManager = new AssetManager();
     private JobManager jobManager = new JobManager();
     private RoadNetworkManager roadNetwork = new RoadNetworkManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
+    private TubeManager tubeManager = new TubeManager();
     private GuiManager guiManager;
     private GameClockImpl gameClock;
 
@@ -60,6 +62,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         guiManager = new GuiManager(gameClock);
         addEntity(guiManager);
         addEntity(roadNetwork);
+        addEntity(tubeManager);
 
         CityPlanner cityPlanner = new CityPlanner(this, gameClock, assetManager, jobManager, navigationManager,
                 roadNetwork);

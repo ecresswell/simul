@@ -18,6 +18,8 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.road.Road;
 import org.housered.simul.model.navigation.road.RoadNetworkManager;
+import org.housered.simul.model.navigation.tube.TubeLine;
+import org.housered.simul.model.navigation.tube.TubeLineBuilder;
 import org.housered.simul.model.work.JobDefinition;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.work.Workplace;
@@ -45,9 +47,9 @@ public class CityPlanner
 
     public void loadLevel(World world)
     {
-//        loadSimpleMap(world);
+        loadSimpleMap(world);
         //loadComplicatedMap(world);
-                loadSemiComplexCity(world);
+        //                loadSemiComplexCity(world);
     }
 
     private List<House> createCityBlock(double x, double y, double width, double height, int houses)
@@ -180,7 +182,7 @@ public class CityPlanner
         Workplace workplace2 = workplaceFactory.createWorkplace(400, 280);
 
         Random r = new Random();
-        for (int i = 0; i < 100; i++)
+        for (int i = 0; i < 10; i++)
         {
             Person person = personFactory.createPerson(r.nextInt(200), r.nextInt(200));
             if (r.nextDouble() < 0.5f)
@@ -206,6 +208,9 @@ public class CityPlanner
         }
 
         Road road1 = new Road(new Vector(180, 240), new Vector(420, 20));
+
+        TubeLineBuilder builder = new TubeLineBuilder();
+        TubeLine build = builder.addTubeStation(180, 230, 10, 10).addTubeStation(300, 230, 10, 10).buildLine();
 
         world.addEntities(house, workplace, workplace2, road1, house2);
     }

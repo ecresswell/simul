@@ -1,6 +1,8 @@
 package org.housered.simul.view;
 
-public interface Renderable
+import org.housered.simul.model.world.GameObject;
+
+public interface Renderable extends GameObject
 {
     public static final byte ROAD_Z_ORDER = 1;
     public static final byte BUILDING_Z_ORDER = 10;

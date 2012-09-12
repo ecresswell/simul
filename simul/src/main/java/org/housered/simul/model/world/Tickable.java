@@ -1,6 +1,6 @@
 package org.housered.simul.model.world;
 
-public interface Tickable
+public interface Tickable extends GameObject
 {
     /**
      * Time passed in seconds.
