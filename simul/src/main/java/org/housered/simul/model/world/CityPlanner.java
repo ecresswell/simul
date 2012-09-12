@@ -18,6 +18,7 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.road.Road;
 import org.housered.simul.model.navigation.road.RoadNetworkManager;
+import org.housered.simul.model.navigation.tube.Tube;
 import org.housered.simul.model.navigation.tube.TubeLine;
 import org.housered.simul.model.navigation.tube.TubeLineBuilder;
 import org.housered.simul.model.work.JobDefinition;
@@ -47,10 +48,10 @@ public class CityPlanner
 
     public void loadLevel(World world)
     {
-        //        loadSimpleMap(world);
+        loadSimpleMap(world);
         //loadComplicatedMap(world);
         //                loadSemiComplexCity(world);
-        loadSpecialMap(world);
+        //        loadSpecialMap(world);
     }
 
     private void loadSpecialMap(World world)
@@ -225,8 +226,10 @@ public class CityPlanner
 
         TubeLineBuilder builder = new TubeLineBuilder();
         TubeLine line = builder.addTubeStation(180, 225, 10, 10).addTubeStation(420, 225, 10, 10).buildLine();
+        line.addTube();
         world.addEntities(line);
         world.addEntities(line.getStations());
+        world.addEntities(line.getTubes());
 
         world.addEntities(house, workplace, workplace2, road1, house2);
     }

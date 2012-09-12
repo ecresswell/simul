@@ -13,12 +13,12 @@ import org.housered.simul.model.world.Tickable;
 public class TubeManager implements Tickable
 {
     private final List<TubeLine> lines = new ArrayList<TubeLine>();
-    
+
     public void addTubeLine(TubeLine tubeLine)
     {
-        
+
     }
-    
+
     public TubeStation getClosestTubeStation(Vector currentPosition, Vector target)
     {
         return null;
@@ -27,6 +27,7 @@ public class TubeManager implements Tickable
     @Override
     public void tick(float dt)
     {
-        
+        for (TubeLine line : lines)
+            line.tick(dt);
     }
 }

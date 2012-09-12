@@ -48,4 +48,11 @@ public class TubeStation implements Renderable, Collidable
     {
         return BUILDING_Z_ORDER;
     }
+
+    @Override
+    public String toString()
+    {
+        return "TubeStation [position=" + position + ", size=" + size + "]";
+    }
+
 }

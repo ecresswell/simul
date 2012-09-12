@@ -16,7 +16,9 @@ public interface GraphicsAdapter
     
     void drawRect(Vector position, Vector size);
     
-    void drawLine(Vector origin, Vector direction);
+    void drawVector(Vector origin, Vector direction);
+    
+    void drawLine(Vector firstPoint, Vector secondPoint);
     
     void fillCircle(Vector position, double radius);
     

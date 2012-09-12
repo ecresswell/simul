@@ -118,7 +118,7 @@ public class CarController implements ActorController
             return;
 
         r.setColour(Color.CYAN);
-        r.drawLine(lookAheadPosition, lookAheadDirection);
+        r.drawVector(lookAheadPosition, lookAheadDirection);
     }
 
     @Override

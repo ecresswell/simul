@@ -2,8 +2,8 @@ package org.housered.simul.model.actor;
 
 import java.awt.Color;
 
-import org.housered.simul.model.actor.brain.DisplayBrainImpl;
 import org.housered.simul.model.actor.brain.HighLevelBrain;
+import org.housered.simul.model.actor.brain.HighLevelBrainImpl;
 import org.housered.simul.model.actor.brain.NavigationBrain;
 import org.housered.simul.model.actor.brain.NavigationMeshBrain;
 import org.housered.simul.model.assets.AssetManager;
@@ -40,9 +40,9 @@ public class Person implements Renderable, Tickable, Actor
             GameClock gameClock, RoadNetworkManager roadNetworkManager)
     {
         this.id = id;
-        //        highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager);
+        highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager);
         navigation = new NavigationMeshBrain(navigationManager, roadNetworkManager);
-        highLevel = new DisplayBrainImpl(this);
+        //        highLevel = new DisplayBrainImpl(this);
 
         carController = new CarController(this, highLevel, navigation, roadNetworkManager.getCarTracker());
         pedestrianController = new PedestrianController(this, highLevel, navigation);
