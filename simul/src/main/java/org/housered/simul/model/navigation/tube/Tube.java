@@ -5,6 +5,7 @@ import java.awt.Color;
 import org.housered.simul.model.location.Locatable;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
+import org.housered.simul.model.world.GameClock;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
@@ -16,13 +17,16 @@ public class Tube implements Renderable, Locatable, Tickable
     private static final Logger LOGGER = LoggerFactory.getLogger(Tube.class);
     private final SpeedLimiter speedLimiter = new SpeedLimiter();
     private final TubeLine line;
+    private final GameClock gameClock;
     private Vector position;
     private TubeStation targetStation;
     private boolean waiting = true;
+    private long waitingUntil = -1;
 
-    Tube(TubeStation station, TubeLine line)
+    Tube(TubeStation station, TubeLine line, GameClock gameClock)
     {
         this.line = line;
+        this.gameClock = gameClock;
         this.position = station.getPosition().copy();
     }
 
@@ -30,13 +34,28 @@ public class Tube implements Renderable, Locatable, Tickable
     {
         LOGGER.debug("{} moving towards {}", this, station);
         speedLimiter.setSpeedLimit(line.getTubeSpeed());
-        waiting = false;
         targetStation = station;
+    }
+
+    void waitAndOpenDoors(long waitInGameMinutes)
+    {
+        waiting = true;
+        waitingUntil = gameClock.getSecondsSinceGameStart() + waitInGameMinutes * 60;
     }
 
     @Override
     public void tick(float dt)
     {
+        if (waitingUntil == -1)
+        {
+            waiting = false;
+        }
+        else if (waitingUntil < gameClock.getSecondsSinceGameStart())
+        {
+            waiting = false;
+            waitingUntil = -1;
+        }
+
         if (waiting)
             return;
 

@@ -5,18 +5,22 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.housered.simul.model.world.GameClock;
 import org.housered.simul.model.world.Tickable;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
 
 public class TubeLine implements Renderable, Tickable
 {
+    private static final long WAIT_TIME = 1;
+    private final GameClock gameClock;
     private final List<TubeStation> stations;
     private final List<Tube> tubes = new LinkedList<Tube>();
     private double tubeMaxSpeed = 5;
 
-    protected TubeLine(List<TubeStation> stations)
+    protected TubeLine(List<TubeStation> stations, GameClock gameClock)
     {
+        this.gameClock = gameClock;
         this.stations = Collections.unmodifiableList(stations);
     }
 
@@ -32,7 +36,7 @@ public class TubeLine implements Renderable, Tickable
 
     public void addTube()
     {
-        Tube newTube = new Tube(stations.get(0), this);
+        Tube newTube = new Tube(stations.get(0), this, gameClock);
         newTube.goTowardsTubeStation(stations.get(1));
         tubes.add(newTube);
     }
@@ -42,6 +46,7 @@ public class TubeLine implements Renderable, Tickable
         int index = stations.indexOf(station);
         int next = index == stations.size() - 1 ? 0 : index + 1;
 
+        tube.waitAndOpenDoors(WAIT_TIME);
         tube.goTowardsTubeStation(stations.get(next));
     }
 
