@@ -21,6 +21,7 @@ import org.housered.simul.model.navigation.road.RoadNetworkManager;
 import org.housered.simul.model.navigation.tube.Tube;
 import org.housered.simul.model.navigation.tube.TubeLine;
 import org.housered.simul.model.navigation.tube.TubeLineBuilder;
+import org.housered.simul.model.navigation.tube.TubeManager;
 import org.housered.simul.model.work.JobDefinition;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.work.Workplace;
@@ -34,9 +35,10 @@ public class CityPlanner
     private final IdGenerator idGenerator;
     private final RoadNetworkManager roadNetworkManager;
     private final JobManager jobManager;
+    private final TubeManager tubeManager;
 
     public CityPlanner(IdGenerator idGenerator, GameClock gameClock, AssetManager assetManager, JobManager jobManager,
-            NavigationManager navigationManager, RoadNetworkManager roadNetworkManager)
+            NavigationManager navigationManager, RoadNetworkManager roadNetworkManager, TubeManager tubeManager)
     {
         this.idGenerator = idGenerator;
         this.gameClock = gameClock;
@@ -44,6 +46,7 @@ public class CityPlanner
         this.jobManager = jobManager;
         this.navigationManager = navigationManager;
         this.roadNetworkManager = roadNetworkManager;
+        this.tubeManager = tubeManager;
     }
 
     public void loadLevel(World world)
@@ -56,8 +59,7 @@ public class CityPlanner
 
     private void loadSpecialMap(World world)
     {
-        PersonFactory personFactory = new PersonFactory(world, assetManager, jobManager, navigationManager, gameClock,
-                roadNetworkManager);
+        PersonFactory personFactory = createPersonFactory();
 
         Random r = new Random();
         for (int i = 0; i < 5000; i++)
@@ -162,8 +164,7 @@ public class CityPlanner
 
     private List<Person> createAndAssignPeople(int numPeople, World world, List<House> houses, List<Workplace> works)
     {
-        PersonFactory personFactory = new PersonFactory(idGenerator, assetManager, jobManager, navigationManager,
-                gameClock, roadNetworkManager);
+        PersonFactory personFactory = createPersonFactory();
 
         List<Person> people = new LinkedList<Person>();
         Random r = new Random();
@@ -186,8 +187,7 @@ public class CityPlanner
 
     private void loadSimpleMap(World world)
     {
-        PersonFactory personFactory = new PersonFactory(idGenerator, assetManager, jobManager, navigationManager,
-                gameClock, roadNetworkManager);
+        PersonFactory personFactory = createPersonFactory();
         HouseFactory houseFactory = new HouseFactory(idGenerator);
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
@@ -197,7 +197,7 @@ public class CityPlanner
         Workplace workplace2 = workplaceFactory.createWorkplace(400, 280);
 
         Random r = new Random();
-        for (int i = 0; i < 10; i++)
+        for (int i = 0; i < 1000; i++)
         {
             Person person = personFactory.createPerson(r.nextInt(200), r.nextInt(200));
             if (r.nextDouble() < 0.5f)
@@ -230,14 +230,14 @@ public class CityPlanner
         world.addEntities(line);
         world.addEntities(line.getStations());
         world.addEntities(line.getTubes());
+        tubeManager.addTubeLine(line);
 
         world.addEntities(house, workplace, workplace2, road1, house2);
     }
 
     private void loadComplicatedMap(World world)
     {
-        PersonFactory personFactory = new PersonFactory(idGenerator, assetManager, jobManager, navigationManager,
-                gameClock, roadNetworkManager);
+        PersonFactory personFactory = createPersonFactory();
         HouseFactory houseFactory = new HouseFactory(idGenerator);
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
@@ -273,5 +273,11 @@ public class CityPlanner
 
         Road road = new Road(new Vector(0, 325), new Vector(750, 20));
         world.addEntity(road);
+    }
+
+    private PersonFactory createPersonFactory()
+    {
+        return new PersonFactory(idGenerator, assetManager, jobManager, navigationManager, gameClock,
+                roadNetworkManager, tubeManager);
     }
 }

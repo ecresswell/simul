@@ -15,6 +15,8 @@ import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
 import org.housered.simul.model.navigation.PedestrianController;
 import org.housered.simul.model.navigation.road.CarController;
 import org.housered.simul.model.navigation.road.RoadNetworkManager;
+import org.housered.simul.model.navigation.tube.TubeController;
+import org.housered.simul.model.navigation.tube.TubeManager;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.world.GameClock;
 import org.housered.simul.model.world.Tickable;
@@ -29,23 +31,25 @@ public class Person implements Renderable, Tickable, Actor
     private final long id;
     private final ActorController carController;
     private final ActorController pedestrianController;
+    private final ActorController tubeController;
     private HighLevelBrain highLevel;
     private NavigationBrain navigation;
     private Vector size = new Vector(3, 3);
 
     private boolean invisible;
-    private boolean inACar;
+    private NavigationType currentType;
 
     public Person(long id, AssetManager assetManager, JobManager jobManager, NavigationManager navigationManager,
-            GameClock gameClock, RoadNetworkManager roadNetworkManager)
+            GameClock gameClock, RoadNetworkManager roadNetworkManager, TubeManager tubeManager)
     {
         this.id = id;
-        highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager);
+        highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager, tubeManager);
         navigation = new NavigationMeshBrain(navigationManager, roadNetworkManager);
         //        highLevel = new DisplayBrainImpl(this);
 
         carController = new CarController(this, highLevel, navigation, roadNetworkManager.getCarTracker());
         pedestrianController = new PedestrianController(this, highLevel, navigation);
+        tubeController = new TubeController(this, highLevel, tubeManager);
     }
 
     @Override
@@ -67,17 +71,21 @@ public class Person implements Renderable, Tickable, Actor
             return;
 
         //draw in the middle
-        if (inACar)
+        if (currentType == NavigationType.CAR)
         {
             carController.render(r);
             r.setColour(Color.ORANGE);
             r.drawRect(getPosition(), getSize());
         }
-        else
+        else if (currentType == NavigationType.WALK)
         {
             pedestrianController.render(r);
             r.setColour(Color.GREEN);
             r.fillCircle(getPosition(), getSize().x);
+        }
+        else if (currentType == NavigationType.TUBE)
+        {
+            tubeController.render(r);
         }
     }
 
@@ -96,25 +104,37 @@ public class Person implements Renderable, Tickable, Actor
         {
             if (target.getType() == NavigationType.CAR)
             {
-                inACar = true;
+                currentType = NavigationType.CAR;
+                tubeController.relinquishControl();
                 pedestrianController.relinquishControl();
-                carController.giveDirectControl();
+                carController.giveDirectControl(target);
+                navigation.setTarget(target);
             }
             else if (target.getType() == NavigationType.WALK)
             {
-                inACar = false;
+                currentType = NavigationType.WALK;
+                tubeController.relinquishControl();
                 carController.relinquishControl();
-                pedestrianController.giveDirectControl();
+                pedestrianController.giveDirectControl(target);
+                navigation.setTarget(target);
+            }
+            else if (target.getType() == NavigationType.TUBE)
+            {
+                currentType = NavigationType.TUBE;
+                carController.relinquishControl();
+                pedestrianController.relinquishControl();
+                tubeController.giveDirectControl(target);
             }
 
-            navigation.setTarget(target);
             LOGGER.trace("[{}]Moving towards target - {}", new Object[] {this, target});
         }
 
-        if (inACar)
+        if (currentType == NavigationType.CAR)
             carController.tick(dt);
-        else
+        else if (currentType == NavigationType.WALK)
             pedestrianController.tick(dt);
+        else if (currentType == NavigationType.TUBE)
+            tubeController.tick(dt);
     }
 
     @Override

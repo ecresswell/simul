@@ -47,7 +47,9 @@ public class TubeLine implements Renderable, Tickable
         int next = index == stations.size() - 1 ? 0 : index + 1;
 
         tube.waitAndOpenDoors(WAIT_TIME);
-        tube.goTowardsTubeStation(stations.get(next));
+        TubeStation nextStation = stations.get(next);
+        station.tubeHasArrived(tube, nextStation);
+        tube.goTowardsTubeStation(nextStation);
     }
 
     @Override

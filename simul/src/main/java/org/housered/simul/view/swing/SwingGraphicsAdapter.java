@@ -55,6 +55,14 @@ public class SwingGraphicsAdapter implements GraphicsAdapter
     {
         return camera.getScreenWidth();
     }
+    
+    @Override
+    public void drawText(Vector position, int size, String text)
+    {
+        IntVector o = new IntVector(camera.translateIntoScreenSpace(position));
+        
+        g.drawString(text, o.x, o.y);
+    }
 
     @Override
     public void drawAbsoluteRect(int x, int y, int width, int height)

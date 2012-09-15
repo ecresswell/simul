@@ -22,6 +22,8 @@ public interface GraphicsAdapter
     
     void fillCircle(Vector position, double radius);
     
+    void drawText(Vector position, int size, String text);
+    
     int getScreenWidth();
     
     int getScreenHeight();

@@ -68,7 +68,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         addEntity(tubeManager);
 
         CityPlanner cityPlanner = new CityPlanner(this, gameClock, assetManager, jobManager, navigationManager,
-                roadNetwork);
+                roadNetwork, tubeManager);
         cityPlanner.loadLevel(this);
 
         roadNetwork.refreshNavigationMesh();
@@ -179,7 +179,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         {
             gameClock.setSpeed(600);
         }
-        
+
         if (inputManager.isKeyDown(KeyEvent.VK_G))
         {
             System.out.println("//DISPERSE");
@@ -219,12 +219,12 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     {
         //LOGGER.trace("Average sleep is {}", averageSleep);
     }
-    
+
     public double getWorldWidth()
     {
         return WORLD_WIDTH;
     }
-    
+
     public double getWorldHeight()
     {
         return WORLD_HEIGHT;

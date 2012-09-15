@@ -1,7 +1,12 @@
 package org.housered.simul.model.navigation.tube;
 
 import java.awt.Color;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
 
+import org.housered.simul.model.assets.Occupant;
+import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Locatable;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
@@ -12,7 +17,7 @@ import org.housered.simul.view.Renderable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Tube implements Renderable, Locatable, Tickable
+public class Tube implements Renderable, Locatable, Tickable, Occupant
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(Tube.class);
     private final SpeedLimiter speedLimiter = new SpeedLimiter();
@@ -20,8 +25,9 @@ public class Tube implements Renderable, Locatable, Tickable
     private final GameClock gameClock;
     private Vector position;
     private TubeStation targetStation;
-    private boolean waiting = true;
+    private TubeStation currentStation;
     private long waitingUntil = -1;
+    private List<TubeController> occupants = new LinkedList<TubeController>();
 
     Tube(TubeStation station, TubeLine line, GameClock gameClock)
     {
@@ -32,32 +38,30 @@ public class Tube implements Renderable, Locatable, Tickable
 
     void goTowardsTubeStation(TubeStation station)
     {
-        LOGGER.debug("{} moving towards {}", this, station);
+        LOGGER.trace("{} moving towards {}", this, station);
         speedLimiter.setSpeedLimit(line.getTubeSpeed());
+        currentStation = targetStation;
         targetStation = station;
     }
 
     void waitAndOpenDoors(long waitInGameMinutes)
     {
-        waiting = true;
         waitingUntil = gameClock.getSecondsSinceGameStart() + waitInGameMinutes * 60;
     }
 
     @Override
     public void tick(float dt)
     {
-        if (waitingUntil == -1)
+        if (waitingUntil < gameClock.getSecondsSinceGameStart())
         {
-            waiting = false;
-        }
-        else if (waitingUntil < gameClock.getSecondsSinceGameStart())
-        {
-            waiting = false;
             waitingUntil = -1;
+            if (currentStation != null)
+                currentStation.exit(this);
         }
-
-        if (waiting)
+        else
+        {
             return;
+        }
 
         speedLimiter.startNewTick(dt);
 
@@ -67,10 +71,23 @@ public class Tube implements Renderable, Locatable, Tickable
 
         if (getPosition().equals(targetStation.getPosition()))
         {
-            LOGGER.debug("{} arrived at station {}", this, targetStation);
-            waiting = true;
+            LOGGER.trace("{} arrived at station {}", this, targetStation);
+            targetStation.occupy(this);
             line.arrivedAtStation(this, targetStation);
+
+            ListIterator<TubeController> i = occupants.listIterator();
+            while (i.hasNext())
+            {
+                TubeController person = i.next();
+                if (person.arrivedAtStationDoYouWishToAlight(this, currentStation))
+                    i.remove();
+            }
         }
+    }
+
+    void putPersonIntoTube(TubeController person)
+    {
+        occupants.add(person);
     }
 
     @Override
@@ -84,6 +101,8 @@ public class Tube implements Renderable, Locatable, Tickable
     {
         r.setColour(Color.white);
         r.fillCircle(position, 10);
+        r.setColour(Color.green);
+        r.drawText(position, 100, String.valueOf(occupants.size()));
     }
 
     @Override
@@ -95,7 +114,6 @@ public class Tube implements Renderable, Locatable, Tickable
     @Override
     public String toString()
     {
-        return "Tube [position=" + position + ", targetStation=" + targetStation + ", line=" + line + ", waiting="
-                + waiting + "]";
+        return "Tube [position=" + position + ", targetStation=" + targetStation + ", line=" + line + "]";
     }
 }

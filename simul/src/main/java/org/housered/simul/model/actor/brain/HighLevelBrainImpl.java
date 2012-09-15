@@ -10,9 +10,12 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationOrder;
 import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
 import org.housered.simul.model.navigation.road.RoadNetworkManager;
+import org.housered.simul.model.navigation.tube.TubeManager;
+import org.housered.simul.model.navigation.tube.TubeStation;
 import org.housered.simul.model.work.Job;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.world.GameClock;
+import org.housered.simul.model.world.GameObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,6 +31,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
     private final RoadNetworkManager roadManager;
     private final AssetManager assetManager;
     private final JobManager jobManager;
+    private final TubeManager tubeManager;
     private final GameClock gameClock;
 
     private Queue<NavigationOrder> orders = new LinkedList<NavigationOrder>();
@@ -39,13 +43,14 @@ public class HighLevelBrainImpl implements HighLevelBrain
     private Occupiable home;
 
     public HighLevelBrainImpl(Actor actor, AssetManager assetManager, JobManager jobManager, GameClock gameClock,
-            RoadNetworkManager roadManager)
+            RoadNetworkManager roadManager, TubeManager tubeManager)
     {
         this.actor = actor;
         this.assetManager = assetManager;
         this.jobManager = jobManager;
         this.gameClock = gameClock;
         this.roadManager = roadManager;
+        this.tubeManager = tubeManager;
     }
 
     @Override
@@ -57,7 +62,22 @@ public class HighLevelBrainImpl implements HighLevelBrain
         {
             if (home != null)
             {
-                LOGGER.trace("Heading home via the car");
+                //                LOGGER.trace("Heading home via the car");
+                //                if (currentTarget != null)
+                //                    currentTarget.exit(actor);
+                //
+                //                state = State.GOING_HOME;
+                //                actor.setInvisible(false);
+                //                currentTarget = home;
+                //
+                //                queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()), NavigationType.WALK);
+                //                queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()), NavigationType.CAR);
+                //                queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
+                //
+                //                return orders.remove();
+
+                LOGGER.trace("Heading home via the tube");
+
                 if (currentTarget != null)
                     currentTarget.exit(actor);
 
@@ -65,10 +85,12 @@ public class HighLevelBrainImpl implements HighLevelBrain
                 actor.setInvisible(false);
                 currentTarget = home;
 
-                queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()), NavigationType.WALK);
-                queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()), NavigationType.CAR);
+                TubeStation closestToMe = tubeManager.getClosestTubeStation(actor.getPosition());
+                TubeStation closestToHome = tubeManager.getClosestTubeStation(currentTarget.getEntryPoint());
+                queueOrder(closestToMe.getEntryPoint(), NavigationType.WALK);
+                queueOrder(closestToHome.getPosition(), NavigationType.TUBE, closestToHome);
                 queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
-
+                
                 return orders.remove();
             }
             LOGGER.warn("{} is homeless", actor);
@@ -113,7 +135,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
             if (state == State.GOING_HOME)
             {
                 LOGGER.trace("Arrived at home");
-                
+
                 currentTarget.occupy(actor);
                 job.arrivedAtHome();
                 state = State.AT_HOME;
@@ -122,7 +144,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
             else if (state == State.GOING_TO_WORK)
             {
                 LOGGER.trace("Arrived at work");
-                
+
                 currentTarget.occupy(actor);
                 job.arrivedAtWork();
                 state = State.AT_WORK;
@@ -131,9 +153,14 @@ public class HighLevelBrainImpl implements HighLevelBrain
         }
     }
 
+    private void queueOrder(Vector targetPoint, NavigationType type, GameObject targetObject)
+    {
+        orders.add(new NavigationOrder(targetPoint, type, targetObject));
+    }
+
     private void queueOrder(Vector targetPoint, NavigationType type)
     {
-        orders.add(new NavigationOrder(targetPoint, type));
+        queueOrder(targetPoint, type, null);
     }
 
     private void updateJobAndHome()
