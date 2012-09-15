@@ -227,7 +227,8 @@ public class CityPlanner
         TubeLineBuilder builder = new TubeLineBuilder(gameClock);
         TubeLine line = builder.addTubeStation(180, 225, 10, 10).addTubeStation(420, 225, 10, 10)
                 .addTubeStation(420, 265, 10, 10).addTubeStation(180, 265, 10, 10).buildLine();
-        line.addTube();
+        line.addTube(line.getStations().get(0));
+        line.addTube(line.getStations().get(2));
         world.addEntities(line);
         world.addEntities(line.getStations());
         world.addEntities(line.getTubes());

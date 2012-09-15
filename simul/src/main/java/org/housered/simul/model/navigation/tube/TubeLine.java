@@ -34,22 +34,30 @@ public class TubeLine implements Renderable, Tickable
         return tubes;
     }
 
-    public void addTube()
+    public void addTube(TubeStation station)
     {
-        Tube newTube = new Tube(stations.get(0), this, gameClock);
-        newTube.goTowardsTubeStation(stations.get(1));
+        if (!stations.contains(station))
+            throw new IllegalArgumentException("Can't add a tube to this station");
+
+        Tube newTube = new Tube(station, this, gameClock);
+        newTube.goTowardsTubeStation(getNextStationForTube(newTube, station));
         tubes.add(newTube);
     }
 
     void arrivedAtStation(Tube tube, TubeStation station)
     {
-        int index = stations.indexOf(station);
+        TubeStation nextStation = getNextStationForTube(tube, station);
+        tube.waitAndOpenDoors(WAIT_TIME);
+        tube.goTowardsTubeStation(nextStation);
+        station.tubeHasArrived(tube);
+    }
+
+    TubeStation getNextStationForTube(Tube tube, TubeStation currentStation)
+    {
+        int index = stations.indexOf(currentStation);
         int next = index == stations.size() - 1 ? 0 : index + 1;
 
-        tube.waitAndOpenDoors(WAIT_TIME);
-        TubeStation nextStation = stations.get(next);
-        station.tubeHasArrived(tube, nextStation);
-        tube.goTowardsTubeStation(nextStation);
+        return stations.get(next);
     }
 
     @Override

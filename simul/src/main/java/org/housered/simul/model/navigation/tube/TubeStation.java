@@ -45,7 +45,7 @@ public class TubeStation implements Renderable, Collidable, Occupiable
         }
     }
 
-    void tubeHasArrived(Tube tube, TubeStation nextStation)
+    void tubeHasArrived(Tube tube)
     {
         for (TubeController person : queue)
             tube.putPersonIntoTube(person);
