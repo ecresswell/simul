@@ -8,7 +8,7 @@ import org.junit.Test;
 public class TubeManagerTest
 {
     @Test
-    public void shouldReturnClosestTubeStationBasedOnStationMidPoint()
+    public void shouldReturnClosestTubeStationBasedOnStationEntryPoint()
     {
         TubeStation t1 = new TubeStation(v(10, 10), v(20, 20));
         TubeStation t2 = new TubeStation(v(10, 40), v(20, 20));
@@ -19,8 +19,7 @@ public class TubeManagerTest
 
         assertEquals(t1, tubeManager.getClosestTubeStation(v(9, 9)));
         assertEquals(t1, tubeManager.getClosestTubeStation(v(12, 12)));
-        assertEquals(t2, tubeManager.getClosestTubeStation(v(12, 45)));
-        assertEquals(t2, tubeManager.getClosestTubeStation(v(10, 35.000001)));
+        assertEquals(t2, tubeManager.getClosestTubeStation(v(12, 47)));
         assertEquals(t1, tubeManager.getClosestTubeStation(v(10, 34.999999)));
     }
 }

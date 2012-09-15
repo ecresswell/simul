@@ -32,8 +32,7 @@ public class TubeManager implements Tickable
         {
             for (TubeStation station : line.getStations())
             {
-                Vector centre = station.getPosition().translateCopy(station.getSize().scaleCopy(0.5));
-                double distance = centre.distance(point);
+                double distance = station.getEntryPoint().distance(point);
                 
                 if (closest == null || distance < minDistance)
                 {
