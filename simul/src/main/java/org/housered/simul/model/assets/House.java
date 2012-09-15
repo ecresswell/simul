@@ -28,13 +28,8 @@ public class House extends AbstractOccupiable implements Tickable
     {
         r.setColour(Color.RED);
         r.drawRect(position, size);
-
         r.setColour(Color.GREEN);
-
-        double percentFull = (double) occupants.size() / 25;
-        float radius = (float) (Math.min(size.x, size.y) * percentFull);
-
-        r.fillCircle(position, radius);
+        r.drawText(position, 100, String.valueOf(occupants.size()));
     }
 
     @Override

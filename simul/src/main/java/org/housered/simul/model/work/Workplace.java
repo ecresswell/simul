@@ -19,20 +19,8 @@ public class Workplace extends AbstractOccupiable implements Tickable
     {
         r.setColour(Color.blue);
         r.drawRect(position, size);
-
         r.setColour(Color.GREEN);
-
-        double percentFull = (double) occupants.size() / 2500;
-        float radius = (float) (Math.min(size.x, size.y) * percentFull);
-
-        r.fillCircle(position, radius);
-
-        //        for (int i = 0; i < occupants.size(); i++)
-        //        {
-        //            r.fillCircle(
-        //                    new Vector(position.x + random.nextInt((int) round(size.x)), position.y
-        //                            + random.nextInt((int) round(size.y))), 3);
-        //        }
+        r.drawText(position, 100, String.valueOf(occupants.size()));
     }
 
     @Override
