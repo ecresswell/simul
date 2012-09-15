@@ -68,6 +68,7 @@ public class TubeLine implements Renderable, Tickable
         {
             r.drawLine(stations.get(i).getPosition(), stations.get(i + 1).getPosition());
         }
+        r.drawLine(stations.get(0).getPosition(), stations.get(stations.size() - 1).getPosition());
     }
 
     @Override

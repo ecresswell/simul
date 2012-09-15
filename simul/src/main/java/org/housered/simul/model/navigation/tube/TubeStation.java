@@ -30,7 +30,7 @@ public class TubeStation implements Renderable, Collidable, Occupiable
         r.setColour(Color.MAGENTA);
         r.drawRect(position, size);
         r.setColour(Color.GREEN);
-        r.drawText(position, 10000, String.valueOf(queue.size()));
+        r.drawText(position.translateCopy(0, size.y * 2), 10000, String.valueOf(queue.size()));
     }
 
     public void queueForTube(TubeController personQueueing, TubeStation targetStation)

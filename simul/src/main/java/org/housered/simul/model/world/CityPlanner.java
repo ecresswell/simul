@@ -225,7 +225,8 @@ public class CityPlanner
         Road road1 = new Road(new Vector(180, 240), new Vector(420, 20));
 
         TubeLineBuilder builder = new TubeLineBuilder(gameClock);
-        TubeLine line = builder.addTubeStation(180, 225, 10, 10).addTubeStation(420, 225, 10, 10).buildLine();
+        TubeLine line = builder.addTubeStation(180, 225, 10, 10).addTubeStation(420, 225, 10, 10)
+                .addTubeStation(420, 265, 10, 10).addTubeStation(180, 265, 10, 10).buildLine();
         line.addTube();
         world.addEntities(line);
         world.addEntities(line.getStations());
