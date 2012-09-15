@@ -51,9 +51,9 @@ public class CityPlanner
 
     public void loadLevel(World world)
     {
-        loadSimpleMap(world);
+        //        loadSimpleMap(world);
         //loadComplicatedMap(world);
-        //                loadSemiComplexCity(world);
+        loadSemiComplexCity(world);
         //        loadSpecialMap(world);
     }
 
@@ -147,13 +147,27 @@ public class CityPlanner
                 yCursor += blockHeight * 1.2;
             }
             yCursor = yCursorOriginal;
-            xCursor += blockWidth * 1.2;
+            xCursor += blockWidth * 2.2;
         }
+
+        blockBounds.add(new Double(300, 400, 40, 40));
 
         //roads fill the gaps
         List<Double> roads = inverseRectangles(world.getWorldWidth(), world.getWorldHeight(), blockBounds);
         for (Double roadRect : roads)
             world.addEntity(new Road(roadRect));
+
+        //tubes
+        TubeLineBuilder builder = new TubeLineBuilder(gameClock);
+        TubeLine line = builder.addTubeStation(100, 60, 10, 10).addTubeStation(600, 60, 10, 10)
+                .addTubeStation(600, 280, 10, 10).addTubeStation(310, 410, 20, 20).addTubeStation(100, 280, 10, 10)
+                .buildLine();
+        line.addTube(line.getStations().get(0));
+        line.addTube(line.getStations().get(2));
+        world.addEntities(line);
+        world.addEntities(line.getStations());
+        world.addEntities(line.getTubes());
+        tubeManager.addTubeLine(line);
 
         List<Person> people = createAndAssignPeople(numberOfPeople, world, houses, workplaces);
 

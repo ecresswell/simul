@@ -55,7 +55,6 @@ public class CarController implements ActorController
             if (checkInFrontSkip == 0)
             {
                 lookAheadDirection = direction.scaleToMagnitudeCopy(HOW_FAR_TO_LOOK_AHEAD);
-                lookAheadPosition = getPosition().translateCopy(getSize().x / 2, getSize().y / 2);
                 CarController closestCar = carTracker.getClosestCar(this, lookAheadDirection);
 
                 double braking = 0;
@@ -84,8 +83,9 @@ public class CarController implements ActorController
             {
                 checkInFrontSkip--;
             }
-
+            
             getPosition().translate(actualMove);
+            lookAheadPosition = getPosition().translateCopy(getSize().x / 2, getSize().y / 2);
         }
 
         if (navigation.hasArrivedAtTarget())
