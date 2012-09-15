@@ -15,7 +15,7 @@ import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
 import org.housered.simul.model.navigation.PedestrianController;
 import org.housered.simul.model.navigation.road.CarController;
 import org.housered.simul.model.navigation.road.RoadNetworkManager;
-import org.housered.simul.model.navigation.tube.TubeController;
+import org.housered.simul.model.navigation.tube.TubePassengerController;
 import org.housered.simul.model.navigation.tube.TubeManager;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.world.GameClock;
@@ -49,7 +49,7 @@ public class Person implements Renderable, Tickable, Actor
 
         carController = new CarController(this, highLevel, navigation, roadNetworkManager.getCarTracker());
         pedestrianController = new PedestrianController(this, highLevel, navigation);
-        tubeController = new TubeController(this, highLevel, tubeManager);
+        tubeController = new TubePassengerController(this, highLevel, tubeManager);
     }
 
     @Override

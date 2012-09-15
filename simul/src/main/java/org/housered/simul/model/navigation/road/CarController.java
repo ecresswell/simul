@@ -1,6 +1,8 @@
 package org.housered.simul.model.navigation.road;
 
 import java.awt.Color;
+import java.awt.geom.Rectangle2D;
+import java.util.Random;
 
 import org.housered.simul.controller.SimulMain;
 import org.housered.simul.model.actor.Actor;
@@ -16,10 +18,12 @@ import org.slf4j.LoggerFactory;
 
 public class CarController implements ActorController
 {
+    private static final Random R = new Random();
     private static final Logger LOGGER = LoggerFactory.getLogger(CarController.class);
     private static final double HOW_FAR_TO_LOOK_AHEAD = 4;
     private static final double CARELESSNESS_FACTOR = 10;
     private static final double MINIMUM_SPEED = 1;
+    private static final double CHANCE_OF_MINIMUM_SPEED = 0.4;
     private static final double MAX_SPEED = 8;
     private final Actor actor;
     private final NavigationBrain navigation;
@@ -55,7 +59,8 @@ public class CarController implements ActorController
             if (checkInFrontSkip == 0)
             {
                 lookAheadDirection = direction.scaleToMagnitudeCopy(HOW_FAR_TO_LOOK_AHEAD);
-                CarController closestCar = carTracker.getClosestCar(this, lookAheadDirection);
+                Vector rayOrigin = getRayLookAheadOrigin(this, direction);
+                CarController closestCar = carTracker.getClosestCar(rayOrigin, this, lookAheadDirection);
 
                 double braking = 0;
 
@@ -74,18 +79,19 @@ public class CarController implements ActorController
                 }
 
                 double maxSpeed = MAX_SPEED * (1 - braking);
-                maxSpeed = Math.max(maxSpeed, MINIMUM_SPEED);
+                if (R.nextFloat() < CHANCE_OF_MINIMUM_SPEED)
+                    maxSpeed = Math.max(maxSpeed, MINIMUM_SPEED);
                 speedLimiter.setSpeedLimit(maxSpeed);
-                
+
                 checkInFrontSkip = SimulMain.carControllerDelay;
             }
             else
             {
                 checkInFrontSkip--;
             }
-            
+
             getPosition().translate(actualMove);
-            lookAheadPosition = getPosition().translateCopy(getSize().x / 2, getSize().y / 2);
+            lookAheadPosition = getRayLookAheadOrigin(this, direction);
         }
 
         if (navigation.hasArrivedAtTarget())
@@ -138,5 +144,15 @@ public class CarController implements ActorController
     public Vector getSize()
     {
         return actor.getSize();
+    }
+
+    static Vector getRayLookAheadOrigin(CarController car, Vector direction)
+    {
+        Rectangle2D.Double d = new Rectangle2D.Double(car.getPosition().x, car.getPosition().y, car.getSize().x,
+                car.getSize().y);
+        Vector origin = new Vector(d.getCenterX(), d.getCenterY());
+        origin.translate(direction.scaleToMagnitudeCopy(car.getSize().x / 2));
+
+        return origin;
     }
 }

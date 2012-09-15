@@ -10,16 +10,16 @@ import org.housered.simul.view.GraphicsAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class TubeController implements ActorController
+public class TubePassengerController implements ActorController
 {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TubeController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TubePassengerController.class);
     private final HighLevelBrain highLevel;
     private final Actor actor;
     private TubeStation targetStation;
     private final TubeManager tubeManager;
     private TubeStation startStation;
     
-    public TubeController(Actor actor, HighLevelBrain highLevel, TubeManager tubeManager)
+    public TubePassengerController(Actor actor, HighLevelBrain highLevel, TubeManager tubeManager)
     {
         this.actor = actor;
         this.highLevel = highLevel;

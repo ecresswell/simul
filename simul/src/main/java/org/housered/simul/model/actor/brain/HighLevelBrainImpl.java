@@ -2,6 +2,7 @@ package org.housered.simul.model.actor.brain;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Random;
 
 import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.assets.AssetManager;
@@ -27,6 +28,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
     }
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HighLevelBrainImpl.class);
+    private static final Random R = new Random();
     private final Actor actor;
     private final RoadNetworkManager roadManager;
     private final AssetManager assetManager;
@@ -62,36 +64,41 @@ public class HighLevelBrainImpl implements HighLevelBrain
         {
             if (home != null)
             {
-                //                LOGGER.trace("Heading home via the car");
-                //                if (currentTarget != null)
-                //                    currentTarget.exit(actor);
-                //
-                //                state = State.GOING_HOME;
-                //                actor.setInvisible(false);
-                //                currentTarget = home;
-                //
-                //                queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()), NavigationType.WALK);
-                //                queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()), NavigationType.CAR);
-                //                queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
-                //
-                //                return orders.remove();
+                if (R.nextFloat() < 0.5f)
+                {
+                    LOGGER.trace("Heading home via the car");
+                    if (currentTarget != null)
+                        currentTarget.exit(actor);
 
-                LOGGER.trace("Heading home via the tube");
+                    state = State.GOING_HOME;
+                    actor.setInvisible(false);
+                    currentTarget = home;
 
-                if (currentTarget != null)
-                    currentTarget.exit(actor);
+                    queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()), NavigationType.WALK);
+                    queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()), NavigationType.CAR);
+                    queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
 
-                state = State.GOING_HOME;
-                actor.setInvisible(false);
-                currentTarget = home;
+                    return orders.remove();
+                }
+                else
+                {
+                    LOGGER.trace("Heading home via the tube");
 
-                TubeStation closestToMe = tubeManager.getClosestTubeStation(actor.getPosition());
-                TubeStation closestToHome = tubeManager.getClosestTubeStation(currentTarget.getEntryPoint());
-                queueOrder(closestToMe.getEntryPoint(), NavigationType.WALK);
-                queueOrder(closestToHome.getPosition(), NavigationType.TUBE, closestToHome);
-                queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
-                
-                return orders.remove();
+                    if (currentTarget != null)
+                        currentTarget.exit(actor);
+
+                    state = State.GOING_HOME;
+                    actor.setInvisible(false);
+                    currentTarget = home;
+
+                    TubeStation closestToMe = tubeManager.getClosestTubeStation(actor.getPosition());
+                    TubeStation closestToHome = tubeManager.getClosestTubeStation(currentTarget.getEntryPoint());
+                    queueOrder(closestToMe.getEntryPoint(), NavigationType.WALK);
+                    queueOrder(closestToHome.getPosition(), NavigationType.TUBE, closestToHome);
+                    queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
+
+                    return orders.remove();
+                }
             }
             LOGGER.warn("{} is homeless", actor);
         }
@@ -99,17 +106,38 @@ public class HighLevelBrainImpl implements HighLevelBrain
         {
             if (job != null)
             {
-                LOGGER.trace("Time to go to work via the car");
-                currentTarget.exit(actor);
-                state = State.GOING_TO_WORK;
-                actor.setInvisible(false);
-                currentTarget = job.getJobLocation();
+                if (R.nextFloat() < 0.5f)
+                {
+                    LOGGER.trace("Time to go to work via the car");
+                    currentTarget.exit(actor);
+                    state = State.GOING_TO_WORK;
+                    actor.setInvisible(false);
+                    currentTarget = job.getJobLocation();
 
-                queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()), NavigationType.WALK);
-                queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()), NavigationType.CAR);
-                queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
+                    queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()), NavigationType.WALK);
+                    queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()), NavigationType.CAR);
+                    queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
 
-                return orders.remove();
+                    return orders.remove();
+                }
+                else
+                {
+                    LOGGER.trace("Going to work via the tube");
+
+                    if (currentTarget != null)
+                        currentTarget.exit(actor);
+                    state = State.GOING_TO_WORK;
+                    actor.setInvisible(false);
+                    currentTarget = job.getJobLocation();
+
+                    TubeStation closestToMe = tubeManager.getClosestTubeStation(actor.getPosition());
+                    TubeStation closestToWork = tubeManager.getClosestTubeStation(currentTarget.getEntryPoint());
+                    queueOrder(closestToMe.getEntryPoint(), NavigationType.WALK);
+                    queueOrder(closestToWork.getPosition(), NavigationType.TUBE, closestToWork);
+                    queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
+
+                    return orders.remove();
+                }
             }
             LOGGER.warn("{} is unemployed", actor);
         }

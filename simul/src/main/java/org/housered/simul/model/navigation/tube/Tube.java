@@ -27,7 +27,7 @@ public class Tube implements Renderable, Locatable, Tickable, Occupant
     private TubeStation targetStation;
     private TubeStation currentStation;
     private long waitingUntil = -1;
-    private List<TubeController> occupants = new LinkedList<TubeController>();
+    private List<TubePassengerController> occupants = new LinkedList<TubePassengerController>();
 
     Tube(TubeStation station, TubeLine line, GameClock gameClock)
     {
@@ -75,17 +75,17 @@ public class Tube implements Renderable, Locatable, Tickable, Occupant
             targetStation.occupy(this);
             line.arrivedAtStation(this, targetStation);
 
-            ListIterator<TubeController> i = occupants.listIterator();
+            ListIterator<TubePassengerController> i = occupants.listIterator();
             while (i.hasNext())
             {
-                TubeController person = i.next();
+                TubePassengerController person = i.next();
                 if (person.arrivedAtStationDoYouWishToAlight(this, currentStation))
                     i.remove();
             }
         }
     }
 
-    void putPersonIntoTube(TubeController person)
+    void putPersonIntoTube(TubePassengerController person)
     {
         occupants.add(person);
     }

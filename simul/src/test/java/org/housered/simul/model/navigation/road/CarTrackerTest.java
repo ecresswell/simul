@@ -99,13 +99,13 @@ public class CarTrackerTest
         assertEquals(car1, tracker.performRayCollision((new Vector(11, 11)), new Vector(5, 5)));
         assertEquals(car2, tracker.performRayCollision((new Vector(20, 20)), new Vector(-50, -50)));
         assertEquals(car3, tracker.performRayCollision((new Vector(7, 7)), new Vector(-10, -10)));
-        
+
         assertEquals(null, tracker.performRayCollision((new Vector(3, 3.99)), new Vector(10, 0)));
         assertEquals(car3, tracker.performRayCollision((new Vector(3, 4)), new Vector(10, 0)));
         assertEquals(car3, tracker.performRayCollision((new Vector(3, 7)), new Vector(10, 0)));
         assertEquals(null, tracker.performRayCollision((new Vector(3, 7.01)), new Vector(10, 0)));
     }
-    
+
     @Test
     public void shouldFireRayFromCentreOfCarAndExcludeSelf()
     {
@@ -117,8 +117,9 @@ public class CarTrackerTest
         tracker.addCar(car1);
         tracker.addCar(car2);
         tracker.addCar(car3);
-        
-        assertEquals(car2, tracker.getClosestCar(car1, new Vector(5, 5)));
+
+        Vector rayOrigin = CarController.getRayLookAheadOrigin(car1, new Vector(5, 5));
+        assertEquals(car2, tracker.getClosestCar(rayOrigin, car1, new Vector(5, 5)));
     }
 
     static CarController qM(Vector pos, Vector size)

@@ -41,11 +41,8 @@ public class CarTracker
         return v.getClosestCar();
     }
 
-    public CarController getClosestCar(final CarController car, Vector direction)
+    public CarController getClosestCar(Vector origin, final CarController car, Vector direction)
     {
-        Rectangle2D.Double d = new Rectangle2D.Double(car.getPosition().x, car.getPosition().y, car.getSize().x,
-                car.getSize().y);
-        Vector origin = new Vector(d.getCenterX(), d.getCenterY());
         Envelope e = new Envelope(origin.x, origin.x + direction.x, origin.y, origin.y + direction.y);
 
         RayTestingItemVisitor v = new RayTestingItemVisitor(origin, direction, car);

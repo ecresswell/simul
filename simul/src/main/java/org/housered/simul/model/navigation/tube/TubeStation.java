@@ -13,7 +13,7 @@ import org.housered.simul.view.Renderable;
 
 public class TubeStation implements Renderable, Collidable, Occupiable
 {
-    private final List<TubeController> queue = new LinkedList<TubeController>();
+    private final List<TubePassengerController> queue = new LinkedList<TubePassengerController>();
     private final List<Tube> tubesInStation = new LinkedList<Tube>();
     private final Vector position;
     private final Vector size;
@@ -33,7 +33,7 @@ public class TubeStation implements Renderable, Collidable, Occupiable
         r.drawText(position.translateCopy(0, size.y * 2), 10000, String.valueOf(queue.size()));
     }
 
-    public void queueForTube(TubeController personQueueing, TubeStation targetStation)
+    public void queueForTube(TubePassengerController personQueueing, TubeStation targetStation)
     {
         if (tubesInStation.size() > 0)
         {
@@ -47,7 +47,7 @@ public class TubeStation implements Renderable, Collidable, Occupiable
 
     void tubeHasArrived(Tube tube)
     {
-        for (TubeController person : queue)
+        for (TubePassengerController person : queue)
             tube.putPersonIntoTube(person);
         queue.clear();
     }
