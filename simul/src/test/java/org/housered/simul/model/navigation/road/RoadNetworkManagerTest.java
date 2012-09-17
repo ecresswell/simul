@@ -1,10 +1,8 @@
 package org.housered.simul.model.navigation.road;
 
 import static org.housered.simul.model.location.Vector.EPSILON;
-import static org.housered.simul.model.location.Vector.v;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Rectangle2D;
@@ -13,9 +11,7 @@ import java.util.List;
 
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.RectangleInverseUtility;
-import org.housered.simul.model.navigation.road.Road.Orientation;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import straightedge.geom.path.PathBlockingObstacle;

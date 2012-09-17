@@ -90,7 +90,8 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         if (entity instanceof Tickable)
             tickables.add((Tickable) entity);
         if (entity instanceof Collidable)
-            navigationManager.addColliableWithoutNavMeshRefresh((Collidable) entity);
+            if (((Collidable) entity).isColliding())
+                navigationManager.addColliableWithoutNavMeshRefresh((Collidable) entity);
         if (entity instanceof Occupiable)
             assetManager.addOccupiable((Occupiable) entity);
         if (entity instanceof Road)

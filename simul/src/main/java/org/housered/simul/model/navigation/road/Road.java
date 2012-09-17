@@ -5,6 +5,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.housered.simul.model.location.BoundingBox;
 import org.housered.simul.model.location.Vector;
+import org.housered.simul.model.navigation.Collidable;
 import org.housered.simul.model.world.GameObject;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
@@ -24,12 +25,12 @@ public class Road implements Renderable, BoundingBox, GameObject
     {
         this(position, size, calculateOrientation(size));
     }
-    
+
     public Road(Rectangle2D.Double bounds)
     {
         this(new Vector(bounds.x, bounds.y), new Vector(bounds.width, bounds.height));
     }
-    
+
     public Road(Vector position, Vector size, Orientation orientation)
     {
         this.position = position;
@@ -61,7 +62,7 @@ public class Road implements Renderable, BoundingBox, GameObject
     {
         return size;
     }
-    
+
     static Orientation calculateOrientation(Vector size)
     {
         if (size.x > size.y)
@@ -75,4 +76,5 @@ public class Road implements Renderable, BoundingBox, GameObject
     {
         return orientation;
     }
+
 }

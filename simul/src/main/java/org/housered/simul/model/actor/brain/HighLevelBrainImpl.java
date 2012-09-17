@@ -75,6 +75,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
                     currentTarget = home;
 
                     queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()), NavigationType.WALK);
+                    //transform and roll out
                     queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()), NavigationType.CAR);
                     queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
 
@@ -95,7 +96,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
                     TubeStation closestToHome = tubeManager.getClosestTubeStation(currentTarget.getEntryPoint());
                     queueOrder(closestToMe.getEntryPoint(), NavigationType.WALK);
                     queueOrder(closestToHome.getPosition(), NavigationType.TUBE, closestToHome);
-                    queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
+                    queueOrder( currentTarget.getEntryPoint(), NavigationType.WALK);
 
                     return orders.remove();
                 }

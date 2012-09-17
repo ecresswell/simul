@@ -104,7 +104,7 @@ public class CityPlanner
     {
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
-        int numberOfPeople = 10000;
+        int numberOfPeople = 2500;
         double pavementOffset = 5;
         int blocks = 3;
         double blockWidth = 200;
@@ -242,7 +242,7 @@ public class CityPlanner
         TubeLine line = builder.addTubeStation(180, 225, 10, 10).addTubeStation(420, 225, 10, 10)
                 .addTubeStation(420, 265, 10, 10).addTubeStation(180, 265, 10, 10).buildLine();
         line.addTube(line.getStations().get(0));
-        line.addTube(line.getStations().get(2));
+        line.addTube(line.getStations().get(1));
         world.addEntities(line);
         world.addEntities(line.getStations());
         world.addEntities(line.getTubes());

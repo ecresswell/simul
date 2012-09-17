@@ -1,6 +1,6 @@
 package org.housered.simul.model.navigation.road;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.road.Road.Orientation;
