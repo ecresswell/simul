@@ -28,4 +28,14 @@ public class RoadEdge
     {
         return cost;
     }
+
+    public RoadNode getStartNode()
+    {
+        return a;
+    }
+
+    public RoadNode getEndNode()
+    {
+        return b;
+    }
 }

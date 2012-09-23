@@ -1,11 +1,11 @@
 package org.housered.simul.model.actor.brain;
 
 import org.housered.simul.model.location.Vector;
-import org.housered.simul.model.navigation.NavigationOrder;
+import org.housered.simul.model.navigation.OldNavigationOrder;
 
 public interface NavigationBrain
 {
-    void setTarget(NavigationOrder order);
+    void setTarget(OldNavigationOrder order);
 
     boolean hasTarget();
 

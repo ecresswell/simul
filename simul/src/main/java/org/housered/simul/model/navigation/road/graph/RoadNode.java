@@ -17,7 +17,7 @@ public class RoadNode implements Node<RoadNode>, Locatable
     {
         this.position = position;
     }
-    
+
     void addRoad(RoadEdge road)
     {
         roads.add(road);
@@ -57,6 +57,11 @@ public class RoadNode implements Node<RoadNode>, Locatable
     public Vector getPosition()
     {
         return position;
+    }
+
+    public List<RoadEdge> getEdges()
+    {
+        return roads;
     }
 
 }

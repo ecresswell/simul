@@ -8,8 +8,8 @@ import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Vector;
-import org.housered.simul.model.navigation.NavigationOrder;
-import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
+import org.housered.simul.model.navigation.OldNavigationOrder;
+import org.housered.simul.model.navigation.OldNavigationOrder.NavigationType;
 import org.housered.simul.model.navigation.road.RoadManager;
 import org.housered.simul.model.navigation.tube.TubeManager;
 import org.housered.simul.model.navigation.tube.TubeStation;
@@ -27,6 +27,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
         AT_HOME, AT_WORK, GOING_HOME, GOING_TO_WORK
     }
 
+    private static final double CHANCE_OF_CAR = 0.5;
     private static final Logger LOGGER = LoggerFactory.getLogger(HighLevelBrainImpl.class);
     private static final Random R = new Random();
     private final Actor actor;
@@ -36,7 +37,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
     private final TubeManager tubeManager;
     private final GameClock gameClock;
 
-    private Queue<NavigationOrder> orders = new LinkedList<NavigationOrder>();
+    private Queue<OldNavigationOrder> orders = new LinkedList<OldNavigationOrder>();
     private Occupiable currentTarget;
     private State state;
     private boolean releaseNextOrder;
@@ -56,7 +57,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
     }
 
     @Override
-    public NavigationOrder decideWhereToGo()
+    public OldNavigationOrder decideWhereToGo()
     {
         updateJobAndHome();
 
@@ -64,7 +65,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
         {
             if (home != null)
             {
-                if (R.nextFloat() < 0.5f)
+                if (R.nextFloat() < CHANCE_OF_CAR)
                 {
                     LOGGER.trace("Heading home via the car");
                     if (currentTarget != null)
@@ -74,9 +75,10 @@ public class HighLevelBrainImpl implements HighLevelBrain
                     actor.setInvisible(false);
                     currentTarget = home;
 
-                    queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()), NavigationType.WALK);
+                    queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()).getPosition(), NavigationType.WALK);
                     //transform and roll out
-                    queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()), NavigationType.CAR);
+                    queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()).getPosition(),
+                            NavigationType.CAR);
                     queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
 
                     return orders.remove();
@@ -96,7 +98,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
                     TubeStation closestToHome = tubeManager.getClosestTubeStation(currentTarget.getEntryPoint());
                     queueOrder(closestToMe.getEntryPoint(), NavigationType.WALK);
                     queueOrder(closestToHome.getPosition(), NavigationType.TUBE, closestToHome);
-                    queueOrder( currentTarget.getEntryPoint(), NavigationType.WALK);
+                    queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
 
                     return orders.remove();
                 }
@@ -107,7 +109,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
         {
             if (job != null)
             {
-                if (R.nextFloat() < 0.5f)
+                if (R.nextFloat() < CHANCE_OF_CAR)
                 {
                     LOGGER.trace("Time to go to work via the car");
                     currentTarget.exit(actor);
@@ -115,8 +117,9 @@ public class HighLevelBrainImpl implements HighLevelBrain
                     actor.setInvisible(false);
                     currentTarget = job.getJobLocation();
 
-                    queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()), NavigationType.WALK);
-                    queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()), NavigationType.CAR);
+                    queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()).getPosition(), NavigationType.WALK);
+                    queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()).getPosition(),
+                            NavigationType.CAR);
                     queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
 
                     return orders.remove();
@@ -184,7 +187,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
 
     private void queueOrder(Vector targetPoint, NavigationType type, GameObject targetObject)
     {
-        orders.add(new NavigationOrder(targetPoint, type, targetObject));
+        orders.add(new OldNavigationOrder(targetPoint, type, targetObject));
     }
 
     private void queueOrder(Vector targetPoint, NavigationType type)

@@ -1,5 +1,6 @@
 package org.housered.simul.model.world;
 
+import static org.housered.simul.model.location.Vector.v;
 import static org.housered.simul.model.navigation.RectangleInverseUtility.inverseRectangles;
 
 import java.awt.geom.Rectangle2D;
@@ -18,6 +19,7 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.road.Road;
 import org.housered.simul.model.navigation.road.RoadManager;
+import org.housered.simul.model.navigation.road.graph.RoadNode;
 import org.housered.simul.model.navigation.tube.Tube;
 import org.housered.simul.model.navigation.tube.TubeLine;
 import org.housered.simul.model.navigation.tube.TubeLineBuilder;
@@ -51,9 +53,9 @@ public class CityPlanner
 
     public void loadLevel(World world)
     {
-        //        loadSimpleMap(world);
+        loadSimpleMap(world);
         //loadComplicatedMap(world);
-        loadSemiComplexCity(world);
+        //        loadSemiComplexCity(world);
         //        loadSpecialMap(world);
     }
 
@@ -211,7 +213,7 @@ public class CityPlanner
         Workplace workplace2 = workplaceFactory.createWorkplace(400, 280);
 
         Random r = new Random();
-        for (int i = 0; i < 1000; i++)
+        for (int i = 0; i < 100; i++)
         {
             Person person = personFactory.createPerson(r.nextInt(200), r.nextInt(200));
             if (r.nextDouble() < 0.5f)
@@ -236,7 +238,28 @@ public class CityPlanner
             world.addEntity(person);
         }
 
-        Road road1 = new Road(new Vector(180, 240), new Vector(420, 20));
+        RoadNode topLeftL = new RoadNode(v(180, 240));
+        RoadNode topRightL = new RoadNode(v(500, 240));
+        RoadNode bottomLeftL = new RoadNode(v(180, 260));
+        RoadNode bottomRightL = new RoadNode(v(500, 260));
+        roadNetworkManager.addRoad(topLeftL, topRightL, 10);
+        roadNetworkManager.addRoad(topRightL, bottomRightL, 5);
+        roadNetworkManager.addRoad(bottomRightL, bottomLeftL, 10);
+        roadNetworkManager.addRoad(bottomLeftL, topLeftL, 5);
+
+        RoadNode topLeftR = new RoadNode(v(185, 245));
+        RoadNode topRightR = new RoadNode(v(495, 245));
+        RoadNode bottomLeftR = new RoadNode(v(185, 255));
+        RoadNode bottomRightR = new RoadNode(v(495, 255));
+        roadNetworkManager.addRoad(topRightR, topLeftR, 10);
+        roadNetworkManager.addRoad(bottomRightR, topRightR, 5);
+        roadNetworkManager.addRoad(bottomLeftR, bottomRightR, 10);
+        roadNetworkManager.addRoad(topLeftR, bottomLeftR, 5);
+
+        roadNetworkManager.addRoad(topLeftR, topLeftL, 1);
+        roadNetworkManager.addRoad(topRightL, topRightR, 1);
+        roadNetworkManager.addRoad(bottomLeftR, bottomLeftL, 1);
+        roadNetworkManager.addRoad(bottomRightL, bottomRightR, 1);
 
         TubeLineBuilder builder = new TubeLineBuilder(gameClock);
         TubeLine line = builder.addTubeStation(180, 225, 10, 10).addTubeStation(420, 225, 10, 10)
@@ -248,7 +271,7 @@ public class CityPlanner
         world.addEntities(line.getTubes());
         tubeManager.addTubeLine(line);
 
-        world.addEntities(house, workplace, workplace2, road1, house2);
+        world.addEntities(house, workplace, workplace2, house2);
     }
 
     private void loadComplicatedMap(World world)

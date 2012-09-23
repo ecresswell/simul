@@ -1,6 +1,6 @@
 package org.housered.simul.model.actor.brain;
 
-import org.housered.simul.model.navigation.NavigationOrder;
+import org.housered.simul.model.navigation.OldNavigationOrder;
 
 
 /**
@@ -10,7 +10,7 @@ import org.housered.simul.model.navigation.NavigationOrder;
  */
 public interface HighLevelBrain 
 {
-    NavigationOrder decideWhereToGo();
+    OldNavigationOrder decideWhereToGo();
     
     void arrivedAtTarget();
 }

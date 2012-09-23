@@ -11,7 +11,7 @@ import org.housered.simul.model.actor.brain.NavigationBrain;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.ActorController;
-import org.housered.simul.model.navigation.NavigationOrder;
+import org.housered.simul.model.navigation.OldNavigationOrder;
 import org.housered.simul.view.GraphicsAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +107,7 @@ public class CarController implements ActorController
     }
 
     @Override
-    public void giveDirectControl(NavigationOrder target)
+    public void giveDirectControl(OldNavigationOrder target)
     {
         carTracker.addCar(this);
     }

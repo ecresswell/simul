@@ -10,8 +10,8 @@ import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.ActorController;
 import org.housered.simul.model.navigation.NavigationManager;
-import org.housered.simul.model.navigation.NavigationOrder;
-import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
+import org.housered.simul.model.navigation.OldNavigationOrder;
+import org.housered.simul.model.navigation.OldNavigationOrder.NavigationType;
 import org.housered.simul.model.navigation.PedestrianController;
 import org.housered.simul.model.navigation.road.CarController;
 import org.housered.simul.model.navigation.road.RoadManager;
@@ -98,7 +98,7 @@ public class Person implements Renderable, Tickable, Actor
     @Override
     public void tick(float dt)
     {
-        NavigationOrder target = highLevel.decideWhereToGo();
+        OldNavigationOrder target = highLevel.decideWhereToGo();
 
         if (target != null)
         {

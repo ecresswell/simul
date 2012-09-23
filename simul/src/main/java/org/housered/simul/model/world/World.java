@@ -43,7 +43,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     private NavigationManager navigationManager = new NavigationManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
     private AssetManager assetManager = new AssetManager();
     private JobManager jobManager = new JobManager();
-    private RoadManager roadNetwork = new RoadManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
+    private RoadManager roadNetwork = new RoadManager();
     private TubeManager tubeManager = new TubeManager();
     private GuiManager guiManager;
     private GameClockImpl gameClock;
@@ -65,13 +65,13 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         guiManager = new GuiManager(gameClock);
         addEntity(guiManager);
         addEntity(roadNetwork);
+        addEntity(roadNetwork.getRoadGraph());
         addEntity(tubeManager);
 
         CityPlanner cityPlanner = new CityPlanner(this, gameClock, assetManager, jobManager, navigationManager,
                 roadNetwork, tubeManager);
         cityPlanner.loadLevel(this);
 
-        roadNetwork.refreshNavigationMesh();
         navigationManager.refreshNavigationMesh();
     }
 
@@ -94,8 +94,6 @@ public class World implements RenderableProvider, Tickable, IdGenerator
                 navigationManager.addColliableWithoutNavMeshRefresh((Collidable) entity);
         if (entity instanceof Occupiable)
             assetManager.addOccupiable((Occupiable) entity);
-        if (entity instanceof Road)
-            roadNetwork.addRoad((Road) entity);
     }
 
     public void addEntities(GameObject... entities)

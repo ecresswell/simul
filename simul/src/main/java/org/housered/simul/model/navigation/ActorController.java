@@ -7,7 +7,7 @@ import org.housered.simul.view.Renderable;
 
 public interface ActorController extends Tickable, Locatable, Renderable, BoundingBox
 {
-    void giveDirectControl(NavigationOrder target);
+    void giveDirectControl(OldNavigationOrder target);
     
     void relinquishControl();
 }

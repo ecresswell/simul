@@ -8,8 +8,8 @@ import java.util.concurrent.FutureTask;
 
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
-import org.housered.simul.model.navigation.NavigationOrder;
-import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
+import org.housered.simul.model.navigation.OldNavigationOrder;
+import org.housered.simul.model.navigation.OldNavigationOrder.NavigationType;
 import org.housered.simul.model.navigation.road.RoadManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public class NavigationMeshBrain implements NavigationBrain
     }
 
     @Override
-    public void setTarget(NavigationOrder order)
+    public void setTarget(OldNavigationOrder order)
     {
         target = order.getTarget();
         type = order.getType();
@@ -56,7 +56,6 @@ public class NavigationMeshBrain implements NavigationBrain
                 @Override
                 public PathData call() throws Exception
                 {
-                    // TODO Auto-generated method stub
                     return networkManager.findPath(getPosition(), target);
                 }
             });
@@ -67,7 +66,6 @@ public class NavigationMeshBrain implements NavigationBrain
                 @Override
                 public PathData call() throws Exception
                 {
-                    // TODO Auto-generated method stub
                     return navigationManager.findPath(getPosition(), target);
                 }
             });
