@@ -14,7 +14,7 @@ import org.housered.simul.model.navigation.NavigationOrder;
 import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
 import org.housered.simul.model.navigation.PedestrianController;
 import org.housered.simul.model.navigation.road.CarController;
-import org.housered.simul.model.navigation.road.RoadNetworkManager;
+import org.housered.simul.model.navigation.road.RoadManager;
 import org.housered.simul.model.navigation.tube.TubePassengerController;
 import org.housered.simul.model.navigation.tube.TubeManager;
 import org.housered.simul.model.work.JobManager;
@@ -40,7 +40,7 @@ public class Person implements Renderable, Tickable, Actor
     private NavigationType currentType;
 
     public Person(long id, AssetManager assetManager, JobManager jobManager, NavigationManager navigationManager,
-            GameClock gameClock, RoadNetworkManager roadNetworkManager, TubeManager tubeManager)
+            GameClock gameClock, RoadManager roadNetworkManager, TubeManager tubeManager)
     {
         this.id = id;
         highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager, tubeManager);

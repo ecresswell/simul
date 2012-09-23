@@ -2,7 +2,7 @@ package org.housered.simul.model.actor;
 
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.navigation.NavigationManager;
-import org.housered.simul.model.navigation.road.RoadNetworkManager;
+import org.housered.simul.model.navigation.road.RoadManager;
 import org.housered.simul.model.navigation.tube.TubeManager;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.world.GameClock;
@@ -14,12 +14,12 @@ public class PersonFactory
     private final AssetManager assetManager;
     private final NavigationManager navigationManager;
     private final GameClock gameClock;
-    private final RoadNetworkManager roadNetworkManager;
+    private final RoadManager roadNetworkManager;
     private final JobManager jobManager;
     private final TubeManager tubeManager;
 
     public PersonFactory(IdGenerator idGenerator, AssetManager assetManager, JobManager jobManager,
-            NavigationManager navigationManager, GameClock gameClock, RoadNetworkManager roadNetworkManager,
+            NavigationManager navigationManager, GameClock gameClock, RoadManager roadNetworkManager,
             TubeManager tubeManager)
     {
         this.idGenerator = idGenerator;

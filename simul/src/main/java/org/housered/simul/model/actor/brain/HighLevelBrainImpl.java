@@ -10,7 +10,7 @@ import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationOrder;
 import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
-import org.housered.simul.model.navigation.road.RoadNetworkManager;
+import org.housered.simul.model.navigation.road.RoadManager;
 import org.housered.simul.model.navigation.tube.TubeManager;
 import org.housered.simul.model.navigation.tube.TubeStation;
 import org.housered.simul.model.work.Job;
@@ -30,7 +30,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
     private static final Logger LOGGER = LoggerFactory.getLogger(HighLevelBrainImpl.class);
     private static final Random R = new Random();
     private final Actor actor;
-    private final RoadNetworkManager roadManager;
+    private final RoadManager roadManager;
     private final AssetManager assetManager;
     private final JobManager jobManager;
     private final TubeManager tubeManager;
@@ -45,7 +45,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
     private Occupiable home;
 
     public HighLevelBrainImpl(Actor actor, AssetManager assetManager, JobManager jobManager, GameClock gameClock,
-            RoadNetworkManager roadManager, TubeManager tubeManager)
+            RoadManager roadManager, TubeManager tubeManager)
     {
         this.actor = actor;
         this.assetManager = assetManager;

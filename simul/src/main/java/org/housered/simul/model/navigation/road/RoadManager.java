@@ -18,10 +18,10 @@ import straightedge.geom.path.PathBlockingObstacle;
 import straightedge.geom.path.PathData;
 import straightedge.geom.path.PathFinder;
 
-public class RoadNetworkManager implements Tickable, GameObject
+public class RoadManager implements Tickable, GameObject
 {
     static final double ROAD_EXPANSION_MARGIN = 0.01d;
-    private static final Logger LOGGER = LoggerFactory.getLogger(RoadNetworkManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RoadManager.class);
     private static final float MAX_CONNECTION_DISTANCE = 1000f;
     private final CarTracker carTracker;
     private List<Road> roads = new LinkedList<Road>();
@@ -31,7 +31,7 @@ public class RoadNetworkManager implements Tickable, GameObject
     private ArrayList<PathBlockingObstacle> obstacles = new ArrayList<PathBlockingObstacle>();
     private NodeConnector<PathBlockingObstacle> nodeConnector = new NodeConnector<PathBlockingObstacle>();
 
-    public RoadNetworkManager(Vector worldBounds)
+    public RoadManager(Vector worldBounds)
     {
         this.worldBounds = worldBounds;
         this.carTracker = new CarTracker();

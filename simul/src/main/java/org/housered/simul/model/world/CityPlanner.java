@@ -17,7 +17,7 @@ import org.housered.simul.model.assets.HouseFactory;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.road.Road;
-import org.housered.simul.model.navigation.road.RoadNetworkManager;
+import org.housered.simul.model.navigation.road.RoadManager;
 import org.housered.simul.model.navigation.tube.Tube;
 import org.housered.simul.model.navigation.tube.TubeLine;
 import org.housered.simul.model.navigation.tube.TubeLineBuilder;
@@ -33,12 +33,12 @@ public class CityPlanner
     private final AssetManager assetManager;
     private final NavigationManager navigationManager;
     private final IdGenerator idGenerator;
-    private final RoadNetworkManager roadNetworkManager;
+    private final RoadManager roadNetworkManager;
     private final JobManager jobManager;
     private final TubeManager tubeManager;
 
     public CityPlanner(IdGenerator idGenerator, GameClock gameClock, AssetManager assetManager, JobManager jobManager,
-            NavigationManager navigationManager, RoadNetworkManager roadNetworkManager, TubeManager tubeManager)
+            NavigationManager navigationManager, RoadManager roadNetworkManager, TubeManager tubeManager)
     {
         this.idGenerator = idGenerator;
         this.gameClock = gameClock;

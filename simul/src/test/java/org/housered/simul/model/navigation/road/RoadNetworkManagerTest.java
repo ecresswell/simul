@@ -21,12 +21,12 @@ public class RoadNetworkManagerTest
 {
     private static final double WORLD_WIDTH = 1000;
     private static final double WORLD_HEIGHT = 1000;
-    private RoadNetworkManager network;
+    private RoadManager network;
 
     @Before
     public void setUp()
     {
-        network = new RoadNetworkManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
+        network = new RoadManager(new Vector(WORLD_WIDTH, WORLD_HEIGHT));
     }
 
     @Test

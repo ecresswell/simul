@@ -1,6 +1,6 @@
 package org.housered.simul.model.navigation.road;
 
-import static org.housered.simul.model.navigation.road.RoadNetworkManager.ROAD_EXPANSION_MARGIN;
+import static org.housered.simul.model.navigation.road.RoadManager.ROAD_EXPANSION_MARGIN;
 
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;

@@ -10,7 +10,7 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.NavigationOrder;
 import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
-import org.housered.simul.model.navigation.road.RoadNetworkManager;
+import org.housered.simul.model.navigation.road.RoadManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,11 +33,11 @@ public class NavigationMeshBrain implements NavigationBrain
     private NavigationType type;
     private PathData path;
     private NavigationState state = NavigationState.NO_TARGET;
-    private final RoadNetworkManager networkManager;
+    private final RoadManager networkManager;
 
     private FutureTask<PathData> currentTask;
 
-    public NavigationMeshBrain(NavigationManager navigationManager, RoadNetworkManager networkManager)
+    public NavigationMeshBrain(NavigationManager navigationManager, RoadManager networkManager)
     {
         this.navigationManager = navigationManager;
         this.networkManager = networkManager;
