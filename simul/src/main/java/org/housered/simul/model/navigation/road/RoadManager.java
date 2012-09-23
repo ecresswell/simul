@@ -141,8 +141,6 @@ public class RoadManager implements Tickable, GameObject
         return new Vector(minDistancePoint);
     }
 
-   
-
     @Override
     public void tick(float dt)
     {

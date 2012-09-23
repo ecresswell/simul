@@ -45,6 +45,12 @@
 			<version>0.3</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>13.0</version>
+		</dependency>
+		
 		<!-- Logging -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

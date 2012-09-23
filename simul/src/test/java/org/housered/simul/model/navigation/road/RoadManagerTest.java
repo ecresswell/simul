@@ -17,7 +17,7 @@ import org.junit.Test;
 import straightedge.geom.path.PathBlockingObstacle;
 import straightedge.geom.path.PathData;
 
-public class RoadNetworkManagerTest
+public class RoadManagerTest
 {
     private static final double WORLD_WIDTH = 1000;
     private static final double WORLD_HEIGHT = 1000;
