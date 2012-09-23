@@ -39,6 +39,12 @@
 			<version>0.3</version>
 		</dependency>
 		
+		<dependency>
+			<groupId>stackframe</groupId>
+			<artifactId>pathfinder</artifactId>
+			<version>0.3</version>
+		</dependency>
+		
 		<!-- Logging -->
 		<dependency>
 			<groupId>ch.qos.logback</groupId>

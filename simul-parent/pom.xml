@@ -10,5 +10,6 @@
 	<modules>
 		<module>../simul</module>
 		<module>../straightedge</module>
+		<module>../pathfinder</module>
 	</modules>
 </project>
