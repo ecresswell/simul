@@ -106,7 +106,7 @@ public class CityPlanner
     {
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
-        int numberOfPeople = 100;
+        int numberOfPeople = 5000;
         double pavementOffset = 5;
         int blocks = 3;
         double blockWidth = 200;
@@ -155,21 +155,41 @@ public class CityPlanner
         blockBounds.add(new Double(300, 400, 40, 40));
 
         //roads fill the gaps
-        RoadNode r1 = new RoadNode(v(118.0, 42.0));
-        RoadNode r2 = new RoadNode(v(610.0, 44.0));
-        RoadNode r3 = new RoadNode(v(733.0, 68.0));
-        RoadNode r4 = new RoadNode(v(735.0, 293.0));
-        RoadNode r5 = new RoadNode(v(349.0, 300.0));
-        RoadNode r6 = new RoadNode(v(226.0, 298.0));
-        RoadNode r7 = new RoadNode(v(222.0, 72.0));
-        
+        RoadNode r1 = new RoadNode(v(3.0, 37.0));
+        RoadNode r2 = new RoadNode(v(219.0, 36.0));
+        RoadNode r3 = new RoadNode(v(235.0, 35.0));
+        RoadNode r4 = new RoadNode(v(463.0, 35.0));
+        RoadNode r5 = new RoadNode(v(714.0, 33.0));
+        RoadNode r6 = new RoadNode(v(720.0, 193.0));
+        RoadNode r7 = new RoadNode(v(467.0, 186.0));
+        RoadNode r8 = new RoadNode(v(222.0, 190.0));
+        RoadNode r9 = new RoadNode(v(2.0, 191.0));
+        RoadNode r10 = new RoadNode(v(723.7177106427731, 296.7497789612953));
+        RoadNode r11 = new RoadNode(v(475.8993742703398, 297.77382167357814));
+        RoadNode r12 = new RoadNode(v(232.17720874703764, 295.7257362490126));
+        RoadNode r13 = new RoadNode(v(6.825477823854058, 296.7497789612953));
+
         roadNetworkManager.addRoad(r1, r2, 10);
         roadNetworkManager.addRoad(r2, r3, 10);
         roadNetworkManager.addRoad(r3, r4, 10);
         roadNetworkManager.addRoad(r4, r5, 10);
         roadNetworkManager.addRoad(r5, r6, 10);
         roadNetworkManager.addRoad(r6, r7, 10);
-        roadNetworkManager.addRoad(r7, r1, 10);
+        roadNetworkManager.addRoad(r7, r8, 10);
+        roadNetworkManager.addRoad(r8, r9, 10);
+        roadNetworkManager.addRoad(r9, r1, 10);
+
+        roadNetworkManager.addRoad(r10, r11, 10);
+        roadNetworkManager.addRoad(r11, r12, 10);
+        roadNetworkManager.addRoad(r12, r13, 10);
+
+        roadNetworkManager.addRoad(r3, r8, 10);
+        roadNetworkManager.addRoad(r4, r7, 10);
+
+        roadNetworkManager.addRoad(r6, r10, 10);
+        roadNetworkManager.addRoad(r7, r11, 10);
+        roadNetworkManager.addRoad(r8, r12, 10);
+        roadNetworkManager.addRoad(r13, r9, 10);
 
         //tubes
         TubeLineBuilder builder = new TubeLineBuilder(gameClock);
