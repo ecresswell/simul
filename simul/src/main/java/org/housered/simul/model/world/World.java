@@ -148,9 +148,6 @@ public class World implements RenderableProvider, Tickable, IdGenerator
 
     private void processMouseInput()
     {
-        //        LOGGER.debug("{}, {}", e.getX() * unitsPerWorldUnit - xClickOffset, e.getY() * unitsPerWorldUnit
-        //                - yClickOffset);
-
         List<MouseEvent> events = mouseManager.unbufferMouseReleased();
 
         final int xOffset = -4;
@@ -163,7 +160,8 @@ public class World implements RenderableProvider, Tickable, IdGenerator
             Vector position = camera.translateIntoWorldSpace(x, y);
             Vector size = Vector.v(2, 2);
             addEntity(new RenderableBoundingBox(position, size));
-            LOGGER.debug("Add entity at {} ({})", position);
+//            LOGGER.debug("Add entity at {}", position);
+            System.out.println(String.format("RoadNode r = new RoadNode(v(%s, %s));", position.x, position.y));
         }
     }
 

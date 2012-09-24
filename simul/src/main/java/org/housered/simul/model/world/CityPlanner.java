@@ -53,9 +53,9 @@ public class CityPlanner
 
     public void loadLevel(World world)
     {
-        loadSimpleMap(world);
+        //        loadSimpleMap(world);
         //loadComplicatedMap(world);
-        //        loadSemiComplexCity(world);
+        loadSemiComplexCity(world);
         //        loadSpecialMap(world);
     }
 
@@ -106,7 +106,7 @@ public class CityPlanner
     {
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
-        int numberOfPeople = 2500;
+        int numberOfPeople = 100;
         double pavementOffset = 5;
         int blocks = 3;
         double blockWidth = 200;
@@ -155,6 +155,21 @@ public class CityPlanner
         blockBounds.add(new Double(300, 400, 40, 40));
 
         //roads fill the gaps
+        RoadNode r1 = new RoadNode(v(118.0, 42.0));
+        RoadNode r2 = new RoadNode(v(610.0, 44.0));
+        RoadNode r3 = new RoadNode(v(733.0, 68.0));
+        RoadNode r4 = new RoadNode(v(735.0, 293.0));
+        RoadNode r5 = new RoadNode(v(349.0, 300.0));
+        RoadNode r6 = new RoadNode(v(226.0, 298.0));
+        RoadNode r7 = new RoadNode(v(222.0, 72.0));
+        
+        roadNetworkManager.addRoad(r1, r2, 10);
+        roadNetworkManager.addRoad(r2, r3, 10);
+        roadNetworkManager.addRoad(r3, r4, 10);
+        roadNetworkManager.addRoad(r4, r5, 10);
+        roadNetworkManager.addRoad(r5, r6, 10);
+        roadNetworkManager.addRoad(r6, r7, 10);
+        roadNetworkManager.addRoad(r7, r1, 10);
 
         //tubes
         TubeLineBuilder builder = new TubeLineBuilder(gameClock);
