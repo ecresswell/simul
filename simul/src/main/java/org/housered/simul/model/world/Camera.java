@@ -1,5 +1,7 @@
 package org.housered.simul.model.world;
 
+import static org.housered.simul.model.location.Vector.v;
+
 import org.housered.simul.model.location.Vector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,5 +94,12 @@ public class Camera
     public int getScreenHeight()
     {
         return screenWidth;
+    }
+
+    public Vector translateIntoWorldSpace(int x, int y)
+    {
+        double newX = ((double) x) / getUnitsPerWorldUnit() - xOffset;
+        double newY = ((double) y) / getUnitsPerWorldUnit() - yOffset;
+        return v(newX, newY);
     }
 }

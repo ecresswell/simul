@@ -1,6 +1,7 @@
 package org.housered.simul.model.world;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,7 +11,8 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.housered.simul.controller.InputManager;
+import org.housered.simul.controller.KeyInputManager;
+import org.housered.simul.controller.MouseListenerManager;
 import org.housered.simul.model.actor.brain.DisplayBrainImpl;
 import org.housered.simul.model.actor.brain.DisplayBrainImpl.DisplayState;
 import org.housered.simul.model.assets.AssetManager;
@@ -48,7 +50,8 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     private GuiManager guiManager;
     private GameClockImpl gameClock;
 
-    private InputManager inputManager = new InputManager();
+    private KeyInputManager inputManager = new KeyInputManager();
+    private MouseListenerManager mouseManager = new MouseListenerManager();
     private final Camera camera;
 
     public World(Camera camera)
@@ -80,7 +83,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         if (entity instanceof Identifiable)
             LOGGER.debug("Add entity with id {} - {}", ((Identifiable) entity).getId(), entity);
         else
-            LOGGER.debug("Add non-identifiable object - {}", entity);
+            LOGGER.trace("Add non-identifiable object - {}", entity);
 
         if (entity instanceof Renderable)
         {
@@ -116,7 +119,10 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     @Override
     public Iterable<Renderable> getZOrderedRenderables()
     {
-        return renderables;
+        synchronized (gameClock)
+        {
+            return renderables;
+        }
     }
 
     @Override
@@ -127,16 +133,41 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     @Override
     public void tick(float dt)
     {
-        processInput();
-        gameClock.tick(dt);
-
-        for (Tickable tickable : tickables)
+        synchronized (gameClock)
         {
-            tickable.tick(dt * gameClock.getGameSecondsPerActualSecond() * SLOW_DOWN_REAL_TIME_FACTOR);
+            processKeyboardInput();
+            processMouseInput();
+            gameClock.tick(dt);
+
+            for (Tickable tickable : tickables)
+            {
+                tickable.tick(dt * gameClock.getGameSecondsPerActualSecond() * SLOW_DOWN_REAL_TIME_FACTOR);
+            }
         }
     }
 
-    private void processInput()
+    private void processMouseInput()
+    {
+        //        LOGGER.debug("{}, {}", e.getX() * unitsPerWorldUnit - xClickOffset, e.getY() * unitsPerWorldUnit
+        //                - yClickOffset);
+
+        List<MouseEvent> events = mouseManager.unbufferMouseReleased();
+
+        final int xOffset = -4;
+        final int yOffset = -27;
+
+        for (MouseEvent e : events)
+        {
+            int x = e.getX() + xOffset;
+            int y = e.getY() + yOffset;
+            Vector position = camera.translateIntoWorldSpace(x, y);
+            Vector size = Vector.v(2, 2);
+            addEntity(new RenderableBoundingBox(position, size));
+            LOGGER.debug("Add entity at {} ({})", position);
+        }
+    }
+
+    private void processKeyboardInput()
     {
         if (inputManager.isKeyDown(KeyEvent.VK_LEFT))
         {
@@ -203,9 +234,14 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         return nextId.getAndIncrement();
     }
 
-    public InputManager getInputManager()
+    public KeyInputManager getInputManager()
     {
         return inputManager;
+    }
+
+    public MouseListenerManager getMouseManager()
+    {
+        return mouseManager;
     }
 
     @Override

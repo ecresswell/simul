@@ -5,7 +5,7 @@ import java.awt.event.KeyListener;
 
 import org.housered.simul.model.world.Tickable;
 
-public final class InputManager implements KeyListener, Tickable
+public final class KeyInputManager implements KeyListener, Tickable
 {
 
     //array of key states made as integers for more possible states. 
@@ -27,7 +27,7 @@ public final class InputManager implements KeyListener, Tickable
     /**
      * Empty Constructor: nothing really needed here.
      */
-    public InputManager()
+    public KeyInputManager()
     {
     }
 

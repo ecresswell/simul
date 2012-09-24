@@ -155,9 +155,6 @@ public class CityPlanner
         blockBounds.add(new Double(300, 400, 40, 40));
 
         //roads fill the gaps
-        List<Double> roads = inverseRectangles(world.getWorldWidth(), world.getWorldHeight(), blockBounds);
-        for (Double roadRect : roads)
-            world.addEntity(new Road(roadRect));
 
         //tubes
         TubeLineBuilder builder = new TubeLineBuilder(gameClock);

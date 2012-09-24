@@ -94,4 +94,26 @@ public class CameraTest
         c.zoom(0.5);
         assertEquals(new Vector(10, 10), c.scaleIntoScreenSpace(new Vector(10, 10)));
     }
+
+    @Test
+    public void shouldScaleScreenIntoWorld()
+    {
+        Camera c = new Camera(800, 600);
+
+        assertEquals(new Vector(5, 5), c.translateIntoWorldSpace(5, 5));
+
+        c.zoom(0.5);
+        assertEquals(new Vector(200, 150), c.translateIntoWorldSpace(0, 0));
+        c.zoom(2);
+
+        c.incrementXOffset(100);
+        assertEquals(new Vector(-95, 5), c.translateIntoWorldSpace(5, 5));
+
+        c.zoom(0.5);
+        assertEquals(new Vector(100, 150), c.translateIntoWorldSpace(0, 0));
+        c.zoom(2);
+
+        c.incrementYOffset(-10);
+        assertEquals(new Vector(-95, 15), c.translateIntoWorldSpace(5, 5));
+    }
 }
