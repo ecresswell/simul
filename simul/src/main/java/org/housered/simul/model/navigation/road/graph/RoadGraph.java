@@ -62,7 +62,7 @@ public class RoadGraph implements Renderable
         r.setColour(Color.gray);
         for (RoadNode node : roadNodes)
         {
-            r.fillCircle(node.getPosition(), 3);
+            r.fillCircle(node.getPosition(), 1);
 
             for (RoadEdge edge : node.getEdges())
             {

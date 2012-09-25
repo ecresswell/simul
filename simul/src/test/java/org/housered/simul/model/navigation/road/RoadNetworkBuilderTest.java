@@ -44,12 +44,28 @@ public class RoadNetworkBuilderTest
         assertContainsRoad(g, -4, 14, -4, 11);
         assertContainsRoad(g, -4, -1, -4, -4);
 
+        //junction roads
+        assertContainsBothWaysRoad(g, -4, -4, -1, -1);
+        assertContainsBothWaysRoad(g, -1, -4, -4, -1);
+        assertContainsBothWaysRoad(g, 14, -4, 11, -1);
+        assertContainsBothWaysRoad(g, 11, -4, 14, -1);
+        assertContainsBothWaysRoad(g, 14, 14, 11, 11);
+        assertContainsBothWaysRoad(g, 14, 11, 11, 14);
+        assertContainsBothWaysRoad(g, -4, 14, -1, 11);
+        assertContainsBothWaysRoad(g, -1, 14, -4, 11);
+
         assertEquals(16, g.getRoadNodes().size());
     }
 
     public static void assertContainsRoad(RoadGraph graph, double sx, double sy, double ex, double ey)
     {
         assertContainsRoad(graph, v(sx, sy), v(ex, ey));
+    }
+
+    public static void assertContainsBothWaysRoad(RoadGraph graph, double sx, double sy, double ex, double ey)
+    {
+        assertContainsRoad(graph, v(sx, sy), v(ex, ey));
+        assertContainsRoad(graph, v(ex, ey), v(sx, sy));
     }
 
     public static void assertContainsRoad(RoadGraph graph, Vector start, Vector end)

@@ -17,23 +17,32 @@ public class RoadNetworkBuilder
         this.expansionFactor = expansionFactor;
         this.distanceBetweenLanes = distanceBetweenLanes;
     }
-
-    public RoadGraph buildNetwork(Double block)
+    
+    public RoadGraph buildNetwork(Double... blocks)
     {
         RoadGraph graph = new RoadGraph();
+        
+        for (Double block : blocks)
+            buildNetwork(graph, block);
+        
+        return graph;
+    }
+    
+    private void buildNetwork(RoadGraph graph, Double block)
+    {
 
         block.add(block.x - expansionFactor, block.y - expansionFactor);
         block.add(block.x + block.width + expansionFactor, block.y + block.height + expansionFactor);
 
-        RoadNode ulL = new RoadNode(v(block.x, block.y));
-        RoadNode urL = new RoadNode(v(block.x + block.width, block.y));
-        RoadNode brL = new RoadNode(v(block.x + block.width, block.y + block.height));
-        RoadNode blL = new RoadNode(v(block.x, block.y + block.height));
+        RoadNode ul = new RoadNode(v(block.x, block.y));
+        RoadNode ur = new RoadNode(v(block.x + block.width, block.y));
+        RoadNode br = new RoadNode(v(block.x + block.width, block.y + block.height));
+        RoadNode bl = new RoadNode(v(block.x, block.y + block.height));
 
-        graph.connectNodesInADirectedWay(urL, ulL);
-        graph.connectNodesInADirectedWay(brL, urL);
-        graph.connectNodesInADirectedWay(blL, brL);
-        graph.connectNodesInADirectedWay(ulL, blL);
+        graph.connectNodesInADirectedWay(ur, ul);
+        graph.connectNodesInADirectedWay(br, ur);
+        graph.connectNodesInADirectedWay(bl, br);
+        graph.connectNodesInADirectedWay(ul, bl);
 
         //outside road should contain junction points
         Double outerBlock = (Double) block.clone();
@@ -62,8 +71,24 @@ public class RoadNetworkBuilder
         graph.connectNodesInADirectedWay(top4, right2, right3, bottom4);
         graph.connectNodesInADirectedWay(bottom4, bottom3, bottom2, bottom1);
         graph.connectNodesInADirectedWay(bottom1, left3, left2, top1);
-
-        return graph;
+        
+        //junctions
+        graph.connectNodesInADirectedWay(top2, left2);
+        graph.connectNodesInADirectedWay(left2, top2);
+        graph.connectNodesInADirectedWay(top1, ul);
+        graph.connectNodesInADirectedWay(ul, top1);
+        graph.connectNodesInADirectedWay(top3, right2);
+        graph.connectNodesInADirectedWay(right2, top3);
+        graph.connectNodesInADirectedWay(top4, ur);
+        graph.connectNodesInADirectedWay(ur, top4);
+        graph.connectNodesInADirectedWay(right3, bottom3);
+        graph.connectNodesInADirectedWay(bottom3, right3);
+        graph.connectNodesInADirectedWay(bottom4, br);
+        graph.connectNodesInADirectedWay(br, bottom4);
+        graph.connectNodesInADirectedWay(bottom2, left3);
+        graph.connectNodesInADirectedWay(left3, bottom2);
+        graph.connectNodesInADirectedWay(bottom1, bl);
+        graph.connectNodesInADirectedWay(bl, bottom1);
     }
 
 }

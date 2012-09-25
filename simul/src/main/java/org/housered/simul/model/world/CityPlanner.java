@@ -19,6 +19,8 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.road.Road;
 import org.housered.simul.model.navigation.road.RoadManager;
+import org.housered.simul.model.navigation.road.RoadNetworkBuilder;
+import org.housered.simul.model.navigation.road.graph.RoadGraph;
 import org.housered.simul.model.navigation.road.graph.RoadNode;
 import org.housered.simul.model.navigation.tube.Tube;
 import org.housered.simul.model.navigation.tube.TubeLine;
@@ -154,20 +156,10 @@ public class CityPlanner
 
         blockBounds.add(new Double(300, 400, 40, 40));
         
-        for (Rectangle2D.Double block : blockBounds)
-        {
-            // 4 points around every block
-            //join them up
-            RoadNode ul = new RoadNode(v(block.x, block.y));
-            RoadNode ur = new RoadNode(v(block.x + block.width, block.y));
-            RoadNode br = new RoadNode(v(block.x + block.width, block.y + block.height));
-            RoadNode bl = new RoadNode(v(block.x, block.y + block.height));
-            
-            roadNetworkManager.addRoad(ul, ur, 10);
-            roadNetworkManager.addRoad(ur, br, 10);
-            roadNetworkManager.addRoad(br, bl, 10);
-            roadNetworkManager.addRoad(bl, ul, 10);
-        }
+        RoadNetworkBuilder roadBuilder = new RoadNetworkBuilder(3, 3);
+        RoadGraph graph = roadBuilder.buildNetwork(blockBounds.toArray(new Double[0]));
+        roadNetworkManager.setRoadNetwork(graph);
+        world.addEntities(graph);
 
         //tubes
         TubeLineBuilder builder = new TubeLineBuilder(gameClock);
