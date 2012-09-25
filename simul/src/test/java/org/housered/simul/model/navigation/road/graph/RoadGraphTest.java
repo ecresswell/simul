@@ -1,10 +1,12 @@
 package org.housered.simul.model.navigation.road.graph;
 
 import static org.housered.simul.model.location.Vector.v;
+import static org.housered.simul.model.navigation.road.RoadNetworkBuilderTest.assertContainsRoad;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
+import org.housered.simul.model.navigation.road.RoadNetworkBuilderTest;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -64,5 +66,35 @@ public class RoadGraphTest
         assertEquals(1, neighbours.size());
         assertEquals(3, n3.traverseCost(n1), 0.001d);
         assertEquals(n1, neighbours.get(0));
+    }
+
+    @Test
+    public void shouldUseCartesianDistanceWhenNoCostProvided()
+    {
+        RoadNode r1 = new RoadNode(v(1, 1));
+        RoadNode r2 = new RoadNode(v(10, 15));
+
+        RoadGraph graph = new RoadGraph();
+        graph.connectNodesInADirectedWay(r1, r2);
+
+        assertEquals(1, r1.getEdges().size());
+        assertEquals(16.64331, r1.getEdges().get(0).getCost(), 0.001d);
+    }
+
+    @Test
+    public void shouldAllowConnectionOfManyRoadNodesAtOnce()
+    {
+        RoadNode r1 = new RoadNode(0, 0);
+        RoadNode r2 = new RoadNode(5, 2);
+        RoadNode r3 = new RoadNode(6, 2);
+        RoadNode r4 = new RoadNode(-6, 4);
+
+        RoadGraph graph = new RoadGraph();
+        graph.connectNodesInADirectedWay(r1, r2, r3, r4, r1);
+
+        assertContainsRoad(graph, 0, 0, 5, 2);
+        assertContainsRoad(graph, 5, 2, 6, 2);
+        assertContainsRoad(graph, 6, 2, -6, 4);
+        assertContainsRoad(graph, -6, 4, 0, 0);
     }
 }

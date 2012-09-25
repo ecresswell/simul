@@ -24,8 +24,8 @@ public class RoadManager implements Tickable, GameObject
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(RoadManager.class);
     private final CarTracker carTracker;
-    private final RoadGraph graph = new RoadGraph();
     private final PathFinder<RoadNode> pathfinder = new AStar<RoadNode>();
+    private RoadGraph graph = new RoadGraph();
 
     public RoadManager()
     {
@@ -72,6 +72,11 @@ public class RoadManager implements Tickable, GameObject
     public void addRoad(RoadNode start, RoadNode end, double cost)
     {
         graph.connectNodesInADirectedWay(start, end, cost);
+    }
+    
+    public void setRoadNetwork(RoadGraph graph)
+    {
+        this.graph = graph;
     }
 
     public RoadNode getClosestRoadPoint(Vector point)

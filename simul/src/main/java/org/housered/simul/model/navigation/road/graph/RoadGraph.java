@@ -16,6 +16,23 @@ public class RoadGraph implements Renderable
     {
         roadNodes.add(node);
     }
+    
+    public void connectNodesInADirectedWay(RoadNode... roadNodes)
+    {
+        RoadNode previous = roadNodes[0];
+        
+        for (int i = 1; i < roadNodes.length; i++)
+        {
+            internalConnectNodesInADirectedWay(previous, roadNodes[i]);
+            previous = roadNodes[i];
+        }
+    }
+
+    private void internalConnectNodesInADirectedWay(RoadNode start, RoadNode end)
+    {
+        double cost = start.getPosition().distance(end.getPosition());
+        connectNodesInADirectedWay(start, end, cost);
+    }
 
     public void connectNodesInADirectedWay(RoadNode start, RoadNode end, double cost)
     {
@@ -59,4 +76,6 @@ public class RoadGraph implements Renderable
     {
         return ROAD_Z_ORDER;
     }
+
+    
 }
