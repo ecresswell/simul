@@ -1,25 +1,24 @@
 package org.housered.simul.model.navigation.road.graph;
 
-
 public class RoadEdge
 {
-    private RoadNode a;
-    private RoadNode b;
+    private RoadNode start;
+    private RoadNode end;
     private double cost;
 
     public RoadEdge(RoadNode start, RoadNode end, double cost)
     {
-        this.a = start;
-        this.b = end;
+        this.start = start;
+        this.end = end;
         this.cost = cost;
     }
 
     public RoadNode getOtherNode(RoadNode currentNode)
     {
-        if (a == currentNode)
-            return b;
-        else if (b == currentNode)
-            return a;
+        if (start == currentNode)
+            return end;
+        else if (end == currentNode)
+            return start;
         else
             throw new IllegalArgumentException("Do not recognise this road node");
     }
@@ -31,21 +30,28 @@ public class RoadEdge
 
     public RoadNode getStartNode()
     {
-        return a;
+        return start;
     }
-    
+
     public void setStartNode(RoadNode newStartNode)
     {
-        a = newStartNode;
+        start = newStartNode;
     }
 
     public RoadNode getEndNode()
     {
-        return b;
+        return end;
     }
-    
+
     public void setEndNode(RoadNode newEndNode)
     {
-        b = newEndNode;
+        end = newEndNode;
+    }
+
+    @Override
+    public String toString()
+    {
+        return String.format("(%s, %s) -> (%s, %s)", start.getPosition().x, start.getPosition().y, end.getPosition().x,
+                end.getPosition().y);
     }
 }

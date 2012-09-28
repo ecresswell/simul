@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.ListIterator;
 
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
@@ -15,6 +16,7 @@ public class RoadGraph implements Renderable
     public void addNode(RoadNode node)
     {
         roadNodes.add(node);
+        consistencyCheck();
     }
 
     public void connectNodesInADirectedWay(RoadNode... roadNodes)
@@ -26,15 +28,16 @@ public class RoadGraph implements Renderable
             internalConnectNodesInADirectedWay(previous, roadNodes[i]);
             previous = roadNodes[i];
         }
+        consistencyCheck();
     }
 
     void replaceNodeWithOtherNode(RoadNode existingNode, RoadNode replacementNode)
     {
         if (!roadNodes.contains(replacementNode))
             roadNodes.add(replacementNode);
-        
-        for (RoadEdge nodeEdges : existingNode.getEdges())
-            replacementNode.addRoad(nodeEdges);
+
+        for (RoadEdge nodeEdge : existingNode.getEdges())
+            replacementNode.addRoad(nodeEdge);
 
         for (RoadNode node : roadNodes)
         {
@@ -46,6 +49,10 @@ public class RoadGraph implements Renderable
                     edge.setEndNode(replacementNode);
             }
         }
+        
+        removeNode(existingNode);
+        
+        consistencyCheck();
     }
 
     private void internalConnectNodesInADirectedWay(RoadNode start, RoadNode end)
@@ -69,6 +76,7 @@ public class RoadGraph implements Renderable
         }
 
         start.addRoad(new RoadEdge(start, end, cost));
+        consistencyCheck();
     }
 
     public Collection<RoadNode> getRoadNodes()
@@ -97,4 +105,47 @@ public class RoadGraph implements Renderable
         return ROAD_Z_ORDER;
     }
 
+    public void removeNode(RoadNode nodeToRemove)
+    {
+        for (RoadNode node : roadNodes)
+        {
+            ListIterator<RoadEdge> listIterator = node.getEdges().listIterator();
+
+            while (listIterator.hasNext())
+            {
+                RoadEdge edge = listIterator.next();
+
+                if (edge.getEndNode() == nodeToRemove)
+                {
+                    listIterator.remove();
+                }
+            }
+        }
+
+        roadNodes.remove(nodeToRemove);
+        consistencyCheck();
+    }
+
+    public void removeRoad(RoadNode startNode, RoadNode endNode)
+    {
+        ListIterator<RoadEdge> listIterator = startNode.getEdges().listIterator();
+
+        while (listIterator.hasNext())
+        {
+            RoadEdge edge = listIterator.next();
+            if (edge.getEndNode() == endNode)
+            {
+                listIterator.remove();
+            }
+        }
+        consistencyCheck();
+    }
+
+    private void consistencyCheck()
+    {
+        for (RoadNode node : roadNodes)
+            for (RoadEdge edge : node.getEdges())
+                if (node != edge.getStartNode())
+                    throw new IllegalStateException("WHAT");
+    }
 }

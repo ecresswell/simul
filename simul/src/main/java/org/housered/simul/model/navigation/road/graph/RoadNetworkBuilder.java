@@ -6,7 +6,10 @@ import java.awt.geom.Rectangle2D.Double;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
+
+import org.mockito.internal.util.RemoveFirstLine;
 
 public class RoadNetworkBuilder
 {
@@ -103,7 +106,7 @@ public class RoadNetworkBuilder
         keyPoints.put(block, new BlockGroup<BlockGroup<RoadNode>>(topLeft, topRight, bottomRight, bottomLeft));
     }
 
-    void replaceNodeWithOtherNode(RoadNode existingNode, RoadNode replacementNode)
+    void replace(RoadNode existingNode, RoadNode replacementNode)
     {
         graph.replaceNodeWithOtherNode(existingNode, replacementNode);
 
@@ -133,6 +136,24 @@ public class RoadNetworkBuilder
         addBlock(newBlock);
         BlockGroup<BlockGroup<RoadNode>> existingPoints = keyPoints.get(existingBlock);
         BlockGroup<BlockGroup<RoadNode>> newPoints = keyPoints.get(newBlock);
+
+        replace(newPoints.getTopLeft().getTopRight(), existingPoints.getTopRight().getTopRight());
+        replace(newPoints.getTopLeft().getBottomRight(), existingPoints.getTopRight().getBottomRight());
+
+        graph.removeRoad(existingPoints.getTopRight().getBottomRight(), newPoints.getBottomLeft().getTopRight());
+
+        replace(newPoints.getBottomLeft().getTopRight(), existingPoints.getBottomRight().getTopRight());
+        replace(newPoints.getBottomLeft().getBottomRight(), existingPoints.getBottomRight().getBottomRight());
+
+        graph.removeNode(newPoints.getTopLeft().getTopLeft());
+        graph.removeNode(newPoints.getTopLeft().getBottomLeft());
+        graph.removeNode(newPoints.getBottomLeft().getTopLeft());
+        graph.removeNode(newPoints.getBottomLeft().getBottomLeft());
+
+        newPoints.getTopLeft().setTopLeft(existingPoints.getTopRight().getTopLeft());
+        newPoints.getTopLeft().setBottomLeft(existingPoints.getTopRight().getBottomLeft());
+        newPoints.getBottomLeft().setTopLeft(existingPoints.getBottomRight().getTopLeft());
+        newPoints.getBottomLeft().setBottomLeft(existingPoints.getBottomRight().getBottomLeft());
     }
 
     BlockGroup<BlockGroup<RoadNode>> getKeyPoints(Double block)

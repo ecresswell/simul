@@ -26,17 +26,17 @@ public class Camera
         this.screenHeight = screenHeight;
     }
 
-    void incrementXOffset(double delta)
+    public void incrementXOffset(double delta)
     {
         this.xOffset += delta;
     }
 
-    void incrementYOffset(double delta)
+    public void incrementYOffset(double delta)
     {
         this.yOffset += delta;
     }
 
-    void zoom(double delta)
+    public void zoom(double delta)
     {
         double gameWidthLost = (double) screenWidth * (zoom - zoom * delta);
         double gameHeightLost = (double) screenHeight * (zoom - zoom * delta);

@@ -37,6 +37,21 @@ public class RoadGraphTest
 
         graph.connectNodesInADirectedWay(node, node, 5);
     }
+    
+    @Test
+    public void shouldRemoveNodeAndAllEdgesThatLinkToTheNode()
+    {
+        RoadGraph graph = new RoadGraph();
+        RoadNode ex = new RoadNode(0, 0);
+        RoadNode a = new RoadNode(1, 1);
+        RoadNode b = new RoadNode(2, 0);
+        graph.connectNodesInADirectedWay(a, ex, b);
+        
+        graph.removeNode(b);
+        
+        assertEquals(2, graph.getRoadNodes().size());
+        assertEquals(0, ex.getEdges().size());
+    }
 
     @Test
     public void shouldReplaceANodeAndUpdateAllItsEdgesToANewNode()
@@ -113,5 +128,23 @@ public class RoadGraphTest
         assertContainsRoad(graph, 5, 2, 6, 2);
         assertContainsRoad(graph, 6, 2, -6, 4);
         assertContainsRoad(graph, -6, 4, 0, 0);
+    }
+    
+    @Test
+    public void shouldAllowRemovalOfRoadsUsingRoadNodes()
+    {
+        RoadNode rep = new RoadNode(10, 10);
+
+        RoadGraph graph = new RoadGraph();
+        RoadNode ex = new RoadNode(0, 0);
+        RoadNode a = new RoadNode(1, 1);
+        RoadNode b = new RoadNode(2, 0);
+        graph.connectNodesInADirectedWay(a, ex, b);
+        
+        graph.removeRoad(a, ex);
+        
+        assertEquals(3, graph.getRoadNodes().size());
+        assertEquals(1, ex.getEdges().size());
+        assertEquals(0, a.getEdges().size());
     }
 }

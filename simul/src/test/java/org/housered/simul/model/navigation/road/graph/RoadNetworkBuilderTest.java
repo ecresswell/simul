@@ -5,30 +5,72 @@ import static org.housered.simul.model.navigation.road.graph.RoadNetworkBuilderT
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.road.graph.RoadNetworkBuilder.BlockGroup;
+import org.housered.simul.model.world.Camera;
+import org.housered.simul.view.swing.SwingGraphicsAdapter;
 import org.junit.Test;
+
+import com.sun.corba.se.impl.orbutil.graph.Graph;
+import com.sun.imageio.plugins.common.ImageUtil;
 
 public class RoadNetworkBuilderTest
 {
     @Test
-    public void shouldAttachBlockToRightOfExistingBlock()
+    public void shouldAttachBlockToRightOfExistingBlock() throws IOException
     {
         Rectangle2D.Double blockA = new Rectangle2D.Double(0, 0, 10, 10);
         Rectangle2D.Double blockB = new Rectangle2D.Double(20, 0, 10, 10);
-
+        
         RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
-        b.addBlock(blockA);
-        b.attachBlockToRight(blockA, blockB);
         RoadGraph g = b.getGraph();
+        
+        b.addBlock(blockA);
+        outputGraph(g, "before");
+        b.attachBlockToRight(blockA, blockB);
+        outputGraph(g, "after");
 
         //just check the interlinks
-        //        assertContainsRoad(g, 14, -4, 30, -4);
-        //        assertContainsRoad(g, 30, -1, 14, -1);
-        //        assertContainsRoad(g, 14, 11, 30, 11);
-        //        assertContainsRoad(g, 30, 14, 14, 14);
+        assertContainsRoad(g, 14, -4, 31, -4);
+        assertContainsRoad(g, 31, -1, 14, -1);
+        assertContainsRoad(g, 14, 11, 31, 11);
+        assertContainsRoad(g, 31, 14, 14, 14);
+        
+        BlockGroup<BlockGroup<RoadNode>> aPoints = b.getKeyPoints(blockA);
+        BlockGroup<BlockGroup<RoadNode>> bPoints = b.getKeyPoints(blockB);
+        
+        assertGroupsEqual(aPoints.getTopRight(), bPoints.getTopLeft());
+        assertGroupsEqual(aPoints.getBottomRight(), bPoints.getBottomLeft());
+    }
+    
+    private void assertGroupsEqual(BlockGroup<RoadNode> a, BlockGroup<RoadNode> b)
+    {
+        assertEquals(a.getTopRight(), b.getTopRight());
+        assertEquals(a.getBottomRight(), b.getBottomRight());
+        assertEquals(a.getTopLeft(), b.getTopLeft());
+        assertEquals(a.getBottomLeft(), b.getBottomLeft());
+    }
+    
+    public void outputGraph(RoadGraph graph, String fileName) throws IOException
+    {
+        int size = 800;
+        BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
+        Camera camera = new Camera(size, size);
+        camera.incrementXOffset(390);
+        camera.incrementYOffset(390);
+        camera.zoom(0.1);
+        graph.render(new SwingGraphicsAdapter((Graphics2D) image.getGraphics(), camera));
+        File writeOut = new File(fileName + ".png");
+        System.out.println(writeOut.getAbsolutePath());
+        ImageIO.write(image, "PNG", writeOut);
     }
 
     @Test
@@ -85,7 +127,7 @@ public class RoadNetworkBuilderTest
         assertEquals(getNodeClosestTo(g, 11, 11), keyPoints.getBottomRight().getTopLeft());
 
         RoadNode replacement = new RoadNode(11, 11);
-        b.replaceNodeWithOtherNode(keyPoints.getBottomRight().getTopLeft(), replacement);
+        b.replace(keyPoints.getBottomRight().getTopLeft(), replacement);
 
         assertEquals(replacement, keyPoints.getBottomRight().getTopLeft());
     }
