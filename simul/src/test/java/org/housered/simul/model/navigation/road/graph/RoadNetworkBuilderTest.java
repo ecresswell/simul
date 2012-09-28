@@ -7,10 +7,6 @@ import static org.junit.Assert.fail;
 import java.awt.geom.Rectangle2D;
 
 import org.housered.simul.model.location.Vector;
-import org.housered.simul.model.navigation.road.graph.RoadEdge;
-import org.housered.simul.model.navigation.road.graph.RoadGraph;
-import org.housered.simul.model.navigation.road.graph.RoadNetworkBuilder;
-import org.housered.simul.model.navigation.road.graph.RoadNode;
 import org.junit.Test;
 
 public class RoadNetworkBuilderTest
@@ -25,14 +21,14 @@ public class RoadNetworkBuilderTest
         b.addBlock(blockA);
         b.attachBlockToRight(blockA, blockB);
         RoadGraph g = b.getGraph();
-        
+
         //just check the interlinks
-//        assertContainsRoad(g, 14, -4, 30, -4);
-//        assertContainsRoad(g, 30, -1, 14, -1);
-//        assertContainsRoad(g, 14, 11, 30, 11);
-//        assertContainsRoad(g, 30, 14, 14, 14);
+        //        assertContainsRoad(g, 14, -4, 30, -4);
+        //        assertContainsRoad(g, 30, -1, 14, -1);
+        //        assertContainsRoad(g, 14, 11, 30, 11);
+        //        assertContainsRoad(g, 30, 14, 14, 14);
     }
-    
+
     @Test
     public void shouldAddRoadsGoingBothWaysAroundABlock()
     {
@@ -74,6 +70,12 @@ public class RoadNetworkBuilderTest
 
         assertEquals(16, g.getRoadNodes().size());
     }
+    
+    @Test
+    public void shouldSaveAllPointsForABlockInASensibleWay()
+    {
+        
+    }
 
     public static void assertContainsRoad(RoadGraph graph, double sx, double sy, double ex, double ey)
     {
@@ -95,5 +97,36 @@ public class RoadNetworkBuilderTest
                         return;
 
         fail("Could not find road");
+    }
+
+    public static RoadNode getNodeClosestTo(RoadGraph graph, double x, double y)
+    {
+        double minDistance = 0;
+        RoadNode minNode = null;
+
+        for (RoadNode node : graph.getRoadNodes())
+        {
+            double distance = node.getPosition().distance(x, y);
+            if (minNode == null || distance < minDistance)
+            {
+                minNode = node;
+                minDistance = distance;
+            }
+        }
+
+        return minNode;
+    }
+
+    @Test
+    public void shouldReturnNodeClosestToPoint()
+    {
+        RoadNode a = new RoadNode(0, 0);
+        RoadNode b = new RoadNode(5, 2);
+        RoadGraph graph = new RoadGraph();
+        graph.connectNodesInADirectedWay(a, b);
+
+        assertEquals(a, getNodeClosestTo(graph, 0, 0));
+        assertEquals(b, getNodeClosestTo(graph, 5, 1));
+        assertEquals(a, getNodeClosestTo(graph, -111113, Double.MIN_VALUE));
     }
 }

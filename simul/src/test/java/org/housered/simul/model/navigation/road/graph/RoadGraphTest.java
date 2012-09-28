@@ -96,6 +96,7 @@ public class RoadGraphTest
         assertEquals(1, r1.getEdges().size());
         assertEquals(16.64331, r1.getEdges().get(0).getCost(), 0.001d);
     }
+    
 
     @Test
     public void shouldAllowConnectionOfManyRoadNodesAtOnce()

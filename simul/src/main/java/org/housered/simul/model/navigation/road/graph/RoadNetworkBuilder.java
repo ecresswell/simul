@@ -8,10 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
 public class RoadNetworkBuilder
 {
-    private final Map<Double, BlockKeyPoints> keyPoints = new HashMap<Double, RoadNetworkBuilder.BlockKeyPoints>();
+    private final Map<Double, BlockGroup<BlockGroup<RoadNode>>> keyPoints = new HashMap<Double, BlockGroup<BlockGroup<RoadNode>>>();
     private final double expansionFactor;
     private final double distanceBetweenLanes;
     private final RoadGraph graph = new RoadGraph();
@@ -97,40 +96,79 @@ public class RoadNetworkBuilder
         graph.connectNodesInADirectedWay(bottom1, bl);
         graph.connectNodesInADirectedWay(bl, bottom1);
 
-        keyPoints.put(block, new BlockKeyPoints(top1, top4, bottom4, bottom1));
+        BlockGroup<RoadNode> topLeft = new BlockGroup<RoadNode>(top1, top2, tl, left2);
+        BlockGroup<RoadNode> topRight = new BlockGroup<RoadNode>(top3, top4, right2, tr);
+        BlockGroup<RoadNode> bottomRight = new BlockGroup<RoadNode>(br, right3, bottom4, bottom3);
+        BlockGroup<RoadNode> bottomLeft = new BlockGroup<RoadNode>(left3, bl, bottom2, bottom1);
+        keyPoints.put(block, new BlockGroup<BlockGroup<RoadNode>>(topLeft, topRight, bottomRight, bottomLeft));
     }
 
     void attachBlockToRight(Double existingBlock, Double newBlock)
     {
         addBlock(newBlock);
-        BlockKeyPoints existingPoints = keyPoints.get(existingBlock);
-        BlockKeyPoints newPoints = keyPoints.get(newBlock);
-        
-        List<RoadNode> topNodesToModify = new ArrayList<RoadNode>();
-        for (RoadEdge edge : newPoints.topLeft.getEdges())
-        {
-            topNodesToModify.add(edge.getOtherNode(newPoints.topLeft));
-        }
+        BlockGroup<BlockGroup<RoadNode>> existingPoints = keyPoints.get(existingBlock);
+        BlockGroup<BlockGroup<RoadNode>> newPoints = keyPoints.get(newBlock);
     }
-    
 
-    private static class BlockKeyPoints
+    BlockGroup<BlockGroup<RoadNode>> getKeyPoints(Double block)
     {
-        private final RoadNode topLeft;
-        private final RoadNode topRight;
-        private final RoadNode bottomRight;
-        private final RoadNode bottomLeft;
+        return keyPoints.get(block);
+    }
 
-        /**
-         * These are the outer points.
-         */
-        public BlockKeyPoints(RoadNode tl, RoadNode tr, RoadNode br, RoadNode bl)
+    static class BlockGroup<T>
+    {
+        private T topleft;
+        private T topRight;
+        private T bottomRight;
+        private T bottomLeft;
+
+        public BlockGroup(T topleft, T topRight, T bottomRight, T bottomLeft)
         {
-            this.topLeft = tl;
-            this.topRight = tr;
-            this.bottomRight = br;
-            this.bottomLeft = bl;
+            this.setTopleft(topleft);
+            this.setTopRight(topRight);
+            this.setBottomRight(bottomRight);
+            this.setBottomLeft(bottomLeft);
 
+        }
+
+        public T getTopleft()
+        {
+            return topleft;
+        }
+
+        public void setTopleft(T topleft)
+        {
+            this.topleft = topleft;
+        }
+
+        public T getTopRight()
+        {
+            return topRight;
+        }
+
+        public void setTopRight(T topRight)
+        {
+            this.topRight = topRight;
+        }
+
+        public T getBottomRight()
+        {
+            return bottomRight;
+        }
+
+        public void setBottomRight(T bottomRight)
+        {
+            this.bottomRight = bottomRight;
+        }
+
+        public T getBottomLeft()
+        {
+            return bottomLeft;
+        }
+
+        public void setBottomLeft(T bottomLeft)
+        {
+            this.bottomLeft = bottomLeft;
         }
     }
 
