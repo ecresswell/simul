@@ -103,6 +103,31 @@ public class RoadNetworkBuilder
         keyPoints.put(block, new BlockGroup<BlockGroup<RoadNode>>(topLeft, topRight, bottomRight, bottomLeft));
     }
 
+    void replaceNodeWithOtherNode(RoadNode existingNode, RoadNode replacementNode)
+    {
+        graph.replaceNodeWithOtherNode(existingNode, replacementNode);
+
+        for (BlockGroup<BlockGroup<RoadNode>> points : keyPoints.values())
+        {
+            internalReplaceInBlock(points.getTopLeft(), existingNode, replacementNode);
+            internalReplaceInBlock(points.getTopRight(), existingNode, replacementNode);
+            internalReplaceInBlock(points.getBottomRight(), existingNode, replacementNode);
+            internalReplaceInBlock(points.getBottomLeft(), existingNode, replacementNode);
+        }
+    }
+
+    private static void internalReplaceInBlock(BlockGroup<RoadNode> block, RoadNode existing, RoadNode replacement)
+    {
+        if (block.getTopLeft() == existing)
+            block.setTopLeft(replacement);
+        if (block.getTopRight() == existing)
+            block.setTopRight(replacement);
+        if (block.getBottomRight() == existing)
+            block.setBottomRight(replacement);
+        if (block.getBottomLeft() == existing)
+            block.setBottomLeft(replacement);
+    }
+
     void attachBlockToRight(Double existingBlock, Double newBlock)
     {
         addBlock(newBlock);
@@ -124,19 +149,18 @@ public class RoadNetworkBuilder
 
         public BlockGroup(T topleft, T topRight, T bottomRight, T bottomLeft)
         {
-            this.setTopleft(topleft);
+            this.setTopLeft(topleft);
             this.setTopRight(topRight);
             this.setBottomRight(bottomRight);
             this.setBottomLeft(bottomLeft);
-
         }
 
-        public T getTopleft()
+        public T getTopLeft()
         {
             return topleft;
         }
 
-        public void setTopleft(T topleft)
+        public void setTopLeft(T topleft)
         {
             this.topleft = topleft;
         }

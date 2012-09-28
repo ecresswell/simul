@@ -1,12 +1,14 @@
 package org.housered.simul.model.navigation.road.graph;
 
 import static org.housered.simul.model.location.Vector.v;
+import static org.housered.simul.model.navigation.road.graph.RoadNetworkBuilderTest.assertContainsRoad;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.awt.geom.Rectangle2D;
 
 import org.housered.simul.model.location.Vector;
+import org.housered.simul.model.navigation.road.graph.RoadNetworkBuilder.BlockGroup;
 import org.junit.Test;
 
 public class RoadNetworkBuilderTest
@@ -70,11 +72,22 @@ public class RoadNetworkBuilderTest
 
         assertEquals(16, g.getRoadNodes().size());
     }
-    
+
     @Test
-    public void shouldSaveAllPointsForABlockInASensibleWay()
+    public void shouldReplaceNodesInTheBlockGroupsToo()
     {
-        
+        Rectangle2D.Double block = new Rectangle2D.Double(0, 0, 10, 10);
+
+        RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
+        RoadGraph g = b.buildNetwork(block);
+        BlockGroup<BlockGroup<RoadNode>> keyPoints = b.getKeyPoints(block);
+
+        assertEquals(getNodeClosestTo(g, 11, 11), keyPoints.getBottomRight().getTopLeft());
+
+        RoadNode replacement = new RoadNode(11, 11);
+        b.replaceNodeWithOtherNode(keyPoints.getBottomRight().getTopLeft(), replacement);
+
+        assertEquals(replacement, keyPoints.getBottomRight().getTopLeft());
     }
 
     public static void assertContainsRoad(RoadGraph graph, double sx, double sy, double ex, double ey)
