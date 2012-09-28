@@ -16,15 +16,35 @@ public class RoadGraph implements Renderable
     {
         roadNodes.add(node);
     }
-    
+
     public void connectNodesInADirectedWay(RoadNode... roadNodes)
     {
         RoadNode previous = roadNodes[0];
-        
+
         for (int i = 1; i < roadNodes.length; i++)
         {
             internalConnectNodesInADirectedWay(previous, roadNodes[i]);
             previous = roadNodes[i];
+        }
+    }
+
+    void replaceNodeWithOtherNode(RoadNode existingNode, RoadNode replacementNode)
+    {
+        if (!roadNodes.contains(replacementNode))
+            roadNodes.add(replacementNode);
+        
+        for (RoadEdge nodeEdges : existingNode.getEdges())
+            replacementNode.addRoad(nodeEdges);
+
+        for (RoadNode node : roadNodes)
+        {
+            for (RoadEdge edge : node.getEdges())
+            {
+                if (edge.getStartNode() == existingNode)
+                    edge.setStartNode(replacementNode);
+                if (edge.getEndNode() == existingNode)
+                    edge.setEndNode(replacementNode);
+            }
         }
     }
 
@@ -77,5 +97,4 @@ public class RoadGraph implements Renderable
         return ROAD_Z_ORDER;
     }
 
-    
 }

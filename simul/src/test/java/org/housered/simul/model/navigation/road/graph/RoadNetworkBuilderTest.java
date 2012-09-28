@@ -1,4 +1,4 @@
-package org.housered.simul.model.navigation.road;
+package org.housered.simul.model.navigation.road.graph;
 
 import static org.housered.simul.model.location.Vector.v;
 import static org.junit.Assert.assertEquals;
@@ -9,12 +9,30 @@ import java.awt.geom.Rectangle2D;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.road.graph.RoadEdge;
 import org.housered.simul.model.navigation.road.graph.RoadGraph;
+import org.housered.simul.model.navigation.road.graph.RoadNetworkBuilder;
 import org.housered.simul.model.navigation.road.graph.RoadNode;
 import org.junit.Test;
 
 public class RoadNetworkBuilderTest
 {
+    @Test
+    public void shouldAttachBlockToRightOfExistingBlock()
+    {
+        Rectangle2D.Double blockA = new Rectangle2D.Double(0, 0, 10, 10);
+        Rectangle2D.Double blockB = new Rectangle2D.Double(20, 0, 10, 10);
 
+        RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
+        b.addBlock(blockA);
+        b.attachBlockToRight(blockA, blockB);
+        RoadGraph g = b.getGraph();
+        
+        //just check the interlinks
+//        assertContainsRoad(g, 14, -4, 30, -4);
+//        assertContainsRoad(g, 30, -1, 14, -1);
+//        assertContainsRoad(g, 14, 11, 30, 11);
+//        assertContainsRoad(g, 30, 14, 14, 14);
+    }
+    
     @Test
     public void shouldAddRoadsGoingBothWaysAroundABlock()
     {

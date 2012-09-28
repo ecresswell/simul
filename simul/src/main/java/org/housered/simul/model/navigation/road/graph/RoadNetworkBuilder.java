@@ -1,48 +1,55 @@
-package org.housered.simul.model.navigation.road;
+package org.housered.simul.model.navigation.road.graph;
 
 import static org.housered.simul.model.location.Vector.v;
 
 import java.awt.geom.Rectangle2D.Double;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.housered.simul.model.navigation.road.graph.RoadGraph;
-import org.housered.simul.model.navigation.road.graph.RoadNode;
 
 public class RoadNetworkBuilder
 {
+    private final Map<Double, BlockKeyPoints> keyPoints = new HashMap<Double, RoadNetworkBuilder.BlockKeyPoints>();
     private final double expansionFactor;
     private final double distanceBetweenLanes;
+    private final RoadGraph graph = new RoadGraph();
 
     public RoadNetworkBuilder(double expansionFactor, double distanceBetweenLanes)
     {
         this.expansionFactor = expansionFactor;
         this.distanceBetweenLanes = distanceBetweenLanes;
     }
-    
-    public RoadGraph buildNetwork(Double... blocks)
+
+    public RoadGraph getGraph()
     {
-        RoadGraph graph = new RoadGraph();
-        
-        for (Double block : blocks)
-            buildNetwork(graph, block);
-        
         return graph;
     }
-    
-    private void buildNetwork(RoadGraph graph, Double block)
+
+    public RoadGraph buildNetwork(Double... blocks)
+    {
+        for (Double block : blocks)
+            addBlock(block);
+
+        return graph;
+    }
+
+    void addBlock(Double block)
     {
 
         block.add(block.x - expansionFactor, block.y - expansionFactor);
         block.add(block.x + block.width + expansionFactor, block.y + block.height + expansionFactor);
 
-        RoadNode ul = new RoadNode(v(block.x, block.y));
-        RoadNode ur = new RoadNode(v(block.x + block.width, block.y));
+        RoadNode tl = new RoadNode(v(block.x, block.y));
+        RoadNode tr = new RoadNode(v(block.x + block.width, block.y));
         RoadNode br = new RoadNode(v(block.x + block.width, block.y + block.height));
         RoadNode bl = new RoadNode(v(block.x, block.y + block.height));
 
-        graph.connectNodesInADirectedWay(ur, ul);
-        graph.connectNodesInADirectedWay(br, ur);
+        graph.connectNodesInADirectedWay(tr, tl);
+        graph.connectNodesInADirectedWay(br, tr);
         graph.connectNodesInADirectedWay(bl, br);
-        graph.connectNodesInADirectedWay(ul, bl);
+        graph.connectNodesInADirectedWay(tl, bl);
 
         //outside road should contain junction points
         Double outerBlock = (Double) block.clone();
@@ -71,16 +78,16 @@ public class RoadNetworkBuilder
         graph.connectNodesInADirectedWay(top4, right2, right3, bottom4);
         graph.connectNodesInADirectedWay(bottom4, bottom3, bottom2, bottom1);
         graph.connectNodesInADirectedWay(bottom1, left3, left2, top1);
-        
+
         //junctions
         graph.connectNodesInADirectedWay(top2, left2);
         graph.connectNodesInADirectedWay(left2, top2);
-        graph.connectNodesInADirectedWay(top1, ul);
-        graph.connectNodesInADirectedWay(ul, top1);
+        graph.connectNodesInADirectedWay(top1, tl);
+        graph.connectNodesInADirectedWay(tl, top1);
         graph.connectNodesInADirectedWay(top3, right2);
         graph.connectNodesInADirectedWay(right2, top3);
-        graph.connectNodesInADirectedWay(top4, ur);
-        graph.connectNodesInADirectedWay(ur, top4);
+        graph.connectNodesInADirectedWay(top4, tr);
+        graph.connectNodesInADirectedWay(tr, top4);
         graph.connectNodesInADirectedWay(right3, bottom3);
         graph.connectNodesInADirectedWay(bottom3, right3);
         graph.connectNodesInADirectedWay(bottom4, br);
@@ -89,6 +96,42 @@ public class RoadNetworkBuilder
         graph.connectNodesInADirectedWay(left3, bottom2);
         graph.connectNodesInADirectedWay(bottom1, bl);
         graph.connectNodesInADirectedWay(bl, bottom1);
+
+        keyPoints.put(block, new BlockKeyPoints(top1, top4, bottom4, bottom1));
+    }
+
+    void attachBlockToRight(Double existingBlock, Double newBlock)
+    {
+        addBlock(newBlock);
+        BlockKeyPoints existingPoints = keyPoints.get(existingBlock);
+        BlockKeyPoints newPoints = keyPoints.get(newBlock);
+        
+        List<RoadNode> topNodesToModify = new ArrayList<RoadNode>();
+        for (RoadEdge edge : newPoints.topLeft.getEdges())
+        {
+            topNodesToModify.add(edge.getOtherNode(newPoints.topLeft));
+        }
+    }
+    
+
+    private static class BlockKeyPoints
+    {
+        private final RoadNode topLeft;
+        private final RoadNode topRight;
+        private final RoadNode bottomRight;
+        private final RoadNode bottomLeft;
+
+        /**
+         * These are the outer points.
+         */
+        public BlockKeyPoints(RoadNode tl, RoadNode tr, RoadNode br, RoadNode bl)
+        {
+            this.topLeft = tl;
+            this.topRight = tr;
+            this.bottomRight = br;
+            this.bottomLeft = bl;
+
+        }
     }
 
 }

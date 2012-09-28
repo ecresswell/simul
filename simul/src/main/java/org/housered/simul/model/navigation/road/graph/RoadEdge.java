@@ -3,9 +3,9 @@ package org.housered.simul.model.navigation.road.graph;
 
 public class RoadEdge
 {
-    private final RoadNode a;
-    private final RoadNode b;
-    private final double cost;
+    private RoadNode a;
+    private RoadNode b;
+    private double cost;
 
     public RoadEdge(RoadNode start, RoadNode end, double cost)
     {
@@ -33,9 +33,19 @@ public class RoadEdge
     {
         return a;
     }
+    
+    public void setStartNode(RoadNode newStartNode)
+    {
+        a = newStartNode;
+    }
 
     public RoadNode getEndNode()
     {
         return b;
+    }
+    
+    public void setEndNode(RoadNode newEndNode)
+    {
+        b = newEndNode;
     }
 }

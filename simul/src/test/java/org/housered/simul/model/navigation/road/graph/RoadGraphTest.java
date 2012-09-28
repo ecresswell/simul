@@ -1,12 +1,11 @@
 package org.housered.simul.model.navigation.road.graph;
 
 import static org.housered.simul.model.location.Vector.v;
-import static org.housered.simul.model.navigation.road.RoadNetworkBuilderTest.assertContainsRoad;
+import static org.housered.simul.model.navigation.road.graph.RoadNetworkBuilderTest.assertContainsRoad;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
 
-import org.housered.simul.model.navigation.road.RoadNetworkBuilderTest;
 import org.junit.Test;
 
 import com.google.common.collect.Lists;
@@ -37,6 +36,23 @@ public class RoadGraphTest
         RoadNode node = new RoadNode(v(10, 10));
 
         graph.connectNodesInADirectedWay(node, node, 5);
+    }
+
+    @Test
+    public void shouldReplaceANodeAndUpdateAllItsEdgesToANewNode()
+    {
+        RoadNode rep = new RoadNode(10, 10);
+
+        RoadGraph graph = new RoadGraph();
+        RoadNode ex = new RoadNode(0, 0);
+        RoadNode a = new RoadNode(1, 1);
+        RoadNode b = new RoadNode(2, 0);
+        graph.connectNodesInADirectedWay(a, ex, b);
+
+        graph.replaceNodeWithOtherNode(ex, rep);
+
+        assertContainsRoad(graph, 1, 1, 10, 10);
+        assertContainsRoad(graph, 10, 10, 2, 0);
     }
 
     @Test
