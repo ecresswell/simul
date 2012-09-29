@@ -40,6 +40,32 @@ public class RoadNetworkBuilder
 
     public RoadGraph buildNetwork(Vector blockSize, List<Vector> blockPositions)
     {
+        List<List<Vector>> orderedBlockPositions = orderBlockPositions(blockPositions);
+        List<List<Double>> blocks = createBlocks(blockSize, orderedBlockPositions);
+
+        addBlock(blocks.get(0).get(0));
+
+        for (int x = 1; x < blocks.size(); x++)
+        {
+            attachBlockToRight(blocks.get(x - 1).get(0), blocks.get(x).get(0));
+        }
+
+        for (int y = 1; y < blocks.get(0).size(); y++)
+        {
+            attachBlockToBottom(blocks.get(0).get(y - 1), blocks.get(0).get(y));
+        }
+
+        for (int x = 1; x < blocks.size(); x++)
+        {
+            for (int y = 1; y < blocks.get(x).size(); y++)
+            {
+                addBlock(blocks.get(x).get(y));
+                if (y < blocks.get(x - 1).size())
+                    attachBlockToRight(blocks.get(x - 1).get(y), blocks.get(x).get(y));
+                attachBlockToBottom(blocks.get(x).get(y - 1), blocks.get(x).get(y));
+            }
+        }
+
         return graph;
     }
 
@@ -203,7 +229,7 @@ public class RoadNetworkBuilder
         return keyPoints.get(block);
     }
 
-    static List<List<Vector>> orderBlocks(List<Vector> blocks)
+    static List<List<Vector>> orderBlockPositions(List<Vector> blocks)
     {
         List<List<Vector>> ordered = new ArrayList<List<Vector>>();
         Map<java.lang.Double, List<Vector>> scanLines = new HashMap<java.lang.Double, List<Vector>>();
@@ -236,6 +262,23 @@ public class RoadNetworkBuilder
         }
 
         return ordered;
+    }
+
+    private static List<List<Double>> createBlocks(Vector size, List<List<Vector>> orderedBlockPositions)
+    {
+        List<List<Double>> blocks = new ArrayList<List<Double>>();
+
+        for (List<Vector> ys : orderedBlockPositions)
+        {
+            List<Double> yBlocks = new ArrayList<Double>();
+            for (Vector y : ys)
+            {
+                yBlocks.add(new Double(y.x, y.y, size.x, size.y));
+            }
+            blocks.add(yBlocks);
+        }
+
+        return blocks;
     }
 
     static class BlockGroup<T>

@@ -1,5 +1,6 @@
 package org.housered.simul.model.navigation.road.graph;
 
+import static java.util.Arrays.asList;
 import static org.housered.simul.model.location.Vector.v;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
@@ -23,7 +24,7 @@ import org.junit.Test;
 
 public class RoadNetworkBuilderTest
 {
-    private static boolean renderGraphs = false;
+    private static boolean renderGraphs = true;
 
     @Test
     public void shouldAttachBlockToRightOfExistingBlock() throws IOException
@@ -82,11 +83,15 @@ public class RoadNetworkBuilderTest
         assertGroupsEqual(aPoints.getBottomRight(), cPoints.getTopRight());
         assertGroupsEqual(aPoints.getBottomRight(), bPoints.getBottomLeft());
     }
-    
+
     @Test
-    public void shouldManageTheOrderingOfBlocksToCreateANetwork()
+    public void shouldManageTheOrderingOfBlocksToCreateANetwork() throws IOException
     {
-        
+        RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
+        RoadGraph graph = b.buildNetwork(v(10, 10),
+                asList(v(0, 0), v(20, 0), v(40, 0), v(0, 40), v(20, 40), v(40, 20), v(40, 40), v(0, 20), v(20, 20)));
+
+        outputGraph(graph, "graph");
     }
 
     @Test
@@ -145,8 +150,8 @@ public class RoadNetworkBuilderTest
         int size = 800;
         BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
         Camera camera = new Camera(size, size);
-        camera.incrementXOffset(390);
-        camera.incrementYOffset(390);
+        camera.incrementXOffset(370);
+        camera.incrementYOffset(370);
         camera.zoom(0.1);
         graph.render(new SwingGraphicsAdapter((Graphics2D) image.getGraphics(), camera));
         File writeOut = new File(fileName + ".png");
@@ -214,15 +219,13 @@ public class RoadNetworkBuilderTest
 
         assertEquals(replacement, keyPoints.getBottomRight().getTopLeft());
     }
-    
-    
 
     @Test
     public void shouldArrangeBlocksInto2DArray()
     {
         List<Vector> blocks = Arrays.asList(v(10, 10), v(10, 0), v(0, 0), v(0, 10));
 
-        List<List<Vector>> results = RoadNetworkBuilder.orderBlocks(blocks);
+        List<List<Vector>> results = RoadNetworkBuilder.orderBlockPositions(blocks);
 
         assertEquals(2, results.get(0).size());
         assertEquals(2, results.get(1).size());

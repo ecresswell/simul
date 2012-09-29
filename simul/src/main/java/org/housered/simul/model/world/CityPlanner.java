@@ -108,7 +108,7 @@ public class CityPlanner
     {
         WorkplaceFactory workplaceFactory = new WorkplaceFactory(idGenerator);
 
-        int numberOfPeople = 0;
+        int numberOfPeople = 10000;
         double pavementOffset = 5;
         int blocks = 3;
         double blockWidth = 200;
@@ -149,10 +149,10 @@ public class CityPlanner
                 yCursor += blockHeight * 1.2;
             }
             yCursor = yCursorOriginal;
-            xCursor += blockWidth * 2.2;
+            xCursor += blockWidth * 1.2;
         }
 
-        RoadNetworkBuilder roadBuilder = new RoadNetworkBuilder(3, 3);
+        RoadNetworkBuilder roadBuilder = new RoadNetworkBuilder(12, 5);
         RoadGraph graph = roadBuilder.buildNetwork(v(blockWidth, blockHeight), blockPositions);
         roadNetworkManager.setRoadNetwork(graph);
         world.addEntities(graph);
@@ -160,7 +160,7 @@ public class CityPlanner
         //tubes
         TubeLineBuilder builder = new TubeLineBuilder(gameClock);
         TubeLine line = builder.addTubeStation(100, 60, 10, 10).addTubeStation(600, 60, 10, 10)
-                .addTubeStation(600, 280, 10, 10).addTubeStation(310, 410, 20, 20).addTubeStation(100, 280, 10, 10)
+                .addTubeStation(600, 280, 10, 10).addTubeStation(240, 410, 5, 5).addTubeStation(100, 280, 10, 10)
                 .buildLine();
         line.addTube(line.getStations().get(0));
         line.addTube(line.getStations().get(2));
