@@ -108,6 +108,9 @@ public class RoadNetworkBuilder
 
     void replace(RoadNode existingNode, RoadNode replacementNode)
     {
+        if (existingNode == replacementNode)
+            return;
+
         graph.replaceNodeWithOtherNode(existingNode, replacementNode);
 
         for (BlockGroup<BlockGroup<RoadNode>> points : keyPoints.values())
@@ -133,7 +136,9 @@ public class RoadNetworkBuilder
 
     void attachBlockToRight(Double existingBlock, Double newBlock)
     {
-        addBlock(newBlock);
+        if (!keyPoints.containsKey(newBlock))
+            addBlock(newBlock);
+
         BlockGroup<BlockGroup<RoadNode>> existingPoints = keyPoints.get(existingBlock);
         BlockGroup<BlockGroup<RoadNode>> newPoints = keyPoints.get(newBlock);
 
@@ -145,8 +150,10 @@ public class RoadNetworkBuilder
         replace(newPoints.getBottomLeft().getTopRight(), existingPoints.getBottomRight().getTopRight());
         replace(newPoints.getBottomLeft().getBottomRight(), existingPoints.getBottomRight().getBottomRight());
 
-        graph.removeNode(newPoints.getTopLeft().getTopLeft());
-        graph.removeNode(newPoints.getTopLeft().getBottomLeft());
+        if (newPoints.getTopLeft().getTopLeft() != existingPoints.getTopRight().getTopLeft())
+            graph.removeNode(newPoints.getTopLeft().getTopLeft());
+        if (newPoints.getTopLeft().getBottomLeft() != existingPoints.getTopRight().getBottomLeft())
+            graph.removeNode(newPoints.getTopLeft().getBottomLeft());
         graph.removeNode(newPoints.getBottomLeft().getTopLeft());
         graph.removeNode(newPoints.getBottomLeft().getBottomLeft());
 
@@ -154,6 +161,35 @@ public class RoadNetworkBuilder
         newPoints.getTopLeft().setBottomLeft(existingPoints.getTopRight().getBottomLeft());
         newPoints.getBottomLeft().setTopLeft(existingPoints.getBottomRight().getTopLeft());
         newPoints.getBottomLeft().setBottomLeft(existingPoints.getBottomRight().getBottomLeft());
+    }
+
+    void attachBlockToBottom(Double existingBlock, Double newBlock)
+    {
+        if (!keyPoints.containsKey(newBlock))
+            addBlock(newBlock);
+
+        BlockGroup<BlockGroup<RoadNode>> existingPoints = keyPoints.get(existingBlock);
+        BlockGroup<BlockGroup<RoadNode>> newPoints = keyPoints.get(newBlock);
+
+        replace(newPoints.getTopLeft().getBottomLeft(), existingPoints.getBottomLeft().getBottomLeft());
+        replace(newPoints.getTopLeft().getBottomRight(), existingPoints.getBottomLeft().getBottomRight());
+
+        graph.removeRoad(newPoints.getTopRight().getBottomLeft(), existingPoints.getBottomLeft().getBottomRight());
+
+        replace(newPoints.getTopRight().getBottomLeft(), existingPoints.getBottomRight().getBottomLeft());
+        replace(newPoints.getTopRight().getBottomRight(), existingPoints.getBottomRight().getBottomRight());
+
+        if (newPoints.getTopLeft().getTopLeft() != existingPoints.getBottomLeft().getTopLeft())
+            graph.removeNode(newPoints.getTopLeft().getTopLeft());
+        if (newPoints.getTopLeft().getTopRight() != existingPoints.getBottomLeft().getTopRight())
+            graph.removeNode(newPoints.getTopLeft().getTopRight());
+        graph.removeNode(newPoints.getTopRight().getTopLeft());
+        graph.removeNode(newPoints.getTopRight().getTopRight());
+
+        newPoints.getTopLeft().setTopLeft(existingPoints.getBottomLeft().getTopLeft());
+        newPoints.getTopLeft().setTopRight(existingPoints.getBottomLeft().getTopRight());
+        newPoints.getTopRight().setTopLeft(existingPoints.getBottomRight().getTopLeft());
+        newPoints.getTopRight().setTopRight(existingPoints.getBottomRight().getTopRight());
     }
 
     BlockGroup<BlockGroup<RoadNode>> getKeyPoints(Double block)

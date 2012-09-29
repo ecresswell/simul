@@ -1,8 +1,8 @@
 package org.housered.simul.model.navigation.road.graph;
 
 import static org.housered.simul.model.location.Vector.v;
-import static org.housered.simul.model.navigation.road.graph.RoadNetworkBuilderTest.assertContainsRoad;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.fail;
 
 import java.awt.Graphics2D;
@@ -19,9 +19,6 @@ import org.housered.simul.model.world.Camera;
 import org.housered.simul.view.swing.SwingGraphicsAdapter;
 import org.junit.Test;
 
-import com.sun.corba.se.impl.orbutil.graph.Graph;
-import com.sun.imageio.plugins.common.ImageUtil;
-
 public class RoadNetworkBuilderTest
 {
     @Test
@@ -29,10 +26,10 @@ public class RoadNetworkBuilderTest
     {
         Rectangle2D.Double blockA = new Rectangle2D.Double(0, 0, 10, 10);
         Rectangle2D.Double blockB = new Rectangle2D.Double(20, 0, 10, 10);
-        
+
         RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
         RoadGraph g = b.getGraph();
-        
+
         b.addBlock(blockA);
         outputGraph(g, "before");
         b.attachBlockToRight(blockA, blockB);
@@ -43,22 +40,93 @@ public class RoadNetworkBuilderTest
         assertContainsRoad(g, 31, -1, 14, -1);
         assertContainsRoad(g, 14, 11, 31, 11);
         assertContainsRoad(g, 31, 14, 14, 14);
-        
+
         BlockGroup<BlockGroup<RoadNode>> aPoints = b.getKeyPoints(blockA);
         BlockGroup<BlockGroup<RoadNode>> bPoints = b.getKeyPoints(blockB);
-        
+
         assertGroupsEqual(aPoints.getTopRight(), bPoints.getTopLeft());
         assertGroupsEqual(aPoints.getBottomRight(), bPoints.getBottomLeft());
     }
-    
-    private void assertGroupsEqual(BlockGroup<RoadNode> a, BlockGroup<RoadNode> b)
+
+    @Test
+    public void shouldAttachBlockToBottomOfExistingBlock() throws IOException
     {
-        assertEquals(a.getTopRight(), b.getTopRight());
-        assertEquals(a.getBottomRight(), b.getBottomRight());
-        assertEquals(a.getTopLeft(), b.getTopLeft());
-        assertEquals(a.getBottomLeft(), b.getBottomLeft());
+        Rectangle2D.Double blockA = new Rectangle2D.Double(0, 0, 10, 10);
+        Rectangle2D.Double blockB = new Rectangle2D.Double(20, 0, 10, 10);
+        Rectangle2D.Double blockC = new Rectangle2D.Double(0, 20, 10, 10);
+
+        RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
+        RoadGraph g = b.getGraph();
+
+        b.addBlock(blockA);
+        b.attachBlockToRight(blockA, blockB);
+        outputGraph(g, "before");
+
+        b.attachBlockToBottom(blockA, blockC);
+        outputGraph(g, "after");
+
+        assertContainsRoad(g, -4, 31, -4, 14);
+        assertContainsRoad(g, -1, 14, -1, 31);
+        assertContainsRoad(g, 14, 14, 14, 31);
+        assertContainsRoad(g, 11, 31, 11, 14);
+
+        BlockGroup<BlockGroup<RoadNode>> aPoints = b.getKeyPoints(blockA);
+        BlockGroup<BlockGroup<RoadNode>> bPoints = b.getKeyPoints(blockB);
+        BlockGroup<BlockGroup<RoadNode>> cPoints = b.getKeyPoints(blockC);
+
+        assertGroupsEqual(aPoints.getBottomLeft(), cPoints.getTopLeft());
+        assertGroupsEqual(aPoints.getBottomRight(), cPoints.getTopRight());
+        assertGroupsEqual(aPoints.getBottomRight(), bPoints.getBottomLeft());
+    }
+
+    @Test
+    public void shouldAttachBlockToBottomAndLeftOfExistingNetworkWhenDoingRightFirst() throws IOException
+    {
+        Rectangle2D.Double blockA = new Rectangle2D.Double(0, 0, 10, 10);
+        Rectangle2D.Double blockB = new Rectangle2D.Double(20, 0, 10, 10);
+        Rectangle2D.Double blockC = new Rectangle2D.Double(0, 20, 10, 10);
+        Rectangle2D.Double blockD = new Rectangle2D.Double(20, 20, 10, 10);
+
+        RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
+        RoadGraph g = b.getGraph();
+
+        b.addBlock(blockA);
+        b.attachBlockToRight(blockA, blockB);
+        b.attachBlockToBottom(blockA, blockC);
+        outputGraph(g, "before");
+        b.attachBlockToRight(blockC, blockD);
+        b.attachBlockToBottom(blockB, blockD);
+        outputGraph(g, "after");
     }
     
+    @Test
+    public void shouldAttachBlockToBottomAndLeftOfExistingNetworkWhenDoingBottomFirst() throws IOException
+    {
+        Rectangle2D.Double blockA = new Rectangle2D.Double(0, 0, 10, 10);
+        Rectangle2D.Double blockB = new Rectangle2D.Double(20, 0, 10, 10);
+        Rectangle2D.Double blockC = new Rectangle2D.Double(0, 20, 10, 10);
+        Rectangle2D.Double blockD = new Rectangle2D.Double(20, 20, 10, 10);
+
+        RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
+        RoadGraph g = b.getGraph();
+
+        b.addBlock(blockA);
+        b.attachBlockToRight(blockA, blockB);
+        b.attachBlockToBottom(blockA, blockC);
+        outputGraph(g, "before");
+        b.attachBlockToBottom(blockB, blockD);
+        b.attachBlockToRight(blockC, blockD);
+        outputGraph(g, "after");
+    }
+
+    private void assertGroupsEqual(BlockGroup<RoadNode> a, BlockGroup<RoadNode> b)
+    {
+        assertSame(a.getTopRight(), b.getTopRight());
+        assertSame(a.getBottomRight(), b.getBottomRight());
+        assertSame(a.getTopLeft(), b.getTopLeft());
+        assertSame(a.getBottomLeft(), b.getBottomLeft());
+    }
+
     public void outputGraph(RoadGraph graph, String fileName) throws IOException
     {
         int size = 800;
@@ -79,7 +147,8 @@ public class RoadNetworkBuilderTest
         Rectangle2D.Double block = new Rectangle2D.Double(0, 0, 10, 10);
 
         RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
-        RoadGraph g = b.buildNetwork(block);
+        b.addBlock(block);
+        RoadGraph g = b.getGraph();
 
         //inner road
         assertContainsRoad(g, 11, -1, -1, -1);
@@ -121,7 +190,8 @@ public class RoadNetworkBuilderTest
         Rectangle2D.Double block = new Rectangle2D.Double(0, 0, 10, 10);
 
         RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
-        RoadGraph g = b.buildNetwork(block);
+        b.addBlock(block);
+        RoadGraph g = b.getGraph();
         BlockGroup<BlockGroup<RoadNode>> keyPoints = b.getKeyPoints(block);
 
         assertEquals(getNodeClosestTo(g, 11, 11), keyPoints.getBottomRight().getTopLeft());

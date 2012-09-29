@@ -33,6 +33,9 @@ public class RoadGraph implements Renderable
 
     void replaceNodeWithOtherNode(RoadNode existingNode, RoadNode replacementNode)
     {
+        if (existingNode == replacementNode)
+            return;
+        
         if (!roadNodes.contains(replacementNode))
             roadNodes.add(replacementNode);
 
