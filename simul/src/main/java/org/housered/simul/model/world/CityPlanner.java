@@ -117,7 +117,7 @@ public class CityPlanner
         double xCursor = 10;
         double yCursor = 10;
 
-        List<Rectangle2D.Double> blockBounds = new LinkedList<Rectangle2D.Double>();
+        List<Vector> blockPositions = new LinkedList<Vector>();
 
         //houses
         List<House> houses = new LinkedList<House>();
@@ -126,8 +126,7 @@ public class CityPlanner
             yCursor = 10;
             for (int y = 0; y < blocks; y++)
             {
-                blockBounds.add(new Rectangle2D.Double(xCursor - pavementOffset, yCursor - pavementOffset, blockWidth
-                        + pavementOffset * 2, blockHeight + pavementOffset * 2));
+                blockPositions.add(v(xCursor - pavementOffset, yCursor - pavementOffset));
                 houses.addAll(createCityBlock(xCursor, yCursor, blockWidth, blockHeight, 10));
                 yCursor += blockHeight * 1.2;
             }
@@ -144,8 +143,7 @@ public class CityPlanner
         {
             for (int y = 0; y < blocks; y++)
             {
-                blockBounds.add(new Rectangle2D.Double(xCursor - pavementOffset, yCursor - pavementOffset, blockWidth
-                        + pavementOffset * 2, blockHeight + pavementOffset * 2));
+                blockPositions.add(v(xCursor - pavementOffset, yCursor - pavementOffset));
                 Workplace workplace = workplaceFactory.createWorkplace(xCursor, yCursor, blockWidth, blockHeight);
                 workplaces.add(workplace);
                 yCursor += blockHeight * 1.2;
@@ -154,10 +152,8 @@ public class CityPlanner
             xCursor += blockWidth * 2.2;
         }
 
-        blockBounds.add(new Double(300, 400, 40, 40));
-        
         RoadNetworkBuilder roadBuilder = new RoadNetworkBuilder(3, 3);
-        RoadGraph graph = roadBuilder.buildNetwork(blockBounds.toArray(new Double[0]));
+        RoadGraph graph = roadBuilder.buildNetwork(v(blockWidth, blockHeight), blockPositions);
         roadNetworkManager.setRoadNetwork(graph);
         world.addEntities(graph);
 

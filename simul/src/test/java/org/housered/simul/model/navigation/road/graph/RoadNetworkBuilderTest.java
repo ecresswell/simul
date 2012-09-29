@@ -10,6 +10,8 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.imageio.ImageIO;
 
@@ -21,6 +23,8 @@ import org.junit.Test;
 
 public class RoadNetworkBuilderTest
 {
+    private static boolean renderGraphs = false;
+
     @Test
     public void shouldAttachBlockToRightOfExistingBlock() throws IOException
     {
@@ -78,6 +82,12 @@ public class RoadNetworkBuilderTest
         assertGroupsEqual(aPoints.getBottomRight(), cPoints.getTopRight());
         assertGroupsEqual(aPoints.getBottomRight(), bPoints.getBottomLeft());
     }
+    
+    @Test
+    public void shouldManageTheOrderingOfBlocksToCreateANetwork()
+    {
+        
+    }
 
     @Test
     public void shouldAttachBlockToBottomAndLeftOfExistingNetworkWhenDoingRightFirst() throws IOException
@@ -98,7 +108,7 @@ public class RoadNetworkBuilderTest
         b.attachBlockToBottom(blockB, blockD);
         outputGraph(g, "after");
     }
-    
+
     @Test
     public void shouldAttachBlockToBottomAndLeftOfExistingNetworkWhenDoingBottomFirst() throws IOException
     {
@@ -129,6 +139,9 @@ public class RoadNetworkBuilderTest
 
     public void outputGraph(RoadGraph graph, String fileName) throws IOException
     {
+        if (!renderGraphs)
+            return;
+
         int size = 800;
         BufferedImage image = new BufferedImage(size, size, BufferedImage.TYPE_INT_RGB);
         Camera camera = new Camera(size, size);
@@ -200,6 +213,24 @@ public class RoadNetworkBuilderTest
         b.replace(keyPoints.getBottomRight().getTopLeft(), replacement);
 
         assertEquals(replacement, keyPoints.getBottomRight().getTopLeft());
+    }
+    
+    
+
+    @Test
+    public void shouldArrangeBlocksInto2DArray()
+    {
+        List<Vector> blocks = Arrays.asList(v(10, 10), v(10, 0), v(0, 0), v(0, 10));
+
+        List<List<Vector>> results = RoadNetworkBuilder.orderBlocks(blocks);
+
+        assertEquals(2, results.get(0).size());
+        assertEquals(2, results.get(1).size());
+        assertEquals(2, results.size());
+        assertEquals(v(0, 0), results.get(0).get(0));
+        assertEquals(v(10, 0), results.get(1).get(0));
+        assertEquals(v(0, 10), results.get(0).get(1));
+        assertEquals(v(10, 10), results.get(1).get(1));
     }
 
     public static void assertContainsRoad(RoadGraph graph, double sx, double sy, double ex, double ey)

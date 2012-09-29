@@ -4,11 +4,20 @@ import static org.housered.simul.model.location.Vector.v;
 
 import java.awt.geom.Rectangle2D.Double;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
+import javax.swing.text.StyledEditorKit.UnderlineAction;
+
+import org.housered.simul.model.location.Vector;
 import org.mockito.internal.util.RemoveFirstLine;
 
 public class RoadNetworkBuilder
@@ -29,11 +38,8 @@ public class RoadNetworkBuilder
         return graph;
     }
 
-    public RoadGraph buildNetwork(Double... blocks)
+    public RoadGraph buildNetwork(Vector blockSize, List<Vector> blockPositions)
     {
-        for (Double block : blocks)
-            addBlock(block);
-
         return graph;
     }
 
@@ -195,6 +201,41 @@ public class RoadNetworkBuilder
     BlockGroup<BlockGroup<RoadNode>> getKeyPoints(Double block)
     {
         return keyPoints.get(block);
+    }
+
+    static List<List<Vector>> orderBlocks(List<Vector> blocks)
+    {
+        List<List<Vector>> ordered = new ArrayList<List<Vector>>();
+        Map<java.lang.Double, List<Vector>> scanLines = new HashMap<java.lang.Double, List<Vector>>();
+
+        SortedSet<java.lang.Double> xs = new TreeSet<java.lang.Double>();
+        for (Vector v : blocks)
+        {
+            if (!scanLines.containsKey(v.x))
+                scanLines.put(v.x, new ArrayList<Vector>());
+            scanLines.get(v.x).add(v);
+            xs.add(v.x);
+        }
+
+        for (java.lang.Double x : xs)
+        {
+            List<Vector> list = scanLines.get(x);
+            Collections.sort(list, new Comparator<Vector>() {
+                @Override
+                public int compare(Vector o1, Vector o2)
+                {
+                    if (o1.y < o2.y)
+                        return -1;
+                    else if (o1.y > o2.y)
+                        return 1;
+                    else
+                        return 0;
+                }
+            });
+            ordered.add(list);
+        }
+
+        return ordered;
     }
 
     static class BlockGroup<T>
