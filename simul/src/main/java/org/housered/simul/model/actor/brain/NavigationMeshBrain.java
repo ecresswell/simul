@@ -6,6 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 
+import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
 import org.housered.simul.model.navigation.OldNavigationOrder;
@@ -28,20 +29,20 @@ public class NavigationMeshBrain implements NavigationBrain
 
     private static Logger LOGGER = LoggerFactory.getLogger(NavigationMeshBrain.class);
     private final NavigationManager navigationManager;
-    private Vector currentPosition;
+    private final Actor actor;
+    private final RoadManager networkManager;
     private Vector target;
     private NavigationType type;
     private PathData path;
     private NavigationState state = NavigationState.NO_TARGET;
-    private final RoadManager networkManager;
 
     private FutureTask<PathData> currentTask;
 
-    public NavigationMeshBrain(NavigationManager navigationManager, RoadManager networkManager)
+    public NavigationMeshBrain(NavigationManager navigationManager, RoadManager networkManager, Actor actor)
     {
         this.navigationManager = navigationManager;
         this.networkManager = networkManager;
-        currentPosition = new Vector();
+        this.actor = actor;
     }
 
     @Override
@@ -56,7 +57,7 @@ public class NavigationMeshBrain implements NavigationBrain
                 @Override
                 public PathData call() throws Exception
                 {
-                    return networkManager.findPath(getPosition(), target);
+                    return networkManager.findPath(actor.getPosition(), target);
                 }
             });
         }
@@ -66,7 +67,7 @@ public class NavigationMeshBrain implements NavigationBrain
                 @Override
                 public PathData call() throws Exception
                 {
-                    return navigationManager.findPath(getPosition(), target);
+                    return navigationManager.findPath(actor.getPosition(), target);
                 }
             });
         }
@@ -95,7 +96,7 @@ public class NavigationMeshBrain implements NavigationBrain
 
         if (path.isError())
         {
-            LOGGER.error("Could not find path (for {}) between {} and {} - {}", new Object[] {type, getPosition(),
+            LOGGER.error("Could not find path (for {}) between {} and {} - {}", new Object[] {type, actor.getPosition(),
                     target, path.getResult()});
             return;
         }
@@ -124,16 +125,16 @@ public class NavigationMeshBrain implements NavigationBrain
         {
             LOGGER.warn("Path is in error for {}: {}", this, path.getResult());
             target = null;
-            return currentPosition;
+            return actor.getPosition();
         }
 
         if (state == NavigationState.ARRIVED)
-            return currentPosition;
+            return actor.getPosition();
 
         //TODO: don't keep checking this
         Vector nextPoint = new Vector(path.getPoints().get(0));
 
-        if (getPosition().equals(nextPoint))
+        if (actor.getPosition().equals(nextPoint))
         {
             if (path.getPoints().size() == 1)
             {
@@ -150,12 +151,6 @@ public class NavigationMeshBrain implements NavigationBrain
             }
         }
         return nextPoint;
-    }
-
-    @Override
-    public Vector getPosition()
-    {
-        return currentPosition;
     }
 
     @Override

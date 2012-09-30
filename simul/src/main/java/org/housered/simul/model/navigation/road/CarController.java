@@ -109,6 +109,7 @@ public class CarController implements ActorController
     @Override
     public void giveDirectControl(OldNavigationOrder target)
     {
+        navigation.setTarget(target);
         carTracker.addCar(this);
     }
 

@@ -56,6 +56,7 @@ public class PedestrianController implements ActorController
     @Override
     public void giveDirectControl(OldNavigationOrder target)
     {
+        navigation.setTarget(target);
     }
 
     @Override

@@ -40,7 +40,6 @@ public class RoadManager implements Tickable, GameObject
     @Deprecated
     public PathData findPath(Vector start, Vector end)
     {
-        long startTime = System.currentTimeMillis();
 
         RoadNode startNode = getClosestRoadPoint(start);
         RoadNode endNode = getClosestRoadPoint(end);
@@ -49,9 +48,6 @@ public class RoadManager implements Tickable, GameObject
         
         if (path != null && path.size() == 1)
             path.add(path.get(0));
-
-        LOGGER.trace("Path calculation took {} ms - between {} and {} => {}", new Object[] {
-                System.currentTimeMillis() - startTime, start, end, path});
 
         if (path == null)
             return new PathData(Result.ERROR1);
@@ -64,9 +60,16 @@ public class RoadManager implements Tickable, GameObject
         return new PathData(pathAsPoints, new ArrayList<KNode>());
     }
 
-    synchronized List<RoadNode> findPath(RoadNode start, RoadNode target)
+    public synchronized List<RoadNode> findPath(RoadNode start, RoadNode target)
     {
-        return pathfinder.findPath(graph.getRoadNodes(), start, Arrays.asList(target));
+        long startTime = System.currentTimeMillis();
+        
+        List<RoadNode> path = pathfinder.findPath(graph.getRoadNodes(), start, Arrays.asList(target));
+        
+        LOGGER.trace("Path calculation took {} ms - between {} and {} => {}", new Object[] {
+                System.currentTimeMillis() - startTime, start, target, path});
+        
+        return path;
     }
 
     public void addRoad(RoadNode start, RoadNode end, double cost)

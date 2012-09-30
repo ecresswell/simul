@@ -80,11 +80,6 @@ public class RoadNetworkBuilder
         RoadNode br = new RoadNode(v(block.x + block.width, block.y + block.height));
         RoadNode bl = new RoadNode(v(block.x, block.y + block.height));
 
-        //        graph.connectNodesInADirectedWay(tr, tl);
-        //        graph.connectNodesInADirectedWay(br, tr);
-        //        graph.connectNodesInADirectedWay(bl, br);
-        //        graph.connectNodesInADirectedWay(tl, bl);
-
         //outside road should contain junction points
         Double outerBlock = (Double) block.clone();
         outerBlock.add(block.x - distanceBetweenLanes, block.y - distanceBetweenLanes);
@@ -185,7 +180,7 @@ public class RoadNetworkBuilder
 
         replace(newPoints.getTopLeft().getTopRight(), existingPoints.getTopRight().getTopRight());
         replace(newPoints.getTopLeft().getBottomRight(), existingPoints.getTopRight().getBottomRight());
-        
+
         replace(newPoints.getBottomLeft().getTopRight(), existingPoints.getBottomRight().getTopRight());
         replace(newPoints.getBottomLeft().getBottomRight(), existingPoints.getBottomRight().getBottomRight());
 
@@ -209,7 +204,7 @@ public class RoadNetworkBuilder
     {
         if (!keyPoints.containsKey(newBlock))
             addBlock(newBlock);
-        
+
         graph.beginBatchGraphUpdate();
 
         BlockGroup<BlockGroup<RoadNode>> existingPoints = keyPoints.get(existingBlock);
@@ -232,7 +227,7 @@ public class RoadNetworkBuilder
         newPoints.getTopLeft().setTopRight(existingPoints.getBottomLeft().getTopRight());
         newPoints.getTopRight().setTopLeft(existingPoints.getBottomRight().getTopLeft());
         newPoints.getTopRight().setTopRight(existingPoints.getBottomRight().getTopRight());
-        
+
         graph.removeDuplicateRoads();
         graph.endBatchGraphUpdate();
     }

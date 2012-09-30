@@ -33,8 +33,8 @@ public class Person implements Renderable, Tickable, Actor
     private final ActorController pedestrianController;
     private final ActorController tubeController;
     private HighLevelBrain highLevel;
-    private NavigationBrain navigation;
     private Vector size = new Vector(3, 3);
+    private Vector position = new Vector();
 
     private boolean invisible;
     private NavigationType currentType;
@@ -44,9 +44,7 @@ public class Person implements Renderable, Tickable, Actor
     {
         this.id = id;
         highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager, tubeManager);
-        navigation = new NavigationMeshBrain(navigationManager, roadNetworkManager);
-        //        highLevel = new DisplayBrainImpl(this);
-
+        NavigationMeshBrain navigation = new NavigationMeshBrain(navigationManager, roadNetworkManager, this);
         carController = new CarController(this, highLevel, navigation, roadNetworkManager.getCarTracker());
         pedestrianController = new PedestrianController(this, highLevel, navigation);
         tubeController = new TubePassengerController(this, highLevel, tubeManager);
@@ -55,7 +53,7 @@ public class Person implements Renderable, Tickable, Actor
     @Override
     public Vector getPosition()
     {
-        return navigation.getPosition();
+        return position;
     }
 
     @Override
@@ -108,7 +106,6 @@ public class Person implements Renderable, Tickable, Actor
                 tubeController.relinquishControl();
                 pedestrianController.relinquishControl();
                 carController.giveDirectControl(target);
-                navigation.setTarget(target);
             }
             else if (target.getType() == NavigationType.WALK)
             {
@@ -116,7 +113,6 @@ public class Person implements Renderable, Tickable, Actor
                 tubeController.relinquishControl();
                 carController.relinquishControl();
                 pedestrianController.giveDirectControl(target);
-                navigation.setTarget(target);
             }
             else if (target.getType() == NavigationType.TUBE)
             {
