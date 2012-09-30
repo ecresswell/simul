@@ -1,21 +1,38 @@
 package org.housered.simul.model.navigation.road.graph;
 
+import static java.lang.String.format;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Set;
 
+import org.housered.simul.model.location.Vector;
 import org.housered.simul.view.GraphicsAdapter;
 import org.housered.simul.view.Renderable;
 
 public class RoadGraph implements Renderable
 {
     private List<RoadNode> roadNodes = new ArrayList<RoadNode>();
+    private boolean checkMode = true;
 
     public void addNode(RoadNode node)
     {
         roadNodes.add(node);
+        consistencyCheck();
+    }
+
+    public void beginBatchGraphUpdate()
+    {
+        checkMode = false;
+    }
+
+    public void endBatchGraphUpdate()
+    {
+        checkMode = true;
         consistencyCheck();
     }
 
@@ -28,6 +45,7 @@ public class RoadGraph implements Renderable
             internalConnectNodesInADirectedWay(previous, roadNodes[i]);
             previous = roadNodes[i];
         }
+
         consistencyCheck();
     }
 
@@ -35,7 +53,7 @@ public class RoadGraph implements Renderable
     {
         if (existingNode == replacementNode)
             return;
-        
+
         if (!roadNodes.contains(replacementNode))
             roadNodes.add(replacementNode);
 
@@ -52,9 +70,9 @@ public class RoadGraph implements Renderable
                     edge.setEndNode(replacementNode);
             }
         }
-        
+
         removeNode(existingNode);
-        
+
         consistencyCheck();
     }
 
@@ -146,9 +164,39 @@ public class RoadGraph implements Renderable
 
     private void consistencyCheck()
     {
+        if (!checkMode)
+            return;
+
+        Set<Vector> nodePositions = new HashSet<Vector>();
+        Set<RoadEdge> edges = new HashSet<RoadEdge>();
+
         for (RoadNode node : roadNodes)
+        {
+            if (!nodePositions.add(node.getPosition()))
+                throw new IllegalStateException("Overlapping road nodes");
             for (RoadEdge edge : node.getEdges())
+            {
+                if (!edges.add(edge))
+                    throw new IllegalStateException(format("Duplicate road defined - %s", edge));
                 if (node != edge.getStartNode())
-                    throw new IllegalStateException("WHAT");
+                    throw new IllegalStateException("Road starting node is out of sync");
+            }
+        }
+    }
+    
+    void removeDuplicateRoads()
+    {
+        Set<RoadEdge> edges = new HashSet<RoadEdge>();
+        
+        for (RoadNode node : roadNodes)
+        {
+            ListIterator<RoadEdge> listIterator = node.getEdges().listIterator();
+            while (listIterator.hasNext())
+            {
+                RoadEdge edge = listIterator.next();
+                if (!edges.add(edge))
+                    listIterator.remove();
+            }
+        }
     }
 }

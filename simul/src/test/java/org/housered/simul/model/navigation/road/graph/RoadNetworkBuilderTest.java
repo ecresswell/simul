@@ -36,9 +36,9 @@ public class RoadNetworkBuilderTest
         RoadGraph g = b.getGraph();
 
         b.addBlock(blockA);
-        outputGraph(g, "before");
+        //        outputGraph(g, "before");
         b.attachBlockToRight(blockA, blockB);
-        outputGraph(g, "after");
+        //        outputGraph(g, "after");
 
         //just check the interlinks
         assertContainsRoad(g, 14, -4, 31, -4);
@@ -65,10 +65,9 @@ public class RoadNetworkBuilderTest
 
         b.addBlock(blockA);
         b.attachBlockToRight(blockA, blockB);
-        outputGraph(g, "before");
-
+        //        outputGraph(g, "before");
         b.attachBlockToBottom(blockA, blockC);
-        outputGraph(g, "after");
+        //        outputGraph(g, "after");
 
         assertContainsRoad(g, -4, 31, -4, 14);
         assertContainsRoad(g, -1, 14, -1, 31);
@@ -108,10 +107,13 @@ public class RoadNetworkBuilderTest
         b.addBlock(blockA);
         b.attachBlockToRight(blockA, blockB);
         b.attachBlockToBottom(blockA, blockC);
-        outputGraph(g, "before");
+        //        outputGraph(g, "before");
         b.attachBlockToRight(blockC, blockD);
         b.attachBlockToBottom(blockB, blockD);
-        outputGraph(g, "after");
+        //        outputGraph(g, "after");
+
+        assertContainsRoad(g, 14, 14, 11, 14);
+        assertContainsRoad(g, 14, 11, 14, 14);
     }
 
     @Test
@@ -132,6 +134,9 @@ public class RoadNetworkBuilderTest
         b.attachBlockToBottom(blockB, blockD);
         b.attachBlockToRight(blockC, blockD);
         outputGraph(g, "after");
+        
+        assertContainsRoad(g, 14, 14, 11, 14);
+        assertContainsRoad(g, 14, 11, 14, 14);
     }
 
     private void assertGroupsEqual(BlockGroup<RoadNode> a, BlockGroup<RoadNode> b)
@@ -160,19 +165,29 @@ public class RoadNetworkBuilderTest
     }
 
     @Test
-    public void shouldAddRoadsGoingBothWaysAroundABlock()
+    public void shouldAddRoadsGoingBothWaysAroundABlock() throws IOException
     {
         Rectangle2D.Double block = new Rectangle2D.Double(0, 0, 10, 10);
 
         RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
         b.addBlock(block);
         RoadGraph g = b.getGraph();
+        outputGraph(g, "block");
 
         //inner road
         assertContainsRoad(g, 11, -1, -1, -1);
         assertContainsRoad(g, -1, -1, -1, 11);
         assertContainsRoad(g, -1, 11, 11, 11);
         assertContainsRoad(g, 11, 11, 11, -1);
+        //onwards
+        assertContainsRoad(g, -1, -4, -1, -1);
+        assertContainsRoad(g, -1, -1, -4, -1);
+        assertContainsRoad(g, 11, -1, 11, -4);
+        assertContainsRoad(g, 14, -1, 11, -1);
+        assertContainsRoad(g, 11, 11, 14, 11);
+        assertContainsRoad(g, 11, 14, 11, 11);
+        assertContainsRoad(g, -4, 11, -1, 11);
+        assertContainsRoad(g, -1, 11, -1, 14);
 
         //outside road, with junction points
         assertContainsRoad(g, -1, -4, 11, -4);
@@ -200,6 +215,7 @@ public class RoadNetworkBuilderTest
         assertContainsBothWaysRoad(g, -1, 14, -4, 11);
 
         assertEquals(16, g.getRoadNodes().size());
+
     }
 
     @Test
