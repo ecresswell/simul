@@ -3,27 +3,28 @@ package org.housered.simul.model.navigation.road;
 import java.awt.geom.Rectangle2D;
 
 import org.housered.simul.model.location.Vector;
+import org.housered.simul.model.navigation.road.quadtree.ExitEarlyItemVisitor;
 
-import com.vividsolutions.jts.index.ItemVisitor;
-
-public class RayTestingItemVisitor implements ItemVisitor
+public class RayTestingItemVisitor implements ExitEarlyItemVisitor
 {
     private final Vector origin;
     private final Vector direction;
     private final CarController ignoredCar;
+    private final double exitEarlyDistanceSquared;
     private CarController minimumCar;
     private double minimumDistanceSquared;
 
     public RayTestingItemVisitor(Vector origin, Vector direction)
     {
-        this(origin, direction, null);
+        this(origin, direction, null, 0);
     }
 
-    public RayTestingItemVisitor(Vector origin, Vector direction, CarController car)
+    public RayTestingItemVisitor(Vector origin, Vector direction, CarController car, double exitEarlyDistance)
     {
         this.origin = origin;
         this.direction = direction;
         this.ignoredCar = car;
+        this.exitEarlyDistanceSquared = exitEarlyDistance * exitEarlyDistance;
     }
 
     public CarController getClosestCar()
@@ -32,13 +33,13 @@ public class RayTestingItemVisitor implements ItemVisitor
     }
 
     @Override
-    public void visitItem(Object item)
+    public boolean visitItem(Object item)
     {
         CarController c = (CarController) item;
-        
+
         if (c == ignoredCar)
-            return;
-        
+            return false;
+
         Rectangle2D.Double d = new Rectangle2D.Double(c.getPosition().x, c.getPosition().y, c.getSize().x,
                 c.getSize().y);
 
@@ -51,7 +52,13 @@ public class RayTestingItemVisitor implements ItemVisitor
             {
                 minimumCar = c;
                 minimumDistanceSquared = distanceSq;
+                
+                
+                if (minimumDistanceSquared < exitEarlyDistanceSquared)
+                    return true;
             }
         }
+        
+        return false;
     }
 }

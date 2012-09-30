@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.index.ArrayListVisitor;
-import com.vividsolutions.jts.index.ItemVisitor;
 
 public class ExitEarlyQuadtree
 {
@@ -146,7 +144,7 @@ public class ExitEarlyQuadtree
      * @param searchEnv the envelope of the desired query area.
      * @param visitor a visitor object which is passed the visited items
      */
-    public void query(Envelope searchEnv, ItemVisitor visitor)
+    public void query(Envelope searchEnv, ExitEarlyItemVisitor visitor)
     {
         /**
          * the items that are matched are the items in quads which overlap the search envelope

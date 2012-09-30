@@ -8,7 +8,6 @@ import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.road.quadtree.ExitEarlyQuadtree;
 
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.index.quadtree.Quadtree;
 
 public class CarTracker
 {
@@ -41,11 +40,12 @@ public class CarTracker
         return v.getClosestCar();
     }
 
-    public CarController getClosestCar(Vector origin, final CarController car, Vector direction)
+    public CarController getClosestCar(Vector origin, final CarController car, Vector direction,
+            double exitEarlyDistance)
     {
         Envelope e = new Envelope(origin.x, origin.x + direction.x, origin.y, origin.y + direction.y);
 
-        RayTestingItemVisitor v = new RayTestingItemVisitor(origin, direction, car);
+        RayTestingItemVisitor v = new RayTestingItemVisitor(origin, direction, car, exitEarlyDistance);
         cars.query(e, v);
 
         return v.getClosestCar();

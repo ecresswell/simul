@@ -172,31 +172,41 @@ public abstract class ExitEarlyNodeBase
         }
     }
 
-    public void visit(Envelope searchEnv, ItemVisitor visitor)
+    public boolean visit(Envelope searchEnv, ExitEarlyItemVisitor visitor)
     {
         if (!isSearchMatch(searchEnv))
-            return;
+            return false;
 
         // this node may have items as well as subnodes (since items may not
         // be wholely contained in any single subnode
-        visitItems(searchEnv, visitor);
+        boolean objectFound = visitItems(searchEnv, visitor);
+
+        if (objectFound)
+            return true;
 
         for (int i = 0; i < 4; i++)
         {
             if (subnode[i] != null)
             {
-                subnode[i].visit(searchEnv, visitor);
+                objectFound = subnode[i].visit(searchEnv, visitor);
+                if (objectFound)
+                    return true;
             }
         }
+        return false;
     }
 
-    private void visitItems(Envelope searchEnv, ItemVisitor visitor)
+    private boolean visitItems(Envelope searchEnv, ExitEarlyItemVisitor visitor)
     {
         // would be nice to filter items based on search envelope, but can't until they contain an envelope
         for (Iterator i = items.iterator(); i.hasNext();)
         {
-            visitor.visitItem(i.next());
+            boolean objectFound = visitor.visitItem(i.next());
+
+            if (objectFound)
+                return true;
         }
+        return false;
     }
 
     //<<TODO:RENAME?>> In Samet's terminology, I think what we're returning here is

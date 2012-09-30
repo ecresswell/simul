@@ -75,7 +75,7 @@ public class CarController implements ActorController
             {
                 lookAheadDirection = direction.scaleToMagnitudeCopy(HOW_FAR_TO_LOOK_AHEAD);
                 Vector rayOrigin = getRayLookAheadOrigin(this, direction);
-                CarController closestCar = carTracker.getClosestCar(rayOrigin, this, lookAheadDirection);
+                CarController closestCar = carTracker.getClosestCar(rayOrigin, this, lookAheadDirection, 0.1);
 
                 double braking = 0;
 

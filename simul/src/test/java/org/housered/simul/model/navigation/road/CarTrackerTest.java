@@ -119,7 +119,7 @@ public class CarTrackerTest
         tracker.addCar(car3);
 
         Vector rayOrigin = CarController.getRayLookAheadOrigin(car1, new Vector(5, 5));
-        assertEquals(car2, tracker.getClosestCar(rayOrigin, car1, new Vector(5, 5)));
+        assertEquals(car2, tracker.getClosestCar(rayOrigin, car1, new Vector(5, 5), 10));
     }
 
     static CarController qM(Vector pos, Vector size)
