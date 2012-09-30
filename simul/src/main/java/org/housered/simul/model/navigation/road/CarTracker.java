@@ -1,18 +1,18 @@
 package org.housered.simul.model.navigation.road;
 
-import java.awt.geom.Rectangle2D;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.housered.simul.model.location.Vector;
+import org.housered.simul.model.navigation.road.quadtree.ExitEarlyQuadtree;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.index.quadtree.Quadtree;
 
 public class CarTracker
 {
-    private final Quadtree cars = new Quadtree();
+    private final ExitEarlyQuadtree cars = new ExitEarlyQuadtree();
     private final Map<CarController, Envelope> positions = new HashMap<CarController, Envelope>();
     private double maxX = 0;
     private double maxY = 0;
@@ -56,13 +56,6 @@ public class CarTracker
         Envelope e = new Envelope(position.x, position.x + size.x, position.y, position.y + size.y);
         @SuppressWarnings("unchecked")
         List<CarController> results = cars.query(e);
-        return results;
-    }
-
-    public List<CarController> getCars(Envelope query)
-    {
-        @SuppressWarnings("unchecked")
-        List<CarController> results = cars.query(query);
         return results;
     }
 
