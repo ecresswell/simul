@@ -38,6 +38,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     private static final float SLOW_DOWN_REAL_TIME_FACTOR = 0.25f;
     private static Logger LOGGER = LoggerFactory.getLogger(World.class);
 
+    private final Camera camera;
     private AtomicLong nextId = new AtomicLong();
     private List<Renderable> renderables = new ArrayList<Renderable>();
     private List<Tickable> tickables = new LinkedList<Tickable>();
@@ -49,10 +50,10 @@ public class World implements RenderableProvider, Tickable, IdGenerator
     private TubeManager tubeManager = new TubeManager();
     private GuiManager guiManager;
     private GameClockImpl gameClock;
+    private boolean batchInsertEntities = false;
 
     private KeyInputManager inputManager = new KeyInputManager();
     private MouseListenerManager mouseManager = new MouseListenerManager();
-    private final Camera camera;
 
     public World(Camera camera)
     {
@@ -73,9 +74,23 @@ public class World implements RenderableProvider, Tickable, IdGenerator
 
         CityPlanner cityPlanner = new CityPlanner(this, gameClock, assetManager, jobManager, navigationManager,
                 roadNetwork, tubeManager);
+        
+        startBatchInsertEntities();
         cityPlanner.loadLevel(this);
+        endBatchInsertEntities();
 
         navigationManager.refreshNavigationMesh();
+    }
+
+    private void startBatchInsertEntities()
+    {
+        batchInsertEntities = true;
+    }
+
+    private void endBatchInsertEntities()
+    {
+        batchInsertEntities = false;
+        Collections.sort(renderables, new RenderableComparator());
     }
 
     public void addEntity(GameObject entity)
@@ -88,7 +103,8 @@ public class World implements RenderableProvider, Tickable, IdGenerator
         if (entity instanceof Renderable)
         {
             renderables.add((Renderable) entity);
-            Collections.sort(renderables, new RenderableComparator());
+            if (!batchInsertEntities)
+                Collections.sort(renderables, new RenderableComparator());
         }
         if (entity instanceof Tickable)
             tickables.add((Tickable) entity);
@@ -160,7 +176,7 @@ public class World implements RenderableProvider, Tickable, IdGenerator
             Vector position = camera.translateIntoWorldSpace(x, y);
             Vector size = Vector.v(2, 2);
             addEntity(new RenderableBoundingBox(position, size));
-//            LOGGER.debug("Add entity at {}", position);
+            //            LOGGER.debug("Add entity at {}", position);
             System.out.println(String.format("RoadNode r = new RoadNode(v(%s, %s));", position.x, position.y));
         }
     }

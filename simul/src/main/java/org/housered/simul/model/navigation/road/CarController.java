@@ -2,6 +2,7 @@ package org.housered.simul.model.navigation.road;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 import java.util.Random;
 
 import org.housered.simul.controller.SimulMain;
@@ -31,6 +32,8 @@ public class CarController implements ActorController
     private final SpeedLimiter speedLimiter = new SpeedLimiter();
     private final HighLevelBrain highLevel;
 
+    private boolean inACar = false;
+
     private int checkInFrontSkip = 0;
     private Vector lookAheadPosition;
     private Vector lookAheadDirection;
@@ -49,6 +52,18 @@ public class CarController implements ActorController
     public void tick(float dt)
     {
         speedLimiter.startNewTick(dt);
+
+        if (!inACar)
+        {
+            List<CarController> carsInMyWay = carTracker.getCars(actor.getPosition(), actor.getSize());
+            if (carsInMyWay.size() > 0)
+            {
+                lookAheadPosition = actor.getPosition();
+                return;
+            }
+            carTracker.addCar(this);
+            inACar = true;
+        }
 
         if (navigation.hasTarget())
         {
@@ -110,13 +125,13 @@ public class CarController implements ActorController
     public void giveDirectControl(NavigationOrder target)
     {
         navigation.setTarget(target);
-        carTracker.addCar(this);
     }
 
     @Override
     public void relinquishControl()
     {
         carTracker.removeCar(this);
+        inACar = false;
     }
 
     @Override

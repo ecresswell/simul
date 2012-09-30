@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public class RoadNavigationBrain
 {
-    private static final int THREADS = 1;
+    private static final int THREADS = 2;
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREADS);
 
     private enum NavigationState
@@ -53,7 +53,6 @@ public class RoadNavigationBrain
                 return networkManager.findPath(start, target);
             }
         });
-
         EXECUTOR_SERVICE.execute(currentTask);
     }
 
@@ -107,7 +106,6 @@ public class RoadNavigationBrain
         if (state == NavigationState.ARRIVED)
             return actor.getPosition();
 
-        //TODO: don't keep checking this
         RoadNode nextNode = path.get(0);
 
         if (actor.getPosition().equals(nextNode.getPosition()))
@@ -125,7 +123,7 @@ public class RoadNavigationBrain
                 path.remove(0);
             }
         }
-        
+
         return nextNode.getPosition();
     }
 

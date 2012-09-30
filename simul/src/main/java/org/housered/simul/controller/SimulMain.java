@@ -19,8 +19,8 @@ public class SimulMain
 
     public SimulMain()
     {
-        int width = 800;
-        int height = 600;
+        int width = 1000;
+        int height = 700;
         final Camera camera = new Camera(width, height);
 
         world = new World(camera);
