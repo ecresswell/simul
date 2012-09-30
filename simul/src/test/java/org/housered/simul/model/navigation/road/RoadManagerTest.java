@@ -39,6 +39,22 @@ public class RoadManagerTest
         assertEquals(n2, path.get(1));
         assertEquals(n3, path.get(2));
     }
+    
+    @Test
+    public void shouldReturnPathWith2ElementsWhenWeWantToStandStill()
+    {
+        RoadNode n1 = new RoadNode(v(10, 10));
+        RoadNode n2 = new RoadNode(v(15, 10));
+        RoadNode n3 = new RoadNode(v(15, 15));
+        network.addRoad(n1, n2, 5);
+        network.addRoad(n2, n3, 5);
+
+        List<RoadNode> path = network.findPath(n1, n1);
+        
+        assertEquals(2, path.size());
+        assertEquals(n1, path.get(0));
+        assertEquals(n1, path.get(1));
+    }
 
     @Test
     public void shouldAcceptVectorStartAndEndForTheMoment()

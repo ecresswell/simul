@@ -8,8 +8,9 @@ import java.util.Random;
 
 import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.location.Vector;
-import org.housered.simul.model.navigation.OldNavigationOrder;
-import org.housered.simul.model.navigation.OldNavigationOrder.NavigationType;
+import org.housered.simul.model.navigation.NavigationOrder;
+import org.housered.simul.model.navigation.WalkNavigationOrder;
+import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +54,7 @@ public class DisplayBrainImpl implements HighLevelBrain
     }
 
     @Override
-    public OldNavigationOrder decideWhereToGo()
+    public NavigationOrder decideWhereToGo()
     {
         Vector target = null;
 
@@ -93,7 +94,7 @@ public class DisplayBrainImpl implements HighLevelBrain
             previousTargetPoint = target;
         }
 
-        return new OldNavigationOrder(target, NavigationType.WALK);
+        return new WalkNavigationOrder(target);
     }
 
     @Override

@@ -2,7 +2,7 @@ package org.housered.simul.model.navigation;
 
 import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.actor.brain.HighLevelBrain;
-import org.housered.simul.model.actor.brain.NavigationBrain;
+import org.housered.simul.model.actor.brain.NavigationMeshBrain;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.view.GraphicsAdapter;
@@ -10,11 +10,11 @@ import org.housered.simul.view.GraphicsAdapter;
 public class PedestrianController implements ActorController
 {
     private final Actor actor;
-    private final NavigationBrain navigation;
+    private final NavigationMeshBrain navigation;
     private final HighLevelBrain highLevel;
     private final SpeedLimiter speedLimiter = new SpeedLimiter();
 
-    public PedestrianController(Actor actor, HighLevelBrain highLevel, NavigationBrain navigation)
+    public PedestrianController(Actor actor, HighLevelBrain highLevel, NavigationMeshBrain navigation)
     {
         this.actor = actor;
         this.highLevel = highLevel;
@@ -54,7 +54,7 @@ public class PedestrianController implements ActorController
     }
 
     @Override
-    public void giveDirectControl(OldNavigationOrder target)
+    public void giveDirectControl(NavigationOrder target)
     {
         navigation.setTarget(target);
     }
@@ -77,7 +77,7 @@ public class PedestrianController implements ActorController
         // TODO Auto-generated method stub
         return 0;
     }
-    
+
     @Override
     public Vector getSize()
     {

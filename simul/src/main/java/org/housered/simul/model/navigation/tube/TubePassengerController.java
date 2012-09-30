@@ -4,8 +4,8 @@ import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.actor.brain.HighLevelBrain;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.ActorController;
-import org.housered.simul.model.navigation.OldNavigationOrder;
-import org.housered.simul.model.navigation.OldNavigationOrder.NavigationType;
+import org.housered.simul.model.navigation.NavigationOrder;
+import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
 import org.housered.simul.view.GraphicsAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +18,7 @@ public class TubePassengerController implements ActorController
     private TubeStation targetStation;
     private final TubeManager tubeManager;
     private TubeStation startStation;
-    
+
     public TubePassengerController(Actor actor, HighLevelBrain highLevel, TubeManager tubeManager)
     {
         this.actor = actor;
@@ -28,12 +28,12 @@ public class TubePassengerController implements ActorController
     }
 
     @Override
-    public void giveDirectControl(OldNavigationOrder target)
+    public void giveDirectControl(NavigationOrder target)
     {
         if (target.getType() != NavigationType.TUBE)
             throw new IllegalArgumentException("Can't do other things");
-        
-        targetStation = (TubeStation) target.getTargetObject();
+
+        targetStation = ((TubeNavigationOrder) target).getTarget();
         startStation = tubeManager.getClosestTubeStation(getPosition());
     }
 
@@ -47,7 +47,7 @@ public class TubePassengerController implements ActorController
             startStation = null;
         }
     }
-    
+
     public boolean arrivedAtStationDoYouWishToAlight(Tube currentTube, TubeStation station)
     {
         if (station == targetStation)

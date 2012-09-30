@@ -68,5 +68,11 @@ public class RoadNode implements Node<RoadNode>, Locatable
     {
         return roads;
     }
+    
+    @Override
+    public String toString()
+    {
+        return String.format("RoadNode [(%s), %s roads]", position, roads.size());
+    }
 
 }

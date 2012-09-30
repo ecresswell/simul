@@ -8,15 +8,17 @@ import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.assets.Occupiable;
 import org.housered.simul.model.location.Vector;
-import org.housered.simul.model.navigation.OldNavigationOrder;
-import org.housered.simul.model.navigation.OldNavigationOrder.NavigationType;
+import org.housered.simul.model.navigation.NavigationOrder;
+import org.housered.simul.model.navigation.WalkNavigationOrder;
+import org.housered.simul.model.navigation.road.CarNavigationOrder;
 import org.housered.simul.model.navigation.road.RoadManager;
+import org.housered.simul.model.navigation.road.graph.RoadNode;
 import org.housered.simul.model.navigation.tube.TubeManager;
+import org.housered.simul.model.navigation.tube.TubeNavigationOrder;
 import org.housered.simul.model.navigation.tube.TubeStation;
 import org.housered.simul.model.work.Job;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.world.GameClock;
-import org.housered.simul.model.world.GameObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +39,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
     private final TubeManager tubeManager;
     private final GameClock gameClock;
 
-    private Queue<OldNavigationOrder> orders = new LinkedList<OldNavigationOrder>();
+    private Queue<NavigationOrder> orders = new LinkedList<NavigationOrder>();
     private Occupiable currentTarget;
     private State state;
     private boolean releaseNextOrder;
@@ -57,7 +59,7 @@ public class HighLevelBrainImpl implements HighLevelBrain
     }
 
     @Override
-    public OldNavigationOrder decideWhereToGo()
+    public NavigationOrder decideWhereToGo()
     {
         updateJobAndHome();
 
@@ -75,11 +77,10 @@ public class HighLevelBrainImpl implements HighLevelBrain
                     actor.setInvisible(false);
                     currentTarget = home;
 
-                    queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()).getPosition(), NavigationType.WALK);
-                    //transform and roll out
-                    queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()).getPosition(),
-                            NavigationType.CAR);
-                    queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
+                    queueWalk(roadManager.getClosestRoadPoint(actor.getPosition()).getPosition());
+                    queueCar(roadManager.getClosestRoadPoint(actor.getPosition()),
+                            roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()));
+                    queueWalk(currentTarget.getEntryPoint());
 
                     return orders.remove();
                 }
@@ -96,9 +97,10 @@ public class HighLevelBrainImpl implements HighLevelBrain
 
                     TubeStation closestToMe = tubeManager.getClosestTubeStation(actor.getPosition());
                     TubeStation closestToHome = tubeManager.getClosestTubeStation(currentTarget.getEntryPoint());
-                    queueOrder(closestToMe.getEntryPoint(), NavigationType.WALK);
-                    queueOrder(closestToHome.getPosition(), NavigationType.TUBE, closestToHome);
-                    queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
+
+                    queueWalk(closestToMe.getEntryPoint());
+                    queueTube(closestToHome);
+                    queueWalk(currentTarget.getEntryPoint());
 
                     return orders.remove();
                 }
@@ -117,10 +119,10 @@ public class HighLevelBrainImpl implements HighLevelBrain
                     actor.setInvisible(false);
                     currentTarget = job.getJobLocation();
 
-                    queueOrder(roadManager.getClosestRoadPoint(actor.getPosition()).getPosition(), NavigationType.WALK);
-                    queueOrder(roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()).getPosition(),
-                            NavigationType.CAR);
-                    queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
+                    queueWalk(roadManager.getClosestRoadPoint(actor.getPosition()).getPosition());
+                    queueCar(roadManager.getClosestRoadPoint(actor.getPosition()),
+                            roadManager.getClosestRoadPoint(currentTarget.getEntryPoint()));
+                    queueWalk(currentTarget.getEntryPoint());
 
                     return orders.remove();
                 }
@@ -136,9 +138,10 @@ public class HighLevelBrainImpl implements HighLevelBrain
 
                     TubeStation closestToMe = tubeManager.getClosestTubeStation(actor.getPosition());
                     TubeStation closestToWork = tubeManager.getClosestTubeStation(currentTarget.getEntryPoint());
-                    queueOrder(closestToMe.getEntryPoint(), NavigationType.WALK);
-                    queueOrder(closestToWork.getPosition(), NavigationType.TUBE, closestToWork);
-                    queueOrder(currentTarget.getEntryPoint(), NavigationType.WALK);
+                    
+                    queueWalk(closestToMe.getEntryPoint());
+                    queueTube(closestToWork);
+                    queueWalk(currentTarget.getEntryPoint());
 
                     return orders.remove();
                 }
@@ -185,14 +188,19 @@ public class HighLevelBrainImpl implements HighLevelBrain
         }
     }
 
-    private void queueOrder(Vector targetPoint, NavigationType type, GameObject targetObject)
+    private void queueWalk(Vector target)
     {
-        orders.add(new OldNavigationOrder(targetPoint, type, targetObject));
+        orders.add(new WalkNavigationOrder(target));
     }
 
-    private void queueOrder(Vector targetPoint, NavigationType type)
+    private void queueCar(RoadNode start, RoadNode end)
     {
-        queueOrder(targetPoint, type, null);
+        orders.add(new CarNavigationOrder(start, end));
+    }
+
+    private void queueTube(TubeStation target)
+    {
+        orders.add(new TubeNavigationOrder(target));
     }
 
     private void updateJobAndHome()

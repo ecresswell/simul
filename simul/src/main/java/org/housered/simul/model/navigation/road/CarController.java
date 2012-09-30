@@ -7,11 +7,11 @@ import java.util.Random;
 import org.housered.simul.controller.SimulMain;
 import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.actor.brain.HighLevelBrain;
-import org.housered.simul.model.actor.brain.NavigationBrain;
+import org.housered.simul.model.actor.brain.RoadNavigationBrain;
 import org.housered.simul.model.location.SpeedLimiter;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.ActorController;
-import org.housered.simul.model.navigation.OldNavigationOrder;
+import org.housered.simul.model.navigation.NavigationOrder;
 import org.housered.simul.view.GraphicsAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,7 +26,7 @@ public class CarController implements ActorController
     private static final double CHANCE_OF_MINIMUM_SPEED = 0.4;
     private static final double MAX_SPEED = 8;
     private final Actor actor;
-    private final NavigationBrain navigation;
+    private final RoadNavigationBrain navigation;
     private final CarTracker carTracker;
     private final SpeedLimiter speedLimiter = new SpeedLimiter();
     private final HighLevelBrain highLevel;
@@ -35,7 +35,7 @@ public class CarController implements ActorController
     private Vector lookAheadPosition;
     private Vector lookAheadDirection;
 
-    public CarController(Actor actor, HighLevelBrain highLevel, NavigationBrain navigation, CarTracker carTracker)
+    public CarController(Actor actor, HighLevelBrain highLevel, RoadNavigationBrain navigation, CarTracker carTracker)
     {
         this.actor = actor;
         this.highLevel = highLevel;
@@ -107,7 +107,7 @@ public class CarController implements ActorController
     }
 
     @Override
-    public void giveDirectControl(OldNavigationOrder target)
+    public void giveDirectControl(NavigationOrder target)
     {
         navigation.setTarget(target);
         carTracker.addCar(this);

@@ -9,15 +9,15 @@ import java.util.concurrent.FutureTask;
 import org.housered.simul.model.actor.Actor;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.NavigationManager;
-import org.housered.simul.model.navigation.OldNavigationOrder;
-import org.housered.simul.model.navigation.OldNavigationOrder.NavigationType;
+import org.housered.simul.model.navigation.NavigationOrder;
+import org.housered.simul.model.navigation.WalkNavigationOrder;
 import org.housered.simul.model.navigation.road.RoadManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import straightedge.geom.path.PathData;
 
-public class NavigationMeshBrain implements NavigationBrain
+public class NavigationMeshBrain
 {
     private static final int THREADS = 1;
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newFixedThreadPool(THREADS);
@@ -30,51 +30,29 @@ public class NavigationMeshBrain implements NavigationBrain
     private static Logger LOGGER = LoggerFactory.getLogger(NavigationMeshBrain.class);
     private final NavigationManager navigationManager;
     private final Actor actor;
-    private final RoadManager networkManager;
     private Vector target;
-    private NavigationType type;
     private PathData path;
     private NavigationState state = NavigationState.NO_TARGET;
 
     private FutureTask<PathData> currentTask;
 
-    public NavigationMeshBrain(NavigationManager navigationManager, RoadManager networkManager, Actor actor)
+    public NavigationMeshBrain(NavigationManager navigationManager, Actor actor)
     {
         this.navigationManager = navigationManager;
-        this.networkManager = networkManager;
         this.actor = actor;
     }
 
-    @Override
-    public void setTarget(OldNavigationOrder order)
+    public void setTarget(NavigationOrder order)
     {
-        target = order.getTarget();
-        type = order.getType();
+        target = ((WalkNavigationOrder) order).getTarget();
 
-        if (order.getType() == NavigationType.CAR)
-        {
-            currentTask = new FutureTask<PathData>(new Callable<PathData>() {
-                @Override
-                public PathData call() throws Exception
-                {
-                    return networkManager.findPath(actor.getPosition(), target);
-                }
-            });
-        }
-        else if (order.getType() == NavigationType.WALK)
-        {
-            currentTask = new FutureTask<PathData>(new Callable<PathData>() {
-                @Override
-                public PathData call() throws Exception
-                {
-                    return navigationManager.findPath(actor.getPosition(), target);
-                }
-            });
-        }
-        else
-        {
-            throw new IllegalArgumentException("Unrecognised NavigationType - " + order.getType());
-        }
+        currentTask = new FutureTask<PathData>(new Callable<PathData>() {
+            @Override
+            public PathData call() throws Exception
+            {
+                return navigationManager.findPath(actor.getPosition(), target);
+            }
+        });
 
         EXECUTOR_SERVICE.execute(currentTask);
     }
@@ -96,8 +74,8 @@ public class NavigationMeshBrain implements NavigationBrain
 
         if (path.isError())
         {
-            LOGGER.error("Could not find path (for {}) between {} and {} - {}", new Object[] {type, actor.getPosition(),
-                    target, path.getResult()});
+            LOGGER.error("Could not find path (for {}) between {} and {} - {}",
+                    new Object[] {"WALK", actor.getPosition(), target, path.getResult()});
             return;
         }
 
@@ -107,7 +85,6 @@ public class NavigationMeshBrain implements NavigationBrain
         currentTask = null;
     }
 
-    @Override
     public boolean hasTarget()
     {
         if (currentTask != null && currentTask.isDone())
@@ -118,7 +95,6 @@ public class NavigationMeshBrain implements NavigationBrain
         return state == NavigationState.MOVING || state == NavigationState.ARRIVED;
     }
 
-    @Override
     public Vector getNextPoint()
     {
         if (path.isError())
@@ -153,7 +129,6 @@ public class NavigationMeshBrain implements NavigationBrain
         return nextPoint;
     }
 
-    @Override
     public boolean hasArrivedAtTarget()
     {
         if (state == NavigationState.ARRIVED)

@@ -69,6 +69,9 @@ public class RoadManager implements Tickable, GameObject
         LOGGER.trace("Path calculation took {} ms - between {} and {} => {}", new Object[] {
                 System.currentTimeMillis() - startTime, start, target, path});
         
+        if (path != null && path.size() == 1)
+            path.add(target);
+        
         return path;
     }
 

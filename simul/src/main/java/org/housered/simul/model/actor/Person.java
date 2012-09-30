@@ -4,19 +4,19 @@ import java.awt.Color;
 
 import org.housered.simul.model.actor.brain.HighLevelBrain;
 import org.housered.simul.model.actor.brain.HighLevelBrainImpl;
-import org.housered.simul.model.actor.brain.NavigationBrain;
 import org.housered.simul.model.actor.brain.NavigationMeshBrain;
+import org.housered.simul.model.actor.brain.RoadNavigationBrain;
 import org.housered.simul.model.assets.AssetManager;
 import org.housered.simul.model.location.Vector;
 import org.housered.simul.model.navigation.ActorController;
 import org.housered.simul.model.navigation.NavigationManager;
-import org.housered.simul.model.navigation.OldNavigationOrder;
-import org.housered.simul.model.navigation.OldNavigationOrder.NavigationType;
+import org.housered.simul.model.navigation.NavigationOrder;
+import org.housered.simul.model.navigation.NavigationOrder.NavigationType;
 import org.housered.simul.model.navigation.PedestrianController;
 import org.housered.simul.model.navigation.road.CarController;
 import org.housered.simul.model.navigation.road.RoadManager;
-import org.housered.simul.model.navigation.tube.TubePassengerController;
 import org.housered.simul.model.navigation.tube.TubeManager;
+import org.housered.simul.model.navigation.tube.TubePassengerController;
 import org.housered.simul.model.work.JobManager;
 import org.housered.simul.model.world.GameClock;
 import org.housered.simul.model.world.Tickable;
@@ -44,9 +44,10 @@ public class Person implements Renderable, Tickable, Actor
     {
         this.id = id;
         highLevel = new HighLevelBrainImpl(this, assetManager, jobManager, gameClock, roadNetworkManager, tubeManager);
-        NavigationMeshBrain navigation = new NavigationMeshBrain(navigationManager, roadNetworkManager, this);
-        carController = new CarController(this, highLevel, navigation, roadNetworkManager.getCarTracker());
-        pedestrianController = new PedestrianController(this, highLevel, navigation);
+        NavigationMeshBrain walkBrain = new NavigationMeshBrain(navigationManager, this);
+        RoadNavigationBrain roadBrain = new RoadNavigationBrain(roadNetworkManager, this);
+        carController = new CarController(this, highLevel, roadBrain, roadNetworkManager.getCarTracker());
+        pedestrianController = new PedestrianController(this, highLevel, walkBrain);
         tubeController = new TubePassengerController(this, highLevel, tubeManager);
     }
 
@@ -96,7 +97,7 @@ public class Person implements Renderable, Tickable, Actor
     @Override
     public void tick(float dt)
     {
-        OldNavigationOrder target = highLevel.decideWhereToGo();
+        NavigationOrder target = highLevel.decideWhereToGo();
 
         if (target != null)
         {
