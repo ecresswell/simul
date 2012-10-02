@@ -133,8 +133,6 @@ public class RoadGraphTest
     @Test
     public void shouldAllowRemovalOfRoadsUsingRoadNodes()
     {
-        RoadNode rep = new RoadNode(10, 10);
-
         RoadGraph graph = new RoadGraph();
         RoadNode ex = new RoadNode(0, 0);
         RoadNode a = new RoadNode(1, 1);
@@ -146,5 +144,27 @@ public class RoadGraphTest
         assertEquals(3, graph.getRoadNodes().size());
         assertEquals(1, ex.getEdges().size());
         assertEquals(0, a.getEdges().size());
+    }
+    
+    @Test
+    public void shouldInsertRoadNodesIntoExistingRoad()
+    {
+        RoadGraph graph = new RoadGraph();
+        RoadNode a = new RoadNode(0, 0);
+        RoadNode b = new RoadNode(10, 0);
+        
+        graph.connectNodesInADirectedWay(a, b);
+        
+        RoadNode one = new RoadNode(4, 0);
+        RoadNode two = new RoadNode(6, 1);
+
+        graph.insertNodeIntoRoad(a.getEdges().get(0), one);
+        assertContainsRoad(graph, 0, 0, 4, 0);
+        assertContainsRoad(graph, 4, 0, 10, 0);
+        
+        graph.insertNodeIntoRoad(one.getEdges().get(0), two);
+        assertContainsRoad(graph, 0, 0, 4, 0);
+        assertContainsRoad(graph, 4, 0, 6, 1);
+        assertContainsRoad(graph, 6, 1, 10, 0);
     }
 }

@@ -199,4 +199,12 @@ public class RoadGraph implements Renderable
             }
         }
     }
+
+    public void insertNodeIntoRoad(RoadEdge existingRoad, RoadNode nodeToInsert)
+    {
+        RoadNode end = existingRoad.getEndNode();
+        existingRoad.setEndNode(nodeToInsert);
+        
+        connectNodesInADirectedWay(nodeToInsert, end);
+    }
 }

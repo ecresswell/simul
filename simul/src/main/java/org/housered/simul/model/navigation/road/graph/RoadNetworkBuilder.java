@@ -168,6 +168,39 @@ public class RoadNetworkBuilder
             block.setBottomLeft(replacement);
     }
 
+    public void addSideRoad(RoadNode existingStartNode, RoadNode existingEndNode, Vector... nodes)
+    {
+        if (nodes.length < 2)
+            throw new IllegalArgumentException("Can't add side road with < 2 nodes");
+
+        RoadNode startNode = new RoadNode(nodes[0]);
+        RoadNode endNode = new RoadNode(nodes[nodes.length - 1]);
+
+        RoadEdge road = null;
+        for (RoadEdge potentialRoad : existingStartNode.getEdges())
+        {
+            if (potentialRoad.getEndNode().equals(existingEndNode))
+                road = potentialRoad;
+        }
+
+        if (road == null)
+            throw new IllegalArgumentException(String.format("Could not find road linking %s and %s",
+                    existingStartNode, existingEndNode));
+
+        graph.insertNodeIntoRoad(road, startNode);
+        graph.insertNodeIntoRoad(startNode.getEdges().get(0), endNode);
+
+        RoadNode previous = startNode;
+        for (int i = 1; i < nodes.length - 1; i++)
+        {
+            RoadNode newNode = new RoadNode(nodes[i]);
+            graph.connectNodesInADirectedWay(previous, newNode);
+            previous = newNode;
+        }
+
+        graph.connectNodesInADirectedWay(previous, endNode);
+    }
+
     void attachBlockToRight(Double existingBlock, Double newBlock)
     {
         if (!keyPoints.containsKey(newBlock))
@@ -344,5 +377,4 @@ public class RoadNetworkBuilder
             this.bottomLeft = bottomLeft;
         }
     }
-
 }

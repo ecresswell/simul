@@ -130,11 +130,11 @@ public class RoadNetworkBuilderTest
         b.addBlock(blockA);
         b.attachBlockToRight(blockA, blockB);
         b.attachBlockToBottom(blockA, blockC);
-        outputGraph(g, "before");
+        //        outputGraph(g, "before");
         b.attachBlockToBottom(blockB, blockD);
         b.attachBlockToRight(blockC, blockD);
-        outputGraph(g, "after");
-        
+        //        outputGraph(g, "after");
+
         assertContainsRoad(g, 14, 14, 11, 14);
         assertContainsRoad(g, 14, 11, 14, 14);
     }
@@ -172,7 +172,7 @@ public class RoadNetworkBuilderTest
         RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
         b.addBlock(block);
         RoadGraph g = b.getGraph();
-        outputGraph(g, "block");
+        //        outputGraph(g, "block");
 
         //inner road
         assertContainsRoad(g, 11, -1, -1, -1);
@@ -250,6 +250,31 @@ public class RoadNetworkBuilderTest
         assertEquals(v(10, 0), results.get(1).get(0));
         assertEquals(v(0, 10), results.get(0).get(1));
         assertEquals(v(10, 10), results.get(1).get(1));
+    }
+
+    @Test
+    public void shouldAddSmallSideRoad() throws IOException
+    {
+        Rectangle2D.Double block = new Rectangle2D.Double(0, 0, 10, 10);
+
+        RoadNetworkBuilder b = new RoadNetworkBuilder(1, 3);
+        b.addBlock(block);
+        BlockGroup<BlockGroup<RoadNode>> keyPoints = b.getKeyPoints(block);
+        b.addSideRoad(keyPoints.getBottomLeft().getTopRight(), keyPoints.getBottomRight().getTopLeft(), v(5, 11),
+                v(5, 8), v(8, 8), v(8, 11));
+
+        RoadGraph g = b.getGraph();
+        outputGraph(g, "block");
+
+        //new roads
+        assertContainsRoad(g, 5, 11, 5, 8);
+        assertContainsRoad(g, 5, 8, 8, 8);
+        assertContainsRoad(g, 8, 8, 8, 11);
+
+        //existing flow
+        assertContainsRoad(g, -1, 11, 5, 11);
+        assertContainsRoad(g, 5, 11, 8, 11);
+        assertContainsRoad(g, 8, 11, 11, 11);
     }
 
     public static void assertContainsRoad(RoadGraph graph, double sx, double sy, double ex, double ey)
